@@ -1,10 +1,13 @@
+import { StaticImageData } from "next/image";
+
 export type Curator = {
   name: string;
   discipline: string;
-  img: string;
+  img: string | StaticImageData;
   short: string;
   bio: string[];
 };
+
 
 import anish from "@/public/images/curators/anisha-rachel-oommen-lQ4kx0db.jpg"
 import ankur from "@/public/images/curators/ankur-tewari-PgCapfpt.jpg"

@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -9,10 +11,10 @@ import { AxiosError } from "axios";
 import { registerUser, registerVIP, registerSEA } from "@/src/services/register.service";
 
 // Import schemas
-import { 
-    generalSchema, 
-    seaSchema, 
-    guestSchema, 
+import {
+    generalSchema,
+    seaSchema,
+    guestSchema,
     ROLE_IDS,
     type GeneralFormData,
     type SEAFormData,
@@ -22,7 +24,7 @@ import {
 // Import form components
 import { GeneralForm, SeaForm, GuestForm } from "@/src/components/register/FormFields";
 
-export default function RegisterPage() {
+function RegisterContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const next = searchParams.get("next") || "";
@@ -101,7 +103,7 @@ export default function RegisterPage() {
                     referrer: "web",
                     interest: ["SEA Delegate"],
                     hearabout: "Website",
-                    subscribe: data.newsletter ? 1 : 0,
+                    subscribe: (data.newsletter ? 1 : 0) as 0 | 1,
                     terms: data.terms,
                 };
                 response = await registerSEA(seaData);
@@ -139,7 +141,7 @@ export default function RegisterPage() {
                     referrer: "web",
                     interest: data.interests || [],
                     hearabout: data.heard || "Other",
-                    subscribe: data.newsletter ? 1 : 0,
+                    subscribe: (data.newsletter ? 1 : 0) as 0 | 1,
                     age_group: data.age || "",
                     visited: data.visitedYears?.length ? "Yes" : "No",
                     visited_year: data.visitedYears || [],
@@ -341,10 +343,14 @@ export default function RegisterPage() {
 
                     <div className="space-y-3 pt-4">
                         <label className="flex items-start gap-3 text-sm">
-                            <input type="checkbox" {...register("terms")} className="mt-1 accent-accent" required/>
+                            <input type="checkbox" {...register("terms")} className="mt-1 accent-accent" required />
                             I accept and agree to all the <Link href="/terms" className="underline underline-offset-4 hover:text-accent">Terms and Conditions</Link>
                         </label>
-                        {errors.terms && <p className="text-red-500 text-sm">{errors.terms.message}</p>}
+                        {errors.terms?.message && (
+                            <p className="text-red-500 text-sm">
+                                {errors.terms.message.toString()}
+                            </p>
+                        )}
 
                         <label className="flex items-start gap-3 text-sm">
                             <input type="checkbox" {...register("newsletter")} className="mt-1 accent-accent" />
@@ -365,7 +371,13 @@ export default function RegisterPage() {
     );
 }
 
-
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegisterContent />
+    </Suspense>
+  );
+}
 
 
 

@@ -8,6 +8,7 @@ import curator2 from "@/public/images/curator-2.jpg";
 import curator3 from "@/public/images/curator-3.jpg";
 import venue1 from "@/public/images/venue-1.jpg";
 import venue2 from "@/public/images/venue-2.jpg";
+import { StaticImageData } from "next/image";
 
 export type Slot = { day: number; time: string };
 /** A sub-programme that is automatically part of a day pass / bundle booking. */
@@ -32,7 +33,7 @@ export type Programme = {
   slots: Slot[];
   venue: string;
   price: number;
-  img: string;
+  img: string | StaticImageData;
   blurb: string;
   longBlurb?: string;
   tags: string[];

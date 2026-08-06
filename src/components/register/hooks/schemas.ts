@@ -11,9 +11,9 @@ export const baseSchema = {
     email: z.string().min(1, "Email is required").email("Invalid email"),
     fullName: z.string().min(3, "Full name is required"),
     std_code: z.string().default("91"),
-    terms: z.literal(true, {
-        errorMap: () => ({ message: "Accept Terms & Conditions" }),
-    }),
+   terms: z.literal(true, {
+  message: "Accept Terms & Conditions",
+}),
 };
 
 export const generalSchema = z.object({

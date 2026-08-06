@@ -33,10 +33,8 @@ export const registerSchema = z.object({
   otp: z.string().optional(),
 
   terms: z.literal(true, {
-    errorMap: () => ({
-      message: "Accept Terms & Conditions",
-    }),
-  }),
+  message: "Accept Terms & Conditions",
+}),
 
   newsletter: z.boolean().optional(),
 });

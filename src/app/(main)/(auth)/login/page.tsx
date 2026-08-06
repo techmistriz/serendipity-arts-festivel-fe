@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { useAppDispatch, useAppSelector } from "@/src/store/hooks";
 import { login } from "@/src/store/slices/authThunk";
 import Link from "next/link";
@@ -17,7 +19,9 @@ type ForgotPasswordForm = {
   email: string;
 };
 
-export default function LoginPage() {
+
+
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "";
@@ -212,5 +216,13 @@ export default function LoginPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

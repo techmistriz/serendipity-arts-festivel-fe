@@ -49,8 +49,8 @@ export default function Header() {
 
   const results = useMemo(() => searchSite(q, 24), [q]);
 
-  const logout = ()=>{
-    
+  const logout = () => {
+
   }
 
   return (
@@ -58,11 +58,11 @@ export default function Header() {
       <header className="sticky top-0 z-40 bg-background/85 backdrop-blur-sm rule-b">
         <div className="container-editorial flex h-14 md:h-16 items-center justify-between">
 
-         <Link href="/" aria-label="Home" className="label notch hover:text-accent transition-colors">
+          <Link href="/" aria-label="Home" className="label notch hover:text-accent transition-colors">
             Home
           </Link>
 
-           <div className="flex items-center gap-3 md:gap-5">
+          <div className="flex items-center gap-3 md:gap-5">
             <button
               onClick={() => setSearchOpen(true)}
               aria-label="Search"
@@ -120,7 +120,7 @@ export default function Header() {
 
       {/* Search */}
 
-     
+
       {searchOpen && (
         <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md overflow-y-auto ed-fade">
           <div className="container-editorial pt-6 md:pt-10">
@@ -157,8 +157,10 @@ export default function Header() {
                   <li key={`${h.kind}-${h.title}-${i}`} className="rule-b">
                     <button
                       onClick={() => {
-                        setSearchOpen(false); setQ("");
-                        navigate({ to: h.to, search: (h.search ?? {}) as never });
+                        setSearchOpen(false);
+                        setQ("");
+
+                        router.push(h.href);
                       }}
                       className="w-full py-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-left hover:text-accent"
                     >
@@ -187,23 +189,23 @@ export default function Header() {
           </div>
           <nav className="container-editorial pt-8 pb-16 md:pt-16">
             <ul>
-             {MENU.map((m) => (
-  <li key={m.href} className="rule-b">
-    <Link
-      href={m.href}
-      onClick={() => setOpen(false)}
-      className="group flex items-baseline justify-between py-4 md:py-7"
-    >
-      <span className="display uppercase text-[11vw] md:text-[7vw] leading-[0.95] group-hover:text-accent transition-colors">
-        {m.label}
-      </span>
+              {MENU.map((m) => (
+                <li key={m.href} className="rule-b">
+                  <Link
+                    href={m.href}
+                    onClick={() => setOpen(false)}
+                    className="group flex items-baseline justify-between py-4 md:py-7"
+                  >
+                    <span className="display uppercase text-[11vw] md:text-[7vw] leading-[0.95] group-hover:text-accent transition-colors">
+                      {m.label}
+                    </span>
 
-      <span className="label text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hidden md:inline">
-        &rarr;
-      </span>
-    </Link>
-  </li>
-))}
+                    <span className="label text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hidden md:inline">
+                      &rarr;
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>
