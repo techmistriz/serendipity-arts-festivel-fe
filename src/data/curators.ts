@@ -6,15 +6,28 @@ export type Curator = {
   bio: string[];
 };
 
-import shebaImg from "@/public/images/sheba-chhachhi.jpg";
+import anish from "@/public/images/curators/anisha-rachel-oommen-lQ4kx0db.jpg"
+import ankur from "@/public/images/curators/ankur-tewari-PgCapfpt.jpg"
+import anuradha from "@/public/images/curators/anuradha-kapur-Dq1_lS0Y.jpg"
+import aruna from "@/public/images/curators/aruna-sairam-Dbc3YYNb.jpg"
+import ashley from "@/public/images/curators/ashley-lobo-BCdCMoiP.jpg"
+import kshitij from "@/public/images/curators/kshitij-jalori-BPM-ad3s.jpg"
+import latika from "@/public/images/curators/latika-gupta-DJNuot68.jpg"
+import mahesh from "@/public/images/curators/mahesh-dattani-Dri71bY0.jpg"
+import padmini from "@/public/images/curators/padmini-chettur-DpB3USq1.jpg"
+import ram from "@/public/images/curators/ram-rahman.jpg"
+import salil from "@/public/images/curators/salil-chaturvedi-Rf994ziw.jpg"
+import sheba from "@/public/images/curators/sheba-chhachhi (1).jpg"
+import sreyansi from "@/public/images/curators/sreyansi-singh.webp"
+import sudhir from "@/public/images/curators/sudhir-rajbhar.jpg"
+import surjit from "@/public/images/curators/surjit-nongmeikapam-BN0JDjiM.jpg"
 
-const A = "https://brij-arts-forge.lovable.app/assets";
 
 export const CURATORS: Curator[] = [
   {
     name: "Salil Chaturvedi",
     discipline: "Accessibility",
-    img: `${A}/salil-chaturvedi-Rf994ziw.jpg`,
+    img: salil,
     short: "Writer, poet, disability rights campaigner.",
     bio: [
       "Salil Chaturvedi is a writer, poet, and disability rights campaigner.",
@@ -26,7 +39,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Anisha Rachel Oommen",
     discipline: "Culinary Arts",
-    img: `${A}/anisha-rachel-oommen-lQ4kx0db.jpg`,
+    img: anish,
     short: "Founder, Goya. Food, culture, community.",
     bio: [
       "Anisha Rachel Oommen is the founder of Goya, an award-winning publication focussed on food & culture in the subcontinent.",
@@ -36,7 +49,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Ankur Tewari",
     discipline: "Music",
-    img: `${A}/ankur-tewari-PgCapfpt.jpg`,
+    img: ankur,
     short: "Singer-songwriter. Former Creative Architect, Coke Studio Bharat.",
     bio: [
       "Ankur Tewari is one of India's leading singer-songwriters and composers, with a career that spans independent music, cinema, and large-scale cultural projects.",
@@ -47,7 +60,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Aruna Sairam",
     discipline: "Music",
-    img: `${A}/aruna-sairam-Dbc3YYNb.jpg`,
+    img: aruna,
     short: "Padma Shri Carnatic vocalist and composer.",
     bio: [
       "Aruna Sairam is a Padma Shri award-winning Carnatic vocalist and composer, celebrated for her rich, resonant voice, and deep command of South Indian classical traditions.",
@@ -58,7 +71,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Ashley Lobo",
     discipline: "Dance",
-    img: `${A}/ashley-lobo-BCdCMoiP.jpg`,
+    img: ashley,
     short: "Founder-Director, Navdhara India Dance Theatre.",
     bio: [
       "Ashley Lobo is considered an influential figure in contemporary dance and a pioneer of formalised Western dance education in India. His four-decade career spans performance, choreography, and pedagogy, with over 40 film and stage works presented in India and internationally.",
@@ -69,7 +82,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Surjit Nongmeikapam",
     discipline: "Dance",
-    img: `${A}/surjit-nongmeikapam-BN0JDjiM.jpg`,
+    img: surjit,
     short: "Choreographer, Imphal. Artistic Director, Nachom Arts Foundation.",
     bio: [
       "Surjit Nongmeikapam is a choreographer, performing artist, and cultural practitioner based in Imphal, Manipur, whose work reimagines traditional performance frameworks through contemporary movement.",
@@ -80,7 +93,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Anuradha Kapur",
     discipline: "Theatre",
-    img: `${A}/anuradha-kapur-Dq1_lS0Y.jpg`,
+    img: anuradha,
     short: "Theatre-maker, teacher. Former Director, NSD.",
     bio: [
       "Anuradha Kapur is a theatre-maker and teacher. She is a founder-member of Vivadi, a cross-disciplinary group of theatre-makers, visual artists, filmmakers, musicians, and writers who seek to connect practice with research in their work. Her theatre productions have travelled both nationally and internationally.",
@@ -91,7 +104,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Mahesh Dattani",
     discipline: "Theatre",
-    img: `${A}/mahesh-dattani-Dri71bY0.jpg`,
+    img: mahesh,
     short: "Playwright, stage director, screenwriter, filmmaker.",
     bio: [
       "Mahesh Dattani is a Mumbai-based playwright, stage director, screenwriter and filmmaker. His published works include Final Solutions and Other Plays, Tara, two volumes of Collected Plays published by Penguin India and most recently Me and My Plays.",
@@ -102,7 +115,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Sudhir Baldeo Rajbhar",
     discipline: "Craft",
-    img: `${A}/sudhir-rajbhar-DSabR8XQ.jpg`,
+    img: sudhir,
     short: "Interdisciplinary artist. Founder, CHAMAR.",
     bio: [
       "Sudhir Rajbhar is a Mumbai-based interdisciplinary artist, designer, and social entrepreneur renowned for founding CHAMAR — a sustainable fashion brand that reclaims the derogatory term \"Chamar\" and transforms it into a symbol of pride and craftsmanship.",
@@ -112,7 +125,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Kshitij Jalori",
     discipline: "Craft",
-    img: `${A}/kshitij-jalori-BPM-ad3s.jpg`,
+    img: kshitij,
     short: "Fashion and textile designer. Banarasi weaves, modern tailoring.",
     bio: [
       "Kshitij Jalori is a fashion and textile designer celebrated for his structural mastery of Banarasi weaves, and his exquisite embroideries which serve as a critical bridge between traditional handcraft and global luxury.",
@@ -122,7 +135,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Latika Gupta",
     discipline: "Visual Arts",
-    img: `${A}/latika-gupta-DJNuot68.jpg`,
+    img: latika,
     short: "Art historian and curator. Director, Sher-Gil Sundaram Arts Foundation.",
     bio: [
       "Latika Gupta is an art historian and curator based in Delhi. She was associate editor at MARG Publications from 2016-2020, and is currently part of the editorial collective of '100 Histories of 100 Worlds in 1 Object', and an associate editor at South Asian Studies.",
@@ -133,7 +146,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Sheba Chhachhi",
     discipline: "Visual Arts",
-    img: shebaImg.url,
+    img: sheba,
     short: "Lens-based artist. Gender, body, city, cultural memory.",
     bio: [
       "Sheba Chhachhi's lens-based works investigate contemporary questions about gender, the body, the city, cultural memory and eco-philosophy, through intimate, sensorial encounters.",
@@ -144,7 +157,7 @@ export const CURATORS: Curator[] = [
   {
     name: "Padmini Chettur",
     discipline: "Special Projects",
-    img: `${A}/padmini-chettur-DpB3USq1.jpg`,
+    img: padmini,
     short: "Contemporary dancer. Minimalist, abstract, formal.",
     bio: [
       "Padmini Chettur began her contemporary dance career in 1990 as a member of the troupe of Chandralekha — the radical Bharatanatyam modernist choreographer, whose own opus dealt with a rigorous deconstruction of the form.",
@@ -154,9 +167,20 @@ export const CURATORS: Curator[] = [
     ],
   },
   {
+    name: "Ram Rahman",
+    discipline: "Special Projects",
+    img: ram,
+    short: "Independent photographer and curator. Founding member, SAHMAT.",
+    bio: [
+"Ram Rahman is an independent photographer and curator. Ram has lived in New York and New Delhi. His photographs have been shown in India and around the world and he has curated solo exhibitions of photographers Sunil Janah, Madan Mahatta, JH Thakker, Jyoti Bhatt and others. As a founding member of the artists collective SAHMAT, the Safdar Hashmi Memorial Trust, Ram has been involved in curating exhibits and events for over 36 years.",
+"Ram's work has been exhibited in 3 Serendipity events in Goa, The Gwangju Biennale in Korea and The Chennai Photo Biennale. Ram has lectured on Delhi's modern architecture in Goa, MoMA in New York and in Delhi. He curated an exhibit of Delhi's modern architecture at the KNMA in Delhi in 2000.",
+"His work is in the collections of MoMA, New York, The MET, New York, The Centre Pompidou, Paris, The Tate Modern, London, The National Museum of Asian Art, Smithsonian, Washington DC, KNMA, Delhi and Zapurza Museum in Pune, besides private collections."
+],
+  },
+  {
     name: "Sreyansi Singh",
     discipline: "Special Projects",
-    img: `${A}/sreyansi-singh-B2CdxQgq.jpg`,
+    img: sreyansi,
     short: "Curator and researcher. Contemporary textile art in South Asia.",
     bio: [
       "Sreyansi Singh is a curator and researcher who critically engages with contemporary textile art and clothes-making practices in South Asia.",
