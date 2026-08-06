@@ -17,18 +17,36 @@ export const baseSchema = {
 };
 
 export const generalSchema = z.object({
-    ...baseSchema,
-    gender: z.string().optional(),
-    age: z.string().optional(),
-    country: z.string().optional(),
-    state: z.string().optional(),
-    city: z.string().optional(),
-    whatsapp: z.string().optional(),
-    otp: z.string().optional(),
-    newsletter: z.boolean().optional(),
-    heard: z.string().optional(),
-    interests: z.array(z.string()).optional(),
-    visitedYears: z.array(z.string()).optional(),
+  ...baseSchema,
+
+  gender: z.string().min(1, "Gender is required"),
+
+  age: z.string().min(1, "Age is required"),
+
+  country: z.string().min(1, "Country is required"),
+
+  state: z.string().min(1, "State is required"),
+
+  city: z.string().min(1, "City is required"),
+
+  whatsapp: z
+    .string()
+    .min(10, "Valid WhatsApp number is required")
+    .max(15, "Invalid WhatsApp number"),
+
+  otp: z.string().min(4, "OTP is required"),
+
+  newsletter: z.boolean().optional(),
+
+  heard: z.string().min(1, "Please select how you heard about us"),
+
+  interests: z
+    .array(z.string())
+    .min(1, "Select at least one interest"),
+
+  visitedYears: z
+    .array(z.string())
+    .min(1, "Select at least one previous visit year"),
 });
 
 export const seaSchema = z.object({
