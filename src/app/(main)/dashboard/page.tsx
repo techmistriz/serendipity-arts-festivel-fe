@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import Image from "next/image";
+import { useAppDispatch, useAppSelector } from "@/src/store/hooks";
+import { logoutUser } from "@/src/store/slices/authThunk";
+import { useRouter } from "next/navigation";
 
 const DAY_NAME = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const dayName = (d: number) => DAY_NAME[(d - 13 + 0) % 7];
@@ -37,7 +40,28 @@ export default function DashboardPage() {
     const totalTickets = bookings.reduce((s, b) => s + b.qty, 0);
     const venuesCovered = new Set(bookings.map((b) => b.venue)).size;
 
-    const isLoggedIn = false;
+
+    const router = useRouter();
+   const dispatch = useAppDispatch();
+
+const { user, isAuthenticated } = useAppSelector(
+  (state) => state.auth
+);
+
+const isLoggedIn = isAuthenticated;
+
+const handleLogout = async () => {
+  await dispatch(logoutUser());
+  router.replace("/login");
+};
+
+
+// useEffect(() => {
+//   if (!isAuthenticated) {
+//     router.replace("/login?next=/dashboard");
+//   }
+// }, [isAuthenticated, router]);
+
     if (!isLoggedIn) {
         return (
             <div className="container-editorial pt-16 md:pt-24 pb-40">
@@ -62,12 +86,15 @@ export default function DashboardPage() {
                 <div>
                     <p className="label text-muted-foreground">Welcome back</p>
                     <h1 className="mt-2 display uppercase text-[14vw] md:text-[9vw] leading-[0.9]">
-                        Ananya
+                        {user?.name || "Guest"}
                     </h1>
                 </div>
-                <button className="label border border-foreground px-5 py-3 hover:bg-foreground hover:text-background transition-colors">
-                    Sign out
-                </button>
+               <button
+   onClick={handleLogout}
+  className="label border border-foreground px-5 py-3 hover:bg-foreground hover:text-background transition-colors"
+>
+  Sign out
+</button>
             </div>
 
             {/* Stat row */}
