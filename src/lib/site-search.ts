@@ -1,7 +1,8 @@
-// Universal site search index — pages, venues (+ sub-venues), curators, programmes.
-// Consumed by the header search on the home page (Navigation.tsx).
-import { PROGRAMMES } from "./programmes-data";
-import { CURATORS } from "./curators";
+// import { PROGRAMMES } from "@/lib/data/programmes";
+// import { CURATORS } from "@/lib/data/programmes";
+
+import { CURATORS } from "../data/curators";
+import { PROGRAMMES } from "../data/programmes-data";
 
 export type SearchHit = {
   kind: "Page" | "Venue" | "Curator" | "Programme";
@@ -30,17 +31,38 @@ const PAGES: SearchHit[] = [
 ];
 
 const VENUES: { name: string; subVenues: string[] }[] = [
-  { name: "The Old GMC Complex", subVenues: ["Ground Floor Galleries", "First Floor Wing", "Central Courtyard", "Second Floor Wing"] },
-  { name: "Art Park", subVenues: ["Main Lawn", "Culinary Pavilion", "Workshop Tent", "Shopping Village"] },
-  { name: "Promenade", subVenues: ["North Deck", "Central Bandstand", "South Deck"] },
-  { name: "Samba Square", subVenues: ["Central Stage", "Shaded Pavilion"] },
-  { name: "Arena at DB Ground", subVenues: ["Main Arena", "Backstage Lounge"] },
-  { name: "ESG Building", subVenues: ["Cinema Hall 1", "Cinema Hall 2", "Panel Room"] },
-  { name: "Directorate of Accounts", subVenues: ["Ground Floor", "First Floor", "Second Floor", "The Studio"] },
+  { 
+    name: "The Old GMC Complex", 
+    subVenues: ["Ground Floor Galleries", "First Floor Wing", "Central Courtyard", "Second Floor Wing"] 
+  },
+  { 
+    name: "Art Park", 
+    subVenues: ["Main Lawn", "Culinary Pavilion", "Workshop Tent", "Shopping Village"] 
+  },
+  { 
+    name: "Promenade", 
+    subVenues: ["North Deck", "Central Bandstand", "South Deck"] 
+  },
+  { 
+    name: "Samba Square", 
+    subVenues: ["Central Stage", "Shaded Pavilion"] 
+  },
+  { 
+    name: "Arena at DB Ground", 
+    subVenues: ["Main Arena", "Backstage Lounge"] 
+  },
+  { 
+    name: "ESG Building", 
+    subVenues: ["Cinema Hall 1", "Cinema Hall 2", "Panel Room"] 
+  },
+  { 
+    name: "Directorate of Accounts", 
+    subVenues: ["Ground Floor", "First Floor", "Second Floor", "The Studio"] 
+  },
 ];
 
 const VENUE_HITS: SearchHit[] = VENUES.flatMap((v) => [
-  { kind: "Venue" as const, title: v.name, to: "/venues" },
+  { kind: "Venue", title: v.name, to: "/venues" },
   ...v.subVenues.map((s) => ({
     kind: "Venue" as const,
     title: s,
@@ -53,14 +75,14 @@ const CURATOR_HITS: SearchHit[] = CURATORS.map((c) => ({
   kind: "Curator",
   title: c.name,
   subtitle: c.discipline,
-  to: "/curators",
+  to: `/curators/${encodeURIComponent(c.name)}`,
 }));
 
 const PROGRAMME_HITS: SearchHit[] = PROGRAMMES.map((p) => ({
   kind: "Programme",
   title: p.title,
   subtitle: `${p.category} · ${p.venue}`,
-  to: "/programmes",
+  to: `/programmes/${p.id}`,
   search: { p: p.id },
 }));
 
@@ -69,16 +91,30 @@ const INDEX: SearchHit[] = [...PAGES, ...VENUE_HITS, ...CURATOR_HITS, ...PROGRAM
 export function searchSite(query: string, limit = 20): SearchHit[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
+  
   const scored: { h: SearchHit; s: number }[] = [];
-  for (const h of INDEX) {
-    const t = h.title.toLowerCase();
-    const sub = (h.subtitle ?? "").toLowerCase();
-    let s = 0;
-    if (t === q) s = 100;
-    else if (t.startsWith(q)) s = 60;
-    else if (t.includes(q)) s = 40;
-    else if (sub.includes(q)) s = 20;
-    if (s) scored.push({ h, s });
+  
+  for (const hit of INDEX) {
+    const title = hit.title.toLowerCase();
+    const subtitle = (hit.subtitle ?? "").toLowerCase();
+    let score = 0;
+    
+    // Exact match gets highest score
+    if (title === q) score = 100;
+    // Starts with query
+    else if (title.startsWith(q)) score = 60;
+    // Contains query
+    else if (title.includes(q)) score = 40;
+    // Subtitle contains query
+    else if (subtitle.includes(q)) score = 20;
+    
+    if (score > 0) {
+      scored.push({ h: hit, s: score });
+    }
   }
-  return scored.sort((a, b) => b.s - a.s).slice(0, limit).map((x) => x.h);
+  
+  return scored
+    .sort((a, b) => b.s - a.s)
+    .slice(0, limit)
+    .map((x) => x.h);
 }
