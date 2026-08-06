@@ -17,10 +17,7 @@ export default function AboutPage() {
           </p>
 
           <p className="headline">
-            What if India's many traditions, creative voices, and stories could
-            find space to speak to each other, and be open to all? In a world
-            where the arts often tend to feel distant or overwhelming, we set
-            out to create a space where they felt close, not closed off.
+           What if India's many traditions, creative voices, and stories could find space to speak to each other, and be open to all? In a world where the arts often tend to feel distant or overwhelming, we set out to create a space where they felt close, not closed off. A place where anyone could feel welcome.
           </p>
 
           <p>
