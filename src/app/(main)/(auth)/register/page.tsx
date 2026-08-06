@@ -53,6 +53,7 @@ function RegisterContent() {
     const {
         register,
         handleSubmit,
+        control,
         watch,
         setValue,
         reset,
@@ -81,6 +82,11 @@ function RegisterContent() {
     };
 
     const onSubmit = async (data: any) => {
+        console.log("SUBMIT CLICKED", data);
+        console.log("SUBMIT CLICKED", data);
+        console.log("Country:", data.country);
+        console.log("State:", data.state);
+        console.log("City:", data.city);
         setIsLoading(true);
         setError(null);
 
@@ -109,6 +115,8 @@ function RegisterContent() {
                 response = await registerSEA(seaData);
             } else if (isGuest) {
                 // Transform Guest/VIP data
+                console.log("Newsletter:", data.newsletter);
+                console.log("Guest Form Data:", data);
                 const guestData = {
                     role_id: ROLE_IDS.guest,
                     name: data.fullName,
@@ -123,6 +131,7 @@ function RegisterContent() {
                     additional_requests: data.additionalRequests || "",
                     accomodation_assistance_required: data.accom || "No",
                     is_old_user: false,
+                    subscribe: (data.newsletter ? 1 : 0) as 0 | 1,
                 };
                 response = await registerVIP(guestData);
             } else {
@@ -331,10 +340,9 @@ function RegisterContent() {
 
                 {/* Form */}
                 <form className="md:col-span-8 space-y-10" onSubmit={handleSubmit(onSubmit)}>
-                    {mode === "general" && <GeneralForm register={register} formState={{ errors }} watch={watch} setValue={setValue} />}
-                    {mode === "sea" && <SeaForm register={register} formState={{ errors }} watch={watch} setValue={setValue} />}
+                    {mode === "general" && <GeneralForm register={register} control={control} formState={{ errors }} watch={watch} setValue={setValue} />}
+                    {mode === "sea" && <SeaForm register={register} control={control} formState={{ errors }} watch={watch} setValue={setValue} />}
                     {mode === "guest" && <GuestForm register={register} formState={{ errors }} watch={watch} setValue={setValue} />}
-
                     {error && (
                         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
                             {error}
@@ -361,6 +369,7 @@ function RegisterContent() {
                     <button
                         type="submit"
                         disabled={isLoading}
+
                         className="headline font-semibold uppercase text-lg md:text-xl bg-foreground text-background rounded-full px-8 py-4 hover:bg-accent transition-colors disabled:opacity-50"
                     >
                         {isLoading ? "Submitting..." : isGuest || isSea ? "Complete Registration →" : "Submit form →"}
@@ -372,11 +381,11 @@ function RegisterContent() {
 }
 
 export default function RegisterPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <RegisterContent />
-    </Suspense>
-  );
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <RegisterContent />
+        </Suspense>
+    );
 }
 
 

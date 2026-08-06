@@ -3,9 +3,16 @@
 import { useState } from "react";
 import { Field, YesNo } from "./FieldComponents";
 import { useOTP } from "./hooks/useOTP";
+import SearchableLocation from "../common/SearchableLocation";
 
 // General Form Component
-export const GeneralForm = ({ register, formState: { errors }, watch, setValue }: any) => {
+export const GeneralForm = ({
+    register,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+}: any) => {
     const [age, setAge] = useState("");
 
     const { handleSendOTP, isSendingOTP, otpError, otpSent } = useOTP();
@@ -78,32 +85,11 @@ export const GeneralForm = ({ register, formState: { errors }, watch, setValue }
                 )}
             </Field>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Field label="Country">
-                    <select {...register("country")} className="input">
-                        <option value="">Select country</option>
-                        <option value="101">India</option>
-                        <option value="102">United States</option>
-                        <option value="103">United Kingdom</option>
-                    </select>
-                </Field>
-                <Field label="State">
-                    <select {...register("state")} className="input">
-                        <option value="">Select state</option>
-                        <option value="12">Goa</option>
-                        <option value="13">Maharashtra</option>
-                        <option value="14">Karnataka</option>
-                    </select>
-                </Field>
-                <Field label="City">
-                    <select {...register("city")} className="input">
-                        <option value="">Select</option>
-                        <option value="45">Panjim</option>
-                        <option value="46">Mumbai</option>
-                        <option value="47">Bengaluru</option>
-                    </select>
-                </Field>
-            </div>
+            <SearchableLocation
+                control={control}
+                setValue={setValue}
+                watch={watch} // Add this
+            />
 
             <Field label="Have you attended the Festival before?">
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
@@ -190,7 +176,7 @@ export const GeneralForm = ({ register, formState: { errors }, watch, setValue }
 };
 
 // SEA Form Component
-export const SeaForm = ({ register, formState: { errors }, watch, setValue }: any) => {
+export const SeaForm = ({ register, formState: { errors }, watch, setValue, control }: any) => {
     const { handleSendOTP, isSendingOTP, otpError, otpSent } = useOTP();
     const email = watch("email");
     const whatsapp = watch("whatsapp");
@@ -220,35 +206,11 @@ export const SeaForm = ({ register, formState: { errors }, watch, setValue }: an
                 </div>
             </Field>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Field label="Country*">
-                    <select {...register("country")} className="input" required>
-                        <option value="">Select country</option>
-                        <option value="101">India</option>
-                        <option value="102">United States</option>
-                        <option value="103">United Kingdom</option>
-                    </select>
-                    {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
-                </Field>
-                <Field label="State*">
-                    <select {...register("state")} className="input" required>
-                        <option value="">Select state</option>
-                        <option value="12">Goa</option>
-                        <option value="13">Maharashtra</option>
-                        <option value="14">Karnataka</option>
-                    </select>
-                    {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
-                </Field>
-                <Field label="City*">
-                    <select {...register("city")} className="input" required>
-                        <option value="">Select</option>
-                        <option value="45">Panjim</option>
-                        <option value="46">Mumbai</option>
-                        <option value="47">Bengaluru</option>
-                    </select>
-                    {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
-                </Field>
-            </div>
+            <SearchableLocation
+                control={control}
+                setValue={setValue}
+                watch={watch} // Add this
+            />
 
             <Field label="WhatsApp Number*">
                 <div className="grid grid-cols-[110px_1fr] gap-3">
