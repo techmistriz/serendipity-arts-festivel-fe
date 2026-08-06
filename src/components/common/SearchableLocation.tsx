@@ -10,9 +10,9 @@ export default function SearchableLocation({
   setValue,
   watch,
 }: any) {
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
+  const [countries, setCountries] = useState<any[]>([]);
+const [states, setStates] = useState<any[]>([]);
+const [cities, setCities] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState({
     countries: false,
     states: false,
