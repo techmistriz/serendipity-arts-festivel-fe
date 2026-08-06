@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { sendOTP } from "@/src/services/auth.service";
+import { sendOTP } from "@/src/services/register.service";
 import { AxiosError } from "axios";
 
 export const useOTP = () => {

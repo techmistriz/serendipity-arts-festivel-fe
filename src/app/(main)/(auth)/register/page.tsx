@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { registerUser, registerVIP, registerSEA } from "@/src/services/auth.service";
+import { registerUser, registerVIP, registerSEA } from "@/src/services/register.service";
 
 // Import schemas
 import { 
@@ -341,7 +341,7 @@ export default function RegisterPage() {
 
                     <div className="space-y-3 pt-4">
                         <label className="flex items-start gap-3 text-sm">
-                            <input type="checkbox" {...register("terms")} className="mt-1 accent-accent" />
+                            <input type="checkbox" {...register("terms")} className="mt-1 accent-accent" required/>
                             I accept and agree to all the <Link href="/terms" className="underline underline-offset-4 hover:text-accent">Terms and Conditions</Link>
                         </label>
                         {errors.terms && <p className="text-red-500 text-sm">{errors.terms.message}</p>}
