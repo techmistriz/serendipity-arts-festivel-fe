@@ -2,6 +2,7 @@
 // questions and surfaces programmes matching their taste.
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import GlitchBar from "./GlitchBar";
@@ -44,9 +45,8 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                         type="button"
                         onClick={() => toggle(o.id)}
                         aria-pressed={on}
-                        className={`text-left p-3 border border-foreground transition-colors ${
-                          on ? "bg-foreground text-background" : "hover:bg-muted"
-                        }`}
+                        className={`text-left p-3 border border-foreground transition-colors ${on ? "bg-foreground text-background" : "hover:bg-muted"
+                          }`}
                       >
                         <span className="headline text-sm leading-snug">{o.label}</span>
                       </button>
@@ -74,14 +74,20 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
               </div>
               <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {recs.map((p) => (
-                  <Link 
-                    key={p.id} 
-                    href={`/programmes?p=${p.id}`} 
-                    onClick={onClose} 
+                  <Link
+                    key={p.id}
+                    href={`/programmes?p=${p.id}`}
+                    onClick={onClose}
                     className="group block"
                   >
-                    <img src={p.img} alt={p.title} loading="lazy"
-                      className="w-full aspect-square object-cover border border-foreground" />
+                    <Image
+                      src={p.img}
+                      alt={p.title}
+                      width={500}
+                      height={500}
+                      loading="lazy"
+                      className="w-full aspect-square object-cover border border-foreground"
+                    />
                     <h3 className="mt-2 headline font-semibold text-sm leading-tight">{p.title}</h3>
                     <p className="text-[11px] text-muted-foreground headline">{dateLabel(p)} · {timeLabel(p)}</p>
                   </Link>
