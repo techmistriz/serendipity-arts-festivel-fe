@@ -7,6 +7,24 @@ import FESTIVAL_LOGO from "@/public/images/footer/Serendipity_Arts_Festival_Logo
 import FOUNDATION_LOGO from "@/public/images/footer/Serendipity_Arts_Logo-2.png"
 
 
+
+const ARCHIVES: { year: string; url: string; note?: string }[] = [
+  { year: "2025", url: "https://archive2025.serendipityartsfestival.com/" },
+  { year: "2024", url: "https://archive2024.serendipityartsfestival.com/" },
+  { year: "2023", url: "https://archive2023.serendipityartsfestival.com/" },
+  { year: "2022", url: "https://serendipityarts.org/wp-content/uploads/2025/06/SAF-2022.pdf", note: "catalogue" },
+  { year: "2021", url: "https://serendipityartsvirtual.com/#home/projects" },
+  { year: "2020", url: "https://www.serendipityartsfestival-safxyou.com/" },
+  {
+    year: "2019",
+    url: "https://archive.serendipityartsfestival.com/archives-2018/wp-content/uploads/2020/09/Catalogue-SAF-2019-3.pdf",
+    note: "catalogue",
+  },
+  { year: "2018", url: "https://archive2018.serendipityartsfestival.com/" },
+  { year: "2017", url: "https://archive2017.serendipityartsfestival.com/" },
+  { year: "2016", url: "https://archive2016.serendipityartsfestival.com/" },
+];
+
 // const FOUNDATION_LOGO = "/logos/foundation-logo.png";
 // const FESTIVAL_LOGO = "/logos/festival-logo.png";
 
@@ -150,6 +168,23 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+        </div>
+
+          <div className="mt-16 rule-t pt-6">
+          <p className="label text-muted-foreground mb-4">Past editions</p>
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm headline">
+            {ARCHIVES.map((a) => (
+              <li key={a.year}>
+                <a href={a.url} target="_blank" rel="noreferrer" className="hover:text-accent">
+                  {a.year}
+                  {a.note ? <span className="text-muted-foreground"> ({a.note})</span> : null}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-muted-foreground headline max-w-2xl">
+            The 2022 and 2019 festival websites aren&rsquo;t available due to technical reasons — do explore their catalogues instead.
+          </p>
         </div>
 
         <div className="mt-16 flex flex-wrap items-end justify-between gap-6 border-t pt-6">

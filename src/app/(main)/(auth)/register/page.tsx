@@ -276,7 +276,7 @@ function RegisterContent() {
                             : "border-foreground hover:bg-foreground hover:text-background"
                             }`}
                     >
-                        {m === "general" ? "General Visitor" : m === "guest" ? "Special Guest" : "SEA Delegate"}
+                        {m === "general" ? "Visitor" : m === "guest" ? "Special Guest" : "SEA Delegate"}
                     </button>
                 ))}
             </div>

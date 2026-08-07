@@ -1,3 +1,6 @@
+
+
+
 import type { Metadata } from "next";
 
 import "./globals.css";
@@ -7,6 +10,7 @@ import Header from "../components/Header";
 import { Inter_Tight } from "next/font/google";
 import { AccessibilityWidget } from "../components/common/AccessibilityWidget";
 import ReduxProvider from "../store/provider";
+import { CartProvider } from "../lib/cart";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -31,6 +35,7 @@ export default function RootLayout({
 >
       <body className="min-h-screen flex flex-col">
         <ReduxProvider>
+          <CartProvider>
         <Header />
 
         <main className="flex-1">
@@ -39,6 +44,7 @@ export default function RootLayout({
 
         <Footer />
         <AccessibilityWidget/>
+        </CartProvider>
         </ReduxProvider>
       </body>
     </html>
