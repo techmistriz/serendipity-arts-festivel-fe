@@ -48,29 +48,29 @@ function RegisterContent() {
                 ? guestSchema
                 : generalSchema;
 
-const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    control,
-    setError,
-    clearErrors,
-    formState: { errors },
-} = useForm<any>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-        email: "",
-        fullName: "",
-        gender: "",
-        std_code: "91",
-        whatsapp: "",
-        otp: "",
-        newsletter: false,
-        terms: false,
-    },
-});
+    const {
+        register,
+        handleSubmit,
+        watch,
+        setValue,
+        reset,
+        control,
+        setError,
+        clearErrors,
+        formState: { errors },
+    } = useForm<any>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            email: "",
+            fullName: "",
+            gender: "",
+            std_code: "91",
+            whatsapp: "",
+            otp: "",
+            newsletter: false,
+            terms: false,
+        },
+    });
 
 
     const email = watch("email");
@@ -168,20 +168,20 @@ const {
         console.log("State:", data.state);
         console.log("City:", data.city);
 
-   if (isChecking) {
-    setGlobalError("Please wait while we check your email.");
-    return;
-}
+        if (isChecking) {
+            setGlobalError("Please wait while we check your email.");
+            return;
+        }
 
-if (userExists === null) {
-    setGlobalError("Please enter a valid email and wait for the email check.");
-    return;
-}
+        if (userExists === null) {
+            setGlobalError("Please enter a valid email and wait for the email check.");
+            return;
+        }
 
         setIsLoading(true);
         setGlobalError(null);
 
-        
+
         try {
             let response;
 
@@ -324,54 +324,54 @@ if (userExists === null) {
                 setGlobalError("Registration failed: Invalid response");
             }
 
-   } catch (err) {
-    if (err instanceof AxiosError) {
-        const responseData = err.response?.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                const responseData = err.response?.data;
 
-        console.log("Status:", err.response?.status);
-        console.log("Response:", responseData);
-        console.log("Backend message:", responseData?.message);
+                console.log("Status:", err.response?.status);
+                console.log("Response:", responseData);
+                console.log("Backend message:", responseData?.message);
 
-        const backendErrors = responseData?.message;
+                const backendErrors = responseData?.message;
 
-        // Backend field-level errors
-        if (
-            backendErrors &&
-            typeof backendErrors === "object" &&
-            !Array.isArray(backendErrors)
-        ) {
-            let hasFieldErrors = false;
+                // Backend field-level errors
+                if (
+                    backendErrors &&
+                    typeof backendErrors === "object" &&
+                    !Array.isArray(backendErrors)
+                ) {
+                    let hasFieldErrors = false;
 
-            Object.entries(backendErrors).forEach(([field, messages]) => {
-                if (Array.isArray(messages) && messages.length > 0) {
-                    hasFieldErrors = true;
+                    Object.entries(backendErrors).forEach(([field, messages]) => {
+                        if (Array.isArray(messages) && messages.length > 0) {
+                            hasFieldErrors = true;
 
-                    setError(field as any, {
-                        type: "server",
-                        message: String(messages[0]),
+                            setError(field as any, {
+                                type: "server",
+                                message: String(messages[0]),
+                            });
+                        }
                     });
+
+                    // Don't show global error when backend
+                    // returned field-specific errors.
+                    if (hasFieldErrors) {
+                        return;
+                    }
                 }
-            });
 
-            // Don't show global error when backend
-            // returned field-specific errors.
-            if (hasFieldErrors) {
-                return;
+                // General backend error
+                if (typeof backendErrors === "string") {
+                    setGlobalError(backendErrors);
+                } else {
+                    setGlobalError("Registration failed. Please try again.");
+                }
+            } else {
+                setGlobalError("An unexpected error occurred");
             }
+        } finally {
+            setIsLoading(false);
         }
-
-        // General backend error
-        if (typeof backendErrors === "string") {
-            setGlobalError(backendErrors);
-        } else {
-            setGlobalError("Registration failed. Please try again.");
-        }
-    } else {
-        setGlobalError("An unexpected error occurred");
-    }
-} finally {
-    setIsLoading(false);
-}
     };
 
     if (submitted) {

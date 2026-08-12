@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Accessibility, X } from "lucide-react";
+import { X } from "lucide-react";
 
 type A11yState = {
   fontScale: number; // 1 = default
@@ -184,17 +184,32 @@ export function AccessibilityWidget() {
     }
   };
 
-  const Toggle = ({ label, on, onClick }: { label: string; on: boolean; onClick: () => void }) => (
-    <button
-      onClick={onClick}
-      aria-pressed={on}
-      className={`headline text-xs uppercase tracking-[0.06em] border border-foreground px-3 py-3 text-left transition-colors ${
-        on ? "bg-foreground text-background" : "hover:bg-foreground hover:text-background"
-      }`}
-    >
-      {label}
-    </button>
-  );
+ const Toggle = ({
+  label,
+  on,
+  onClick,
+}: {
+  label: string;
+  on: boolean;
+  onClick: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    aria-pressed={on}
+    className={`
+      headline text-xs uppercase tracking-[0.06em]
+      border border-foreground
+      px-3 py-3 text-left transition-colors
+      ${
+        on
+          ? "bg-foreground text-background"
+          : "bg-background text-foreground hover:bg-foreground hover:text-background"
+      }
+    `}
+  >
+    {label}
+  </button>
+);
 
   if (!host) return null;
 
@@ -204,10 +219,11 @@ export function AccessibilityWidget() {
         onClick={() => setOpen((v) => !v)}
         aria-label="Open accessibility options"
         aria-expanded={open}
-        className="fixed bottom-4 left-4 z-[100] grid h-12 w-12 place-items-center rounded-full border border-foreground bg-background text-foreground shadow-sm hover:bg-foreground hover:text-background transition-colors"
+        className="fixed bottom-4 left-4 z-[100] inline-flex min-h-11 items-center gap-2 rounded-full border border-foreground bg-background px-4 py-2 text-foreground shadow-sm hover:bg-foreground hover:text-background transition-colors headline text-xs uppercase tracking-[0.06em]"
       >
-        <Accessibility className="h-5 w-5" strokeWidth={1.75} />
+        Accessibility
       </button>
+
 
       {open && (
         <div
@@ -217,10 +233,24 @@ export function AccessibilityWidget() {
         >
           <div className="flex items-start justify-between gap-4">
             <h2 className="display uppercase text-xl leading-none">Accessibility</h2>
-            <button onClick={() => setOpen(false)} aria-label="Close accessibility options">
-              <X className="h-4 w-4" strokeWidth={1.75} />
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={reset}
+                className="headline text-[10px] uppercase tracking-[0.08em] border border-foreground px-2 py-1 hover:bg-foreground hover:text-background transition-colors"
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close accessibility options"
+                className="grid h-9 w-9 place-items-center rounded-full border-2 border-foreground bg-foreground text-background hover:bg-background hover:text-foreground transition-colors"
+              >
+                <X className="h-5 w-5" strokeWidth={2.5} />
+              </button>
+
+            </div>
           </div>
+
 
           <div className="mt-4">
             <p className="label text-muted-foreground">Text size — {Math.round(state.fontScale * 100)}%</p>

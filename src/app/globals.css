@@ -99,7 +99,7 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-   
+    font-feature-settings: "ss01", "ss02", "cv11";
   }
   ::selection {
     background-color: var(--color-accent);
@@ -299,10 +299,10 @@
 html { font-size: calc(100% * var(--a11y-font-scale, 1)); }
 
 html.a11y-contrast {
-  --color-background: #ffffff;
-  --color-foreground: #000000;
-  --color-muted-foreground: #000000;
-  --color-rule: #000000;
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted-foreground: #000000;
+  --rule: #000000;
 }
 /* Filters are applied to page content only, never to the a11y widget itself,
    otherwise the widget can be washed out / clipped by the filter context. */
@@ -356,7 +356,10 @@ html.a11y-highlight-links button {
   color: #000 !important;
   box-shadow: 0 0 0 2px #ffea00;
 }
-#saf-a11y-root a, #saf-a11y-root button { background: inherit !important; box-shadow: none !important; }
+#saf-a11y-root a,
+#saf-a11y-root button {
+  box-shadow: none !important;
+}
 
 html.a11y-spacing p,
 html.a11y-spacing li,
