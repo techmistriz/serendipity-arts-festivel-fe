@@ -4,7 +4,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LayoutGrid, Search, ShoppingBag } from "lucide-react";
+
 import { searchSiteApi } from "../services/search";
+import { useAppDispatch, useAppSelector } from "@/src/store/hooks";
+import { logoutUser } from "@/src/store/slices/authThunk";
 
 const MENU = [
   { label: "Home", href: "/" },
@@ -39,6 +42,15 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
+
+  const dispatch = useAppDispatch();
+
+  const isLoggedIn = useAppSelector(
+    (state) => state.auth.isAuthenticated
+  );
+
+  const count = 0;
+
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [q, setQ] = useState("");
@@ -46,10 +58,6 @@ export default function Header() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // ---------- Static UI values ----------
-  const count = 0; // Change to any number
-  const isLoggedIn = false; // true / false
-  // --------------------------------------
 
   const isHome = pathname === "/";
 
@@ -96,7 +104,7 @@ export default function Header() {
           kind: "Vibe" as const,
           title: vibe.name,
           subtitle: "Vibe",
-          href: `/programmes/${program.slug}`,
+          href: `/programmes/`,
         })),
       ];
 
@@ -141,9 +149,10 @@ export default function Header() {
   }, [open, searchOpen]);
 
 
-  const logout = () => {
-
-  }
+ const logout = async () => {
+  await dispatch(logoutUser());
+  router.push("/");
+};
 
   return (
     <>

@@ -72,7 +72,7 @@ const { user, token, isAuthenticated } = useAppSelector(
       cta: "Register →",
       to: "/register",
     }
-    : !isLoggedIn
+    : !isAuthenticated
       ? {
         label: "You're registered — log in to continue to checkout.",
         cta: "Log in →",

@@ -13,7 +13,7 @@ import artParkImg from "@/public/images/home/art-park-v2.jpg";
 import sambaImg from "@/public/images/home/samba-square-2026.jpg";
 import gmcImg from "@/public/images/home/old-gmc-v2.jpg";
 import promenadeImg from "@/public/images/home/promenade-v2.jpg";
-import { useCart } from "@/src/lib/cart";
+import { useAppSelector } from "@/src/store/hooks";
 // import { GlitchBorder } from "@/components/site/GlitchBorder";
 // import { GlitchLines } from "@/components/site/GlitchLines";
 // import { RecommendModal } from "@/components/site/RecommendModal";
@@ -41,7 +41,9 @@ const PROGRAMMES = [
 
 export default function Home() {
   const featuredCurators = [...CURATORS].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 4);
-  const { isLoggedIn } = useCart();
+  const isAuthenticated = useAppSelector(
+  (state) => state.auth.isAuthenticated
+);
   const [recOpen, setRecOpen] = useState(false);
   const [ti, setTi] = useState(0);
   const t = TESTIMONIALS[ti];
@@ -83,7 +85,7 @@ export default function Home() {
               alt="Serendipity Arts Festival 2026"
               className="w-[42vw] max-w-[240px] md:w-[26vw] md:max-w-[400px] h-auto brightness-0 invert -mt-4 md:-mt-6"
             />
-            {!isLoggedIn && (
+            {!isAuthenticated && (
               <Link
                 href="/register"
                 className="label bg-white text-black rounded-full px-3.5 py-1.5 md:px-5 md:py-2 hover:bg-white/90 transition-colors shrink-0 whitespace-nowrap"
