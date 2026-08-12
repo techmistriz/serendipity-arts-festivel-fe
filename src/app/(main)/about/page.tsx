@@ -36,7 +36,7 @@ export default function AboutPage() {
 
   return (
     <div className="container-editorial pt-12 pb-32 md:pt-24">
-       <h1 className="display uppercase text-[13vw] md:text-[9vw] leading-[0.9]">
+      <h1 className="display uppercase text-[13vw] md:text-[9vw] leading-[0.9]">
         About us
       </h1>
 
@@ -47,7 +47,7 @@ export default function AboutPage() {
           </p>
 
           <p className="headline">
-           What if India's many traditions, creative voices, and stories could find space to speak to each other, and be open to all? In a world where the arts often tend to feel distant or overwhelming, we set out to create a space where they felt close, not closed off. A place where anyone could feel welcome.
+            What if India's many traditions, creative voices, and stories could find space to speak to each other, and be open to all? In a world where the arts often tend to feel distant or overwhelming, we set out to create a space where they felt close, not closed off. A place where anyone could feel welcome.
           </p>
 
           <p>
@@ -112,43 +112,37 @@ export default function AboutPage() {
           Launch films
         </h2>
 
-         {loadingFilms && (
-          <p className="mt-10 text-muted-foreground">
-            Loading launch films...
-          </p>
-        )}
-
-        {filmsError && (
+        {loadingFilms ? (
+          <div className="mt-10">
+            <Loader />
+          </div>
+        ) : filmsError ? (
           <p className="mt-10 text-red-600">
             {filmsError}
           </p>
+        ) : (
+          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+            {launchFilms.map((film) => (
+              <figure
+                key={film.id}
+                className="border-2 border-black bg-black"
+              >
+                <div className="relative aspect-video w-full">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${film.youtube_video_id}`}
+                    title={`Launch Film ${film.year}`}
+                    className="absolute inset-0 h-full w-full"
+                    allowFullScreen
+                  />
+                </div>
+
+                <figcaption className="label bg-black px-3 py-2 text-white">
+                  Launch Film — {film.year}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
         )}
-
-          {loadingFilms ? (
-            <Loader/>):(
-
-        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          {launchFilms.map((film) => (
-            <figure
-              key={film.id}
-              className="border-2 border-black bg-black"
-            >
-              <div className="relative aspect-video w-full">
-                <iframe
-                  src={`https://www.youtube.com/embed/${film.youtube_video_id}`}
-                  title={`Launch Film ${film.year}`}
-                  className="absolute inset-0 h-full w-full"
-                  allowFullScreen
-                />
-              </div>
-
-              <figcaption className="label bg-black px-3 py-2 text-white">
-                Launch Film — {film.year}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-          )}
       </div>
     </div>
   );
