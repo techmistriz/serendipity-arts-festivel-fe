@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { GOA_AREAS, GOA_NODES, GOA_ROADS, GOA_VENUE_POINTS, goaVenueSlug } from "@/src/lib/goa-map";
 import { useCart } from "@/src/lib/cart";
 import { WayfindingMap } from "@/src/components/WayfindingMap";
+import { GoogleWayfindingMap } from "@/src/components/GoogleWayfindingMap";
 
 export default function WayfindingClient() {
   const { bookings } = useCart();
@@ -31,14 +32,12 @@ export default function WayfindingClient() {
         </Link>
       </div>
       <div className="mt-10">
-        <WayfindingMap
-          ariaLabel="Map of Serendipity Arts Festival venues across Panjim"
+        <GoogleWayfindingMap
+          ariaLabel="Google map of Serendipity Arts Festival venues across Panjim"
           points={GOA_VENUE_POINTS}
-          roads={GOA_ROADS}
-          areas={GOA_AREAS}
           nodes={GOA_NODES}
           highlight={bookedVenueSlugs}
-          caption="Panjim riverfront · all venues sit within a twenty minute walk. Highlighted squares are venues on your booking list."
+          caption="Panjim riverfront · all venues sit within a twenty minute walk. Highlighted pins are venues on your booking list."
         />
       </div>
     </div>

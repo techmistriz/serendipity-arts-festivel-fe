@@ -117,7 +117,7 @@ export default function AboutPage() {
             <Loader />
           </div>
         ) : filmsError ? (
-          <p className="mt-10 text-red-600">
+          <p className="mt-10 text-gray-400">
             {filmsError}
           </p>
         ) : (

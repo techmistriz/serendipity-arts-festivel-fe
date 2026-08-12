@@ -26,10 +26,9 @@ type CartCtx = {
   subtotal: number;
   isRegistered: boolean;
   markRegistered: () => void;
-  isLoggedIn: boolean;
+
   isVip: boolean;
-  login: (vip?: boolean) => void;
-  logout: () => void;
+ 
   wishlist: string[];
   toggleWish: (id: string) => void;
   hasBooked: (id: string) => boolean;
@@ -42,7 +41,6 @@ const Ctx = createContext<CartCtx | null>(null);
 
 const CART_KEY = "saf-cart";
 const REG_KEY = "saf-registered";
-const AUTH_KEY = "saf-auth";
 const VIP_KEY = "saf-vip";
 const WISH_KEY = "saf-wishlist";
 const BOOKINGS_KEY = "saf-bookings";
@@ -51,7 +49,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [bookings, setBookings] = useState<CartItem[]>([]);
   const [isRegistered, setIsRegistered] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isVip, setIsVip] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [justBooked, setJustBooked] = useState(false);
@@ -63,7 +60,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const savedBookings = localStorage.getItem(BOOKINGS_KEY);
       if (savedBookings) setBookings(JSON.parse(savedBookings));
       setIsRegistered(localStorage.getItem(REG_KEY) === "1");
-      setIsLoggedIn(localStorage.getItem(AUTH_KEY) === "1");
       setIsVip(localStorage.getItem(VIP_KEY) === "1");
       const w = localStorage.getItem(WISH_KEY);
       if (w) setWishlist(JSON.parse(w));
@@ -98,25 +94,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
     setJustBooked(true);
   };
-  const markRegistered = () => {
-    try { localStorage.setItem(REG_KEY, "1"); localStorage.setItem(AUTH_KEY, "1"); } catch {}
-    setIsRegistered(true);
-    setIsLoggedIn(true);
-  };
-  const login = (vip = false) => {
-    try {
-      localStorage.setItem(AUTH_KEY, "1"); localStorage.setItem(REG_KEY, "1");
-      if (vip) localStorage.setItem(VIP_KEY, "1"); else localStorage.removeItem(VIP_KEY);
-    } catch {}
-    setIsLoggedIn(true);
-    setIsRegistered(true);
-    setIsVip(vip);
-  };
-  const logout = () => {
-    try { localStorage.removeItem(AUTH_KEY); localStorage.removeItem(VIP_KEY); } catch {}
-    setIsLoggedIn(false);
-    setIsVip(false);
-  };
+const markRegistered = () => {
+  try {
+    localStorage.setItem(REG_KEY, "1");
+  } catch {}
+
+  setIsRegistered(true);
+};
+
   const toggleWish = (id: string) =>
     setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
   const hasBooked = (id: string) => bookings.some((i) => i.id === id);
@@ -127,9 +112,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0);
 
   return (
-    <Ctx.Provider value={{ items, bookings, add, remove, setQty, clear, confirmBooking, count, subtotal, isRegistered, markRegistered, isLoggedIn, isVip, login, logout, wishlist, toggleWish, hasBooked, justBooked, markJustBooked, clearJustBooked }}>
-      {children}
-    </Ctx.Provider>
+   <Ctx.Provider
+  value={{
+    items,
+    bookings,
+    add,
+    remove,
+    setQty,
+    clear,
+    confirmBooking,
+    count,
+    subtotal,
+    isRegistered,
+    markRegistered,
+    isVip,
+    wishlist,
+    toggleWish,
+    hasBooked,
+    justBooked,
+    markJustBooked,
+    clearJustBooked,
+  }}
+>
+  {children}
+</Ctx.Provider>
   );
 }
 

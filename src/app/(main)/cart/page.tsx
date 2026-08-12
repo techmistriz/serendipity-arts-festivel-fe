@@ -6,18 +6,26 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useAppSelector } from "@/src/store/hooks";
+import { RootState } from "@/src/store/store";
 
 export default function CartPage() {
-  const {
-    items,
-    remove,
-    setQty,
-    subtotal,
-    isRegistered,
-    isLoggedIn,
-    confirmBooking,
-    isVip,
-  } = useCart();
+
+const {
+  items,
+  remove,
+  setQty,
+  subtotal,
+  isRegistered,
+  confirmBooking,
+  isVip,
+} = useCart();
+
+const { user, token, isAuthenticated } = useAppSelector(
+  (state: RootState) => state.auth
+);
+
+
 
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
@@ -28,7 +36,7 @@ export default function CartPage() {
       return;
     }
 
-    if (!isLoggedIn) {
+    if (!isAuthenticated) {
       router.push("/login?next=/cart");
       return;
     }

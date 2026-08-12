@@ -27,6 +27,7 @@ import { GlitchBorder } from "@/src/components/common/GlitchBorder";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { useAppSelector } from "@/src/store/hooks";
 
 // Category slug ↔ display name mapping. Consumed by /programmes/$category.
 export const CATEGORY_SLUGS: Record<string, string> = {
@@ -387,15 +388,34 @@ export function HowToAttendCTA({ className = "" }: { className?: string }) {
 }
 
 function BookingSheet({ programme, intent, onClose, onOpen }: { programme: Programme; intent: "about" | "cart"; onClose: () => void; onOpen: (p: Programme) => void }) {
+
+    const isAuthenticated = useAppSelector(
+        (state) => state.auth.isAuthenticated
+    );
+
     const [qty, setQty] = useState(1);
     const [slotIdx, setSlotIdx] = useState(0);
     const [addOnIds, setAddOnIds] = useState<string[]>([]);
     const [expanded, setExpanded] = useState(false);
 
     const [showTerms, setShowTerms] = useState(false);
-    const [clashItem, setClashItem] = useState<{ title: string; date: string; time: string } | null>(null);
+    const [clashItem, setClashItem] = useState<{
+        title: string;
+        date: string;
+        time: string;
+    } | null>(null);
+
     const [showRegisterGate, setShowRegisterGate] = useState(false);
-    const { add, items, bookings, isVip, isRegistered, markJustBooked } = useCart();
+
+    const {
+        add,
+        items,
+        bookings,
+        isVip,
+        isRegistered,
+        markJustBooked,
+    } = useCart();
+
     const router = useRouter();
 
     const addBoxRef = useRef<HTMLElement>(null);
@@ -473,16 +493,26 @@ function BookingSheet({ programme, intent, onClose, onOpen }: { programme: Progr
 
 
     const handleAddToCart = () => {
-        // Clash check runs first so the user sees the conflict before any gate.
         const clash = findClash();
-        if (clash) { setClashItem({ title: clash.title, date: clash.date, time: clash.time }); return; }
-        if (!isRegistered) {
+
+        if (clash) {
+            setClashItem({
+                title: clash.title,
+                date: clash.date,
+                time: clash.time,
+            });
+            return;
+        }
+
+        if (!isAuthenticated) {
             setShowRegisterGate(true);
             return;
         }
+
         doAdd();
-        // Navigate to full-screen confirmation route instead of a popup.
+
         onClose();
+
         router.push(
             `/cart/added?id=${encodeURIComponent(cartId)}`
         );
@@ -741,7 +771,7 @@ function BookingSheet({ programme, intent, onClose, onOpen }: { programme: Progr
                         <button
                             onClick={() => {
                                 setClashItem(null);
-                                if (!isRegistered) { setShowRegisterGate(true); return; }
+                                if (!isAuthenticated) { setShowRegisterGate(true); return; }
                                 doAdd();
                                 onClose();
                                 router.push(`/cart/added?id=${encodeURIComponent(cartId)}`);
