@@ -26,6 +26,8 @@ import { RecommendModal } from "../components/common/RecommendModal";
 import { TESTIMONIALS } from "../lib/testimonials";
 import { PARTNERS } from "../lib/partners";
 import Image from "next/image";
+import { useSponsors } from "../hooks/useSponsors";
+import Loader from "../components/common/Loader";
 
 const PROGRAMMES = [
   { img: prog1, title: "Bodies in Translation", date: "14 Dec", venue: "Kala Academy", category: "Performance" },
@@ -44,6 +46,13 @@ export default function Home() {
   const [recOpen, setRecOpen] = useState(false);
   const [ti, setTi] = useState(0);
   const t = TESTIMONIALS[ti];
+
+
+  const {
+    sponsors,
+    loading,
+    error,
+  } = useSponsors(8);
 
   return (
     <div>
@@ -327,16 +336,28 @@ export default function Home() {
           Supported by
         </h2>
         {/* Mobile: horizontal swipe. Desktop: compact grid. */}
-        <div className="-mx-5 px-5 md:mx-0 md:px-0 flex gap-3 overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
-          {PARTNERS.map((p) => (
-            <div key={p.name} className="shrink-0 w-[46vw] snap-start md:w-auto border border-foreground px-2 py-2 flex flex-col">
-              <div className="grid place-items-center flex-1 h-[86px] md:h-[104px]">
-                <Image src={p.url} alt={p.name} loading="lazy" decoding="async" className="max-h-[82px] md:max-h-[100px] max-w-full w-auto object-contain" />
+        {loading ? (
+          <Loader />
+        ) : (
+
+          <div className="-mx-5 px-5 md:mx-0 md:px-0 flex gap-3 overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
+            {sponsors.map((p) => (
+              <div key={p.name} className="shrink-0 w-[46vw] snap-start md:w-auto border border-foreground px-2 py-2 flex flex-col">
+                <div className="grid place-items-center flex-1 h-[86px] md:h-[104px]">
+                  <Image
+                    src={p.logo}
+                    alt={p.name}
+                    width={200}
+                    height={100}
+                    loading="lazy"
+                    className="max-h-[82px] md:max-h-[100px] max-w-full w-auto object-contain"
+                  />
+                </div>
+                <p className="mt-1.5 headline text-[10px] leading-tight text-muted-foreground">{p.name}</p>
               </div>
-              <p className="mt-1.5 headline text-[10px] leading-tight text-muted-foreground">{p.name}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div className="mt-8 flex justify-end">
           <Link href="/partners" className="label hover:text-accent transition-colors">All partners &nbsp;&rarr;</Link>
