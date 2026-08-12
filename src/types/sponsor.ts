@@ -27,7 +27,7 @@ export interface Sponsors {
 
 export interface SponsorsResponse {
   status: any;
-  data: Sponsor[];
+  data: Sponsors[];
   meta: string;
   message: string;
 }

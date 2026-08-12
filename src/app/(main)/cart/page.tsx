@@ -5,6 +5,7 @@ import { useCart } from "@/src/lib/cart";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function CartPage() {
   const {
@@ -44,13 +45,13 @@ export default function CartPage() {
   if (items.length === 0 && !showSuccess) {
     return (
       <div className="container-editorial pt-10 md:pt-24 pb-32">
-               <h1 className="display uppercase text-[14vw] md:text-[10vw] leading-[0.9]">Cart</h1>
+        <h1 className="display uppercase text-[14vw] md:text-[10vw] leading-[0.9]">Cart</h1>
 
         <p className="mt-8 text-muted-foreground max-w-md">
           Your cart is empty. Browse programmes and add the ones you want to book.
         </p>
 
-         <Link href="/programmes" className="mt-8 inline-block label border border-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-colors">
+        <Link href="/programmes" className="mt-8 inline-block label border border-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-colors">
           Browse programmes →
         </Link>
       </div>
@@ -59,16 +60,16 @@ export default function CartPage() {
 
   const gate = !isRegistered
     ? {
-        label: "Register first to complete your booking.",
-        cta: "Register →",
-        to: "/register",
-      }
+      label: "Register first to complete your booking.",
+      cta: "Register →",
+      to: "/register",
+    }
     : !isLoggedIn
       ? {
-          label: "You're registered — log in to continue to checkout.",
-          cta: "Log in →",
-          to: "/login",
-        }
+        label: "You're registered — log in to continue to checkout.",
+        cta: "Log in →",
+        to: "/login",
+      }
       : null;
 
   return (
@@ -102,9 +103,11 @@ export default function CartPage() {
             key={it.id}
             className="rule-b py-5 md:py-6 grid grid-cols-[64px_1fr_auto] md:grid-cols-[96px_1fr_auto_auto] items-center gap-4 md:gap-6"
           >
-            <img
+            <Image
               src={it.img}
               alt={it.title}
+              width={96}
+              height={96}
               className="h-16 w-16 md:h-24 md:w-24 object-cover"
             />
 

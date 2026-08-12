@@ -178,8 +178,12 @@ function RegisterContent() {
             return;
         }
 
+
         setIsLoading(true);
         setGlobalError(null);
+
+        const subscribe: 0 | 1 = data.newsletter ? 1 : 0;
+        const isOldUser: 0 | 1 = userExists === true ? 1 : 0;
 
 
         try {
@@ -204,12 +208,9 @@ function RegisterContent() {
                     interest: ["SEA Delegate"],
                     hearabout: "Website",
 
-                    subscribe: data.newsletter ? 1 : 0,
+                    subscribe,
                     terms: data.terms,
-
-                    // Existing archived user = 1
-                    // New user = 0
-                    is_old_user: userExists === true ? 1 : 0,
+                    is_old_user: isOldUser,
                 };
 
                 console.log("SEA Registration Payload:", seaData);
@@ -234,9 +235,8 @@ function RegisterContent() {
 
                     // Existing archived user = 1
                     // New user = 0
-                    is_old_user: userExists === true ? 1 : 0,
-
-                    subscribe: data.newsletter ? 1 : 0,
+                    is_old_user: isOldUser,
+                    subscribe,
                 };
 
                 console.log("Guest Registration Payload:", guestData);
@@ -262,7 +262,7 @@ function RegisterContent() {
                     interest: data.interests || [],
                     hearabout: data.heard || "Other",
 
-                    subscribe: data.newsletter ? 1 : 0,
+                    subscribe,
 
                     age_group: data.age || "",
                     visited: data.visitedYears?.length ? "Yes" : "No",
@@ -271,7 +271,7 @@ function RegisterContent() {
 
                     // Existing archived user = 1
                     // New user = 0
-                    is_old_user: userExists === true ? 1 : 0,
+                    is_old_user: isOldUser,
 
                     terms: data.terms,
                 };

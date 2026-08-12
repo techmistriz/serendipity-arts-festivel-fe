@@ -1,5 +1,6 @@
 "use client";
 
+import { StaticImageData } from "next/image";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 export type CartItem = {
@@ -9,7 +10,7 @@ export type CartItem = {
   date: string;
   time: string;
   price: number;
-  img: string;
+  img: string | StaticImageData;
   qty: number;
 };
 

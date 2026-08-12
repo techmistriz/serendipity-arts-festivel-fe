@@ -6,11 +6,11 @@ import vol15 from "@/public/images/volunteer/vol-15.jpg";
 import vol16 from "@/public/images/volunteer/vol-16.jpg";
 import vol17 from "@/public/images/volunteer/vol-17.jpg";
 import { GlitchBorder } from "@/src/components/common/GlitchBorder";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 
 const VOL_FRAMES = [vol17, vol14, vol16, vol15];
 
-function VolunteerGif({ frames, interval = 900, className = "" }: { frames: string[]; interval?: number; className?: string }) {
+function VolunteerGif({ frames, interval = 900, className = "" }: { frames: StaticImageData[]; interval?: number; className?: string }) {
   const [i, setI] = useState(0);
   useEffect(() => {
     const t = setInterval(() => setI((n) => (n + 1) % frames.length), interval);
@@ -21,7 +21,7 @@ function VolunteerGif({ frames, interval = 900, className = "" }: { frames: stri
       <div className="relative w-full aspect-[4/3] bg-black">
         {frames.map((src, n) => (
           <Image
-            key={src}
+            key={src.src}
             src={src}
             alt=""
             aria-hidden={n !== i}

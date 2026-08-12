@@ -1,11 +1,20 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useCart } from "@/src/lib/cart";
 
 export default function Added() {
+  return (
+    <Suspense fallback={<AddedLoading />}>
+      <AddedContent />
+    </Suspense>
+  );
+}
+
+function AddedContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -46,6 +55,15 @@ export default function Added() {
           Continue to checkout →
         </Link>
       </div>
+    </div>
+  );
+}
+
+function AddedLoading() {
+  return (
+    <div>
+      <h1>Added to cart</h1>
+      <p>Loading...</p>
     </div>
   );
 }

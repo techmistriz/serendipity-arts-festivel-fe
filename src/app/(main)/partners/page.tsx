@@ -1,6 +1,5 @@
 "use client"
 
-import ErrorMessage2 from "@/src/components/common/ErrorMessage2";
 import GlitchBar from "@/src/components/common/GlitchBar";
 import Loader from "@/src/components/common/Loader";
 import { useSponsors } from "@/src/hooks/useSponsors";

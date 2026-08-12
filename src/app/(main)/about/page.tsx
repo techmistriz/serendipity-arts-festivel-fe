@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import collageAbout from "@/public/images/about/collage-about.png";
-import { getLaunchFilms } from "@/src/services/launchFilms";
+import { getLaunchFilms, type LaunchFilm } from "@/src/services/launchFilms";
 
 export default function AboutPage() {
   const [launchFilms, setLaunchFilms] = useState<LaunchFilm[]>([]);

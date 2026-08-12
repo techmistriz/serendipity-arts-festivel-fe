@@ -24,7 +24,6 @@ import { GlitchBorder } from "../components/common/GlitchBorder";
 import { GlitchLines } from "../components/common/GlitchLines";
 import { RecommendModal } from "../components/common/RecommendModal";
 import { TESTIMONIALS } from "../lib/testimonials";
-import { PARTNERS } from "../lib/partners";
 import Image from "next/image";
 import { useSponsors } from "../hooks/useSponsors";
 import Loader from "../components/common/Loader";
