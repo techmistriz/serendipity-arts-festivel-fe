@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { LayoutGrid, Search, ShoppingBag } from "lucide-react";
-import { searchSite } from "../lib/searchSite";
+import { searchSiteApi } from "../services/search";
 
 const MENU = [
   { label: "Home", href: "/" },
@@ -26,6 +26,15 @@ const MENU = [
   { label: "Terms & Conditions", href: "/terms" },
 ];
 
+
+type SearchResult = {
+  kind: "Programme" | "Curator" | "Venue" | "Vibe";
+  title: string;
+  subtitle?: string;
+  href: string;
+};
+
+
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
@@ -33,7 +42,8 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [q, setQ] = useState("");
-
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   // ---------- Static UI values ----------
@@ -42,6 +52,77 @@ export default function Header() {
   // --------------------------------------
 
   const isHome = pathname === "/";
+
+
+
+  const performSearch = async (keyword: string) => {
+    if (!keyword.trim()) {
+      setResults([]);
+      return;
+    }
+
+    try {
+      setSearchLoading(true);
+
+      const data = await searchSiteApi(keyword);
+
+      const searchResults: SearchResult[] = [
+        ...data.programs.map((program) => ({
+          kind: "Programme" as const,
+          title: program.name,
+          subtitle: "Programme",
+          href: `/programmes/${program.slug}`,
+        })),
+
+        ...data.curators.map((curator) => ({
+          kind: "Curator" as const,
+          title: curator.name,
+          subtitle: curator.discipline,
+          href: curator.slug
+            ? `/curators/${curator.slug}`
+            : "/curators",
+        })),
+
+        ...data.venues.map((venue) => ({
+          kind: "Venue" as const,
+          title: venue.name,
+          subtitle: "Venue",
+          href: venue.slug
+            ? `/venues/${venue.slug}`
+            : "/venues",
+        })),
+
+        ...data.vibes.map((vibe) => ({
+          kind: "Vibe" as const,
+          title: vibe.name,
+          subtitle: "Vibe",
+          href: `/programmes/${program.slug}`,
+        })),
+      ];
+
+      setResults(searchResults);
+    } catch (error) {
+      console.error("Search failed:", error);
+      setResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const keyword = q.trim();
+
+    if (!keyword) {
+      setResults([]);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      performSearch(keyword);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [q]);
 
 
   useEffect(() => {
@@ -59,7 +140,6 @@ export default function Header() {
     };
   }, [open, searchOpen]);
 
-  const results = useMemo(() => searchSite(q, 24), [q]);
 
   const logout = () => {
 
@@ -160,9 +240,17 @@ export default function Header() {
 
             <div className="mt-10 pb-16">
               <ul className="rule-t">
-                {results.length === 0 && (
+                {searchLoading && (
                   <li className="py-6 text-sm text-muted-foreground">
-                    {q ? "Nothing matches that yet." : "Try \u201cdance\u201d, \u201cArt Park\u201d, \u201cvolunteer\u201d\u2026"}
+                    Searching...
+                  </li>
+                )}
+
+                {!searchLoading && results.length === 0 && (
+                  <li className="py-6 text-sm text-muted-foreground">
+                    {q
+                      ? "Nothing matches that yet."
+                      : "Try “dance”, “Art Park”, “volunteer”…"}
                   </li>
                 )}
                 {results.map((h, i) => (
