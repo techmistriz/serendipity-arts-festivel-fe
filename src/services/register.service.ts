@@ -5,7 +5,7 @@ import {
   SEARequest,
   ApiResponse,
 } from "@/src/types/auth";
-import api from "../lib/axios";
+import api from "./axios";
 
 export const sendOTP = (data: SendOTPRequest) => {
   return api.post<ApiResponse>("/auth/send-otp", data);
