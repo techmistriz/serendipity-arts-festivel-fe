@@ -51,9 +51,13 @@ export const seaSchema = z.object({
   country: z.string().min(1, "Country is required"),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
-  whatsapp: z.string().min(10, "Valid WhatsApp number is required"),
+  whatsapp: z
+    .string()
+    .min(10, "Valid WhatsApp number is required")
+    .max(15, "Invalid WhatsApp number"),
   otp: z.string().min(4, "OTP is required"),
   newsletter: z.boolean().optional(),
+  std_code: z.string().default("91"),
 });
 
 export const guestSchema = z.object({

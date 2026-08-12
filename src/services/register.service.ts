@@ -21,5 +21,14 @@ export const registerVIP = (data: GuestRegisterRequest) => {
 
 export const registerSEA = (data: SEARequest) => {
   // Assuming SEA uses the same endpoint as general but with different fields
-  return api.post<ApiResponse>("/auth/sea-register", data);
+  return api.post<ApiResponse>("/auth/sea-delegate-register", data);
+};
+
+export interface ArchiveUserPayload {
+    email: string;
+    role_id: number;
+}
+
+export const archiveUser = (data: ArchiveUserPayload) => {
+    return api.post("/auth/archive-user", data);
 };

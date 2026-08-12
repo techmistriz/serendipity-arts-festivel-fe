@@ -1,5 +1,7 @@
 "use client";
 
+import { useCheckArchiveUser } from "./hooks/useCheckArchiveUser";
+
 import { useState } from "react";
 import { Field, YesNo } from "./FieldComponents";
 import { useOTP } from "./hooks/useOTP";
@@ -19,6 +21,14 @@ export const GeneralForm = ({
 
     const email = watch("email");
     const whatsapp = watch("whatsapp");
+    const {
+        isChecking,
+        userExists,
+        archiveError,
+    } = useCheckArchiveUser(email, 3);
+
+
+
 
     const AGE_GROUPS = ["Under 13", "13-17", "18-24", "25-34", "35-44", "45-54", "55-64", "65-70", "70+"];
     const AGE_NOTES: Record<string, string> = {
@@ -37,8 +47,42 @@ export const GeneralForm = ({
     return (
         <>
             <Field label="Email ID*">
-                <input type="email" {...register("email")} className="input" required />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                <input
+                    type="email"
+                    {...register("email")}
+                    className="input"
+                    required
+                />
+
+                {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                        {errors.email.message}
+                    </p>
+                )}
+
+                {isChecking && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Checking email...
+                    </p>
+                )}
+
+                {!isChecking && userExists === true && (
+                    <p className="text-red-500 text-sm mt-1">
+                        This email already exists.
+                    </p>
+                )}
+
+                {!isChecking && userExists === false && (
+                    <p className="text-green-600 text-sm mt-1">
+                        Email is available.
+                    </p>
+                )}
+
+                {archiveError && (
+                    <p className="text-red-500 text-sm mt-1">
+                        {archiveError}
+                    </p>
+                )}
             </Field>
 
             <Field label="Full Name*">

@@ -184,7 +184,7 @@ function VenueDetail({ venue, onClose }: { venue: ApiVenueDetail; onClose: () =>
                                         <button
                                             key={child.id}
                                             onClick={() => setSub(index)}
-                                            className={`headline text-xs uppercase tracking-[0.06em] border px-3 py-2 transition-colors ${sub === i
+                                            className={`headline text-xs uppercase tracking-[0.06em] border px-3 py-2 transition-colors ${sub === index
                                                 ? "bg-foreground text-background border-foreground"
                                                 : "border-foreground hover:bg-foreground hover:text-background"
                                                 }`}

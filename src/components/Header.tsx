@@ -32,6 +32,8 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [q, setQ] = useState("");
 
+  const [scrolled, setScrolled] = useState(false);
+
   // ---------- Static UI values ----------
   const count = 0; // Change to any number
   const isLoggedIn = false; // true / false
@@ -39,6 +41,14 @@ export default function Header() {
 
   const isHome = pathname === "/";
 
+
+   useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 240);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  
   useEffect(() => {
     document.body.style.overflow = open || searchOpen ? "hidden" : "";
 
@@ -95,7 +105,7 @@ export default function Header() {
                 <Link href="/login" className="label notch hover:text-accent transition-colors">
                   Login
                 </Link>
-                {!isHome && (
+                {(!isHome || scrolled) && (
                   <Link href="/register"
                     className="label notch bg-foreground text-background rounded-full px-4 py-2 hover:bg-accent transition-colors">
                     Register

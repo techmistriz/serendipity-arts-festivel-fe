@@ -1,9 +1,38 @@
 "use client";
 
 import GrantsGif from "@/src/components/about/GrantsGif";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
+import collageAbout from "@/public/images/about/collage-about.png";
+import { getLaunchFilms } from "@/src/services/launchFilms";
 
 export default function AboutPage() {
+  const [launchFilms, setLaunchFilms] = useState<LaunchFilm[]>([]);
+  const [loadingFilms, setLoadingFilms] = useState(true);
+  const [filmsError, setFilmsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLaunchFilms = async () => {
+      try {
+        setLoadingFilms(true);
+        setFilmsError(null);
+
+        const data = await getLaunchFilms();
+
+        setLaunchFilms(data);
+      } catch (error) {
+        console.error("Failed to fetch launch films:", error);
+        setFilmsError("Unable to load launch films.");
+      } finally {
+        setLoadingFilms(false);
+      }
+    };
+
+    fetchLaunchFilms();
+  }, []);
+
+
   return (
     <div className="container-editorial pt-12 pb-32 md:pt-24">
        <h1 className="display uppercase text-[13vw] md:text-[9vw] leading-[0.9]">
@@ -68,6 +97,12 @@ export default function AboutPage() {
             audiences from around the world, it's a space where culture feels
             alive, nuanced, and always within everyone's reach.
           </p>
+          <Image
+            src={collageAbout}
+            alt="Collage of festival graphics, print and colour"
+            loading="lazy"
+            className="w-full aspect-[16/9] object-cover border border-foreground"
+          />
         </div>
       </div>
 
@@ -76,36 +111,42 @@ export default function AboutPage() {
           Launch films
         </h2>
 
+         {loadingFilms && (
+          <p className="mt-10 text-muted-foreground">
+            Loading launch films...
+          </p>
+        )}
+
+        {filmsError && (
+          <p className="mt-10 text-red-600">
+            {filmsError}
+          </p>
+        )}
+
+          {!loadingFilms && !filmsError && (
+
         <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          {[
-            { yr: "2026", id: "eJ6lC1NebL0" },
-            { yr: "2025", id: "AT2y5gz1TRg" },
-            { yr: "2024", id: "tsXESfH50d8" },
-            { yr: "2023", id: "XWaVJd1Dfes" },
-            { yr: "2022", id: "Jh4PXH7deB0" },
-            { yr: "2021", id: "CAvNfVoKZZY" },
-            { yr: "2020", id: "CAvNfVoKZZY" },
-            { yr: "2019", id: "i_KfH24yWZY" },
-          ].map(({ yr, id }) => (
+          {launchFilms.map((film) => (
             <figure
-              key={yr}
+              key={film.id}
               className="border-2 border-black bg-black"
             >
               <div className="relative aspect-video w-full">
                 <iframe
-                  src={`https://www.youtube.com/embed/${id}`}
-                  title={`Launch Film ${yr}`}
+                  src={`https://www.youtube.com/embed/${film.youtube_video_id}`}
+                  title={`Launch Film ${film.year}`}
                   className="absolute inset-0 h-full w-full"
                   allowFullScreen
                 />
               </div>
 
               <figcaption className="label bg-black px-3 py-2 text-white">
-                Launch Film — {yr}
+                Launch Film — {film.year}
               </figcaption>
             </figure>
           ))}
         </div>
+          )}
       </div>
     </div>
   );
