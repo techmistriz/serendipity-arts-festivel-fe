@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import collageAbout from "@/public/images/about/collage-about.png";
 import { getLaunchFilms, type LaunchFilm } from "@/src/services/launchFilms";
+import Loader from "@/src/components/common/Loader";
 
 export default function AboutPage() {
   const [launchFilms, setLaunchFilms] = useState<LaunchFilm[]>([]);
@@ -123,7 +124,8 @@ export default function AboutPage() {
           </p>
         )}
 
-          {!loadingFilms && !filmsError && (
+          {loadingFilms ? (
+            <Loader/>):(
 
         <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           {launchFilms.map((film) => (
