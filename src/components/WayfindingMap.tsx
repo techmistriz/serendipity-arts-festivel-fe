@@ -271,9 +271,8 @@ export function WayfindingMap({
                 className={`flex items-center gap-3 px-4 py-3 rule-b ${hover === p.slug ? "bg-muted/40" : ""}`}
               >
                 <span
-                  className={`label w-7 h-7 grid place-items-center border-[3px] border-black shrink-0 ${
-                    on ? "bg-accent" : ""
-                  }`}
+                  className={`label w-7 h-7 grid place-items-center border-[3px] border-black shrink-0 ${on ? "bg-accent" : ""
+                    }`}
                 >
                   {i + 1}
                 </span>
