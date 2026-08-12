@@ -17,6 +17,8 @@ const MENU = [
   { label: "Login", href: "/login" },
   { label: "Dashboard", href: "/dashboard" },
   { label: "Volunteer", href: "/volunteer" },
+  { label: "Wayfinding", href: "/wayfinding" },
+  { label: "Icons", href: "/icons" },
   { label: "SEA", href: "/sea" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
@@ -42,13 +44,13 @@ export default function Header() {
   const isHome = pathname === "/";
 
 
-   useEffect(() => {
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 240);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  
+
   useEffect(() => {
     document.body.style.overflow = open || searchOpen ? "hidden" : "";
 
