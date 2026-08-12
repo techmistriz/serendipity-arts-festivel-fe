@@ -24,6 +24,7 @@ export const login =
       const { user, token } = response.data.data;
 
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
       dispatch(
         loginSuccess({
@@ -40,6 +41,7 @@ export const login =
     }
   };
 
+  
 export const logoutUser =
   () => async (dispatch: AppDispatch) => {
     try {
@@ -47,6 +49,7 @@ export const logoutUser =
     } catch {}
 
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
     dispatch(logout());
   };
