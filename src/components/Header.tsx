@@ -21,6 +21,7 @@ const MENU = [
   { label: "Login", href: "/login" },
   { label: "Dashboard", href: "/dashboard" },
   { label: "Volunteer", href: "/volunteer" },
+  { label: "Volunteer Registration", href: "/volunteer/apply" },
   { label: "Wayfinding", href: "/wayfinding" },
   { label: "Icons", href: "/icons" },
   { label: "SEA", href: "/sea" },

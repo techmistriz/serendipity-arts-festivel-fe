@@ -15,6 +15,7 @@ import {
     type VenueDetail as ApiVenueDetail,
 } from "@/src/services/venues";
 import { stripHtml } from "@/src/utils/html";
+import Loader from "@/src/components/common/Loader";
 
 
 const getImageUrl = (image: string | null) => {
@@ -94,6 +95,15 @@ export default function Venues() {
                     </p>
                 </div>
             )} */}
+
+                {loading && (
+                            <div className="mt-40">
+            
+                            <Loader/>
+                            </div>
+                        )}
+
+                        
             {!loading && (
                 <div className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                     {venues

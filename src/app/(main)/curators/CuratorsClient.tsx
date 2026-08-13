@@ -12,6 +12,7 @@ import {
     type ApiCurator,
     type CuratorDetail,
 } from "@/src/services/curators";
+import Loader from "@/src/components/common/Loader";
 
 const IMAGE_BASE_URL = "http://localhost:8000";
 
@@ -141,13 +142,22 @@ export default function Curators() {
 
 
             {/* Loading */}
-            {loading && (
+            {/* {loading && (
                 <div className="mt-16 text-center">
                     <p className="headline uppercase text-sm">
                         Loading curators...
                     </p>
                 </div>
+            )} */}
+
+              {loading && (
+                <div className="mt-40">
+
+                <Loader/>
+                </div>
             )}
+
+
 
             {!loading && (
                 <>
@@ -214,13 +224,13 @@ export default function Curators() {
             )}
 
               {/* Detail loading */}
-            {detailLoading && (
+            {/* {detailLoading && (
                 <div className="fixed inset-0 z-[60] bg-background/80 flex items-center justify-center">
                     <p className="headline uppercase text-sm">
                         Loading curator...
                     </p>
                 </div>
-            )}
+            )} */}
 
 
  {/* Detail modal */}

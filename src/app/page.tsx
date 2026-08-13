@@ -27,6 +27,13 @@ import { TESTIMONIALS } from "../lib/testimonials";
 import Image from "next/image";
 import { useSponsors } from "../hooks/useSponsors";
 import Loader from "../components/common/Loader";
+import { ScrollGlitchRain } from "../components/common/ScrollGlitchRain";
+import collageHero from "@/public/collage-hero-hd.jpg"
+import recommendBg from "@/public/recommend-bg-v2.png"
+import curatorsBox from "@/public/curators-box.jpg"
+import venuesBox from "@/public/venues-box.png"
+import testimonialsBox from "@/public/testimonials-box.png"
+import pressBox from "@/public/press-box.png"
 
 const PROGRAMMES = [
   { img: prog1, title: "Bodies in Translation", date: "14 Dec", venue: "Kala Academy", category: "Performance" },
@@ -39,12 +46,21 @@ const PROGRAMMES = [
   { img: prog1, title: "River Songs", date: "19 Dec", venue: "Mandovi Promenade", category: "Performance" },
 ];
 
+
+// Shared torn-paper outline so the hero and the section boxes read as one family.
+const TORN_CLIP =
+  "polygon(1.5% 3%, 22% 0.6%, 47% 2.4%, 71% 0%, 92% 2.8%, 100% 12%, 98.4% 38%, 100% 63%, 97.6% 88%, 88% 100%, 63% 97.4%, 39% 100%, 15% 97.8%, 2.4% 92%, 0% 66%, 1.8% 41%, 0.4% 18%)";
+const tornStyle = { clipPath: TORN_CLIP, WebkitClipPath: TORN_CLIP } as const;
+
+
 export default function Home() {
   const featuredCurators = [...CURATORS].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 4);
   const isAuthenticated = useAppSelector(
-  (state) => state.auth.isAuthenticated
-);
+    (state) => state.auth.isAuthenticated
+  );
   const [recOpen, setRecOpen] = useState(false);
+  const [filmOpen, setFilmOpen] = useState(false);
+  const [pressOpen, setPressOpen] = useState(false);
   const [ti, setTi] = useState(0);
   const t = TESTIMONIALS[ti];
 
@@ -57,6 +73,7 @@ export default function Home() {
 
   return (
     <div>
+      <ScrollGlitchRain />
       {/* HERO */}
       <section className="relative h-[72vh] min-h-[480px] w-full overflow-hidden bg-black text-white">
         <video
@@ -109,28 +126,65 @@ export default function Home() {
       </section>
 
       {/* HERO COPY */}
-      <section className="container-editorial mt-12 md:mt-20">
-        <p className="display uppercase text-[8.5vw] md:text-[5vw] leading-[0.95] tracking-[-0.02em] max-w-[16ch] md:max-w-[20ch]">
-          8 days of exhibitions, performances, workshops and more never seen before.
-        </p>
+      <section className="container-editorial mt-20 md:mt-32">
+        <div className="md:hidden relative w-full min-h-[320px] overflow-hidden" style={tornStyle}>
+          <Image
+            src={collageHero}
+            alt="Serendipity Arts Festival collage"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40" aria-hidden />
+          <div className="relative flex min-h-[320px] items-center justify-center px-6 py-14 text-center">
+            <p className="display uppercase text-white text-[8vw] leading-[0.95] tracking-[-0.02em] max-w-[18ch]">
+              8 days of exhibitions, performances, workshops and more never seen before.
+            </p>
+          </div>
+        </div>
+        <div
+          className="hidden md:block relative w-full min-h-[420px] lg:min-h-[520px] overflow-hidden"
+          style={tornStyle}
+        >
+          <Image
+            src={collageHero}
+            alt="Serendipity Arts Festival collage"
+            className="absolute inset-0 h-full w-full object-cover scale-[1.08] origin-top-left"
+          />
+
+          <div className="absolute inset-0 bg-black/40" aria-hidden />
+          <div className="relative flex min-h-[420px] lg:min-h-[520px] items-center justify-center px-10 py-20 text-center">
+            <p className="display uppercase text-white text-[4vw] leading-[0.95] tracking-[-0.02em] max-w-[18ch]">
+              8 days of exhibitions, performances, workshops and more never seen before.
+            </p>
+          </div>
+        </div>
+
       </section>
 
       {/* PROGRAMMES */}
       <section className="container-editorial mt-20 md:mt-32">
-        <div className="grid grid-cols-1 md:grid-cols-12 items-end gap-6 mb-10 md:mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
           <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
             Programmes
           </h2>
-          <div className="md:col-span-5 border border-foreground p-5 md:p-6">
-            <p className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em]">
-              Let us help you — recommend programmes
-            </p>
-            <button
-              onClick={() => setRecOpen(true)}
-              className="mt-4 label notch border border-foreground px-4 py-2.5 hover:bg-foreground hover:text-background transition-colors"
-            >
-              Start →
-            </button>
+          <div
+            className="md:col-span-5 relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${recommendBg.src})`,
+              ...tornStyle,
+            }}
+          >
+            <div className="absolute inset-0 bg-foreground/55" aria-hidden />
+            <div className="relative">
+              <p className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em] text-white">
+                Let us help you — recommend programmes
+              </p>
+              <button
+                onClick={() => setRecOpen(true)}
+                className="mt-4 label notch border border-white text-white px-4 py-2.5 hover:bg-white hover:text-foreground transition-colors"
+              >
+                Start →
+              </button>
+            </div>
           </div>
         </div>
 
@@ -161,9 +215,31 @@ export default function Home() {
 
       {/* CURATORS */}
       <section className="container-editorial mt-20 md:mt-32">
-        <h2 className="display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] mb-10 md:mb-14">
-          Curators
-        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
+          <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
+            Curators
+          </h2>
+          <a
+            href="https://serendipityarts.org/curator-overview/"
+            target="_blank"
+            rel="noreferrer"
+            className="md:col-span-5 block relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${curatorsBox.src})`,
+              ...tornStyle,
+            }}
+          >
+            <div className="absolute inset-0 bg-foreground/55" aria-hidden />
+            <div className="relative">
+              <p className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em] text-white">
+                Meet the festival curators over the years
+              </p>
+              <span className="mt-4 inline-block label notch border border-white text-white px-4 py-2.5 hover:bg-white hover:text-foreground transition-colors">
+                Curator overview →
+              </span>
+            </div>
+          </a>
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
           {featuredCurators.map((c, i) => (
@@ -187,9 +263,34 @@ export default function Home() {
 
       {/* VENUES — pulls the same imagery as /venues */}
       <section className="container-editorial mt-20 md:mt-32">
-        <h2 className="display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] mb-10 md:mb-14">
-          Venues
-        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
+          <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
+            Venues
+          </h2>
+
+          {/* SERENDIPITY DASH — the festival game */}
+          <a
+            href="#"
+            className="md:col-span-5 block relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover"
+            style={{
+              backgroundImage: `url(${venuesBox.src})`,
+              backgroundPosition: "22% 78%", backgroundSize: "150%", ...tornStyle
+            }}
+          >
+            <div className="absolute inset-0 bg-foreground/55" aria-hidden />
+            <div className="relative">
+              <p className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em] text-white">
+                Serendipity Dash
+              </p>
+              <p className="headline text-xs md:text-sm mt-2 max-w-lg text-white/85">
+                Run the festival streets that cross our festival venues over the years, dodge the vans and collect points. Our little game, playable in your browser.
+              </p>
+              <span className="mt-4 inline-block label notch border border-white text-white px-4 py-2.5 hover:bg-white hover:text-foreground transition-colors">
+                Play the game →
+              </span>
+            </div>
+          </a>
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
           {[
@@ -216,7 +317,7 @@ export default function Home() {
       </section>
 
       {/* SERENDIPITY DASH — the festival game */}
-      <section className="container-editorial mt-20 md:mt-32">
+      {/* <section className="container-editorial mt-20 md:mt-32">
         <a
           href="#"
           className="group grid grid-cols-[1fr_auto] items-center gap-4 md:gap-8 border border-foreground bg-background text-foreground p-4 md:p-7 max-w-xl md:max-w-3xl"
@@ -239,13 +340,53 @@ export default function Home() {
             className="w-20 md:w-36 self-end justify-self-end object-contain border border-foreground"
           />
         </a>
-      </section>
+      </section> */}
 
       {/* TESTIMONIALS */}
-      <section className="container-editorial mt-20 md:mt-32">
-        <h2 className="display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] mb-8 md:mb-12">
-          Testimonials
-        </h2>
+        <section className="container-editorial mt-20 md:mt-32">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
+          <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
+            Testimonials
+          </h2>
+          <div
+            className="md:col-span-5 relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover bg-center"
+            style={{ backgroundImage: `url(${testimonialsBox.src})`, ...tornStyle }}
+          >
+            <div className="absolute inset-0 bg-foreground/55" aria-hidden />
+            <div className="relative">
+              <p className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em] text-white">
+                The first hand experience
+              </p>
+              <p className="headline text-xs md:text-sm mt-2 max-w-lg text-white/85">
+                An actual account from festival goers, in their own words.
+              </p>
+              <button
+                onClick={() => setFilmOpen((v) => !v)}
+                className="mt-4 label notch border border-white text-white px-4 py-2.5 hover:bg-white hover:text-foreground transition-colors"
+              >
+                {filmOpen ? "Hide the film" : "Watch the film →"}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {filmOpen && (
+          <div className="mb-10 md:mb-14 border border-foreground">
+            <div className="relative w-full aspect-video">
+              <iframe
+                src="https://www.youtube.com/embed/xkVJHeiZL64?autoplay=1"
+                title="Serendipity Arts Festival: a first hand experience"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                className="absolute inset-0 h-full w-full"
+              />
+            </div>
+          </div>
+        )}
+
+
         <div className="border border-foreground p-5 md:p-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10">
             <div className="md:col-span-3">
@@ -306,23 +447,82 @@ export default function Home() {
       </section>
 
       {/* PRESS COVERAGE — above About Us */}
-      <section className="container-editorial mt-20 md:mt-32">
-        <h2 className="display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] mb-8 md:mb-12">
-          Press
-        </h2>
+       <section className="container-editorial mt-20 md:mt-32">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
+          <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
+            Press
+          </h2>
+          <div
+            className="md:col-span-5 relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover"
+            style={{ backgroundImage: `url(${pressBox.src})`, backgroundPosition: "30% 85%", backgroundSize: "170%", ...tornStyle }}
+          >
+            <div className="absolute inset-0 bg-foreground/55" aria-hidden />
+            <div className="relative">
+              <p className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em] text-white">
+                Watch the coverages
+              </p>
+              <p className="headline text-xs md:text-sm mt-2 max-w-lg text-white/85">
+                Broadcast stories on the festival, gathered in one place.
+              </p>
+              <button
+                onClick={() => setPressOpen((v) => !v)}
+                className="mt-4 label notch border border-white text-white px-4 py-2.5 hover:bg-white hover:text-foreground transition-colors"
+              >
+                {pressOpen ? "Hide coverages" : "Watch coverages →"}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {pressOpen && (
+          <div className="mb-10 md:mb-14 border border-foreground divide-y divide-foreground">
+            {[
+              { pub: "Times Now", id: "8XsdMdyEoDs", date: "20 Dec 2025" },
+              { pub: "NDTV", id: "OrwGAGUZddg", date: "19 Dec 2025" },
+              { pub: "The Hindu", id: "Eiy18AN4Ib8", short: true, date: "18 Dec 2025" },
+              { pub: "Frontline Magazine", id: "sNTw2zI--G0", date: "17 Dec 2025" },
+              { pub: "Prudent Media Goa", id: "foKlZHsDtb0", date: "16 Dec 2025" },
+            ].map((v) => (
+              <details key={v.id} className="group">
+                <summary className="cursor-pointer list-none px-5 py-4 md:px-7 md:py-5 flex items-center justify-between gap-4 hover:text-accent transition-colors">
+                  <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span className="headline font-semibold text-base md:text-xl leading-tight">{v.pub}</span>
+                    <span className="label text-muted-foreground">{v.date}</span>
+                  </span>
+                  <span className="label shrink-0 group-open:rotate-45 transition-transform">+</span>
+                </summary>
+                <div className="px-5 pb-5 md:px-7 md:pb-7">
+                  <div className={`relative w-full ${v.short ? "max-w-[360px] aspect-[9/16]" : "aspect-video"}`}>
+                    <iframe
+                      src={`https://www.youtube.com/embed/${v.id}`}
+                      title={`${v.pub} coverage of Serendipity Arts Festival`}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                      className="absolute inset-0 h-full w-full"
+                    />
+                  </div>
+                </div>
+              </details>
+            ))}
+          </div>
+        )}
+
+
         <ul className="rule-t">
           {[
-            { pub: "Firstpost", title: "Serendipity Arts Festival announces dates for its 11th edition and a curator-led vision for 2026", url: "https://www.firstpost.com/entertainment/serendipity-arts-festival-announces-dates-for-its-11th-edition-and-a-curator-led-vision-for-2026-14009352.html" },
-            { pub: "t2 Online", title: "Serendipity Arts Festival gears up for its 11th edition — announces curators", url: "https://t2online.in/events/events-1/serendipity-arts-festival-gears-up-for-its-11th-edition--announces-curators/2005066" },
-            { pub: "TNA Mag", title: "Serendipity Arts Festival 2026 — meet the curators", url: "https://tnamag.xyz/art-news/serendipity-arts-festival-2026-curators/" },
-            { pub: "The Tribune", title: "Serendipity Arts Festival to return for 11th edition", url: "https://www.tribuneindia.com/news/arts/serendipity-arts-festival-to-return-for-11th-edition/" },
-            { pub: "The Navhind Times", title: "Serendipity Arts Festival announces curators for 11th edition", url: "https://navhindtimes.in/zest/serendipity-arts-festival-announces-curators-for-11th-edition/" },
-            { pub: "Hindustan Times", title: "11th Serendipity Arts Festival to take place from December 13–20", url: "https://www.hindustantimes.com/lifestyle/art-culture/11th-serendipity-arts-festival-to-take-place-from-december-1320-101778580075113.html" },
+            { pub: "Firstpost", date: "12 May 2026", title: "Serendipity Arts Festival announces dates for its 11th edition and a curator-led vision for 2026", url: "https://www.firstpost.com/entertainment/serendipity-arts-festival-announces-dates-for-its-11th-edition-and-a-curator-led-vision-for-2026-14009352.html" },
+            { pub: "t2 Online", date: "13 May 2026", title: "Serendipity Arts Festival gears up for its 11th edition — announces curators", url: "https://t2online.in/events/events-1/serendipity-arts-festival-gears-up-for-its-11th-edition--announces-curators/2005066" },
+            { pub: "TNA Mag", date: "14 May 2026", title: "Serendipity Arts Festival 2026 — meet the curators", url: "https://tnamag.xyz/art-news/serendipity-arts-festival-2026-curators/" },
+            { pub: "The Tribune", date: "15 May 2026", title: "Serendipity Arts Festival to return for 11th edition", url: "https://www.tribuneindia.com/news/arts/serendipity-arts-festival-to-return-for-11th-edition/" },
+            { pub: "The Navhind Times", date: "14 May 2026", title: "Serendipity Arts Festival announces curators for 11th edition", url: "https://navhindtimes.in/zest/serendipity-arts-festival-announces-curators-for-11th-edition/" },
+            { pub: "Hindustan Times", date: "12 May 2026", title: "11th Serendipity Arts Festival to take place from December 13–20", url: "https://www.hindustantimes.com/lifestyle/art-culture/11th-serendipity-arts-festival-to-take-place-from-december-1320-101778580075113.html" },
           ].map((a) => (
             <li key={a.url} className="rule-b">
               <a href={a.url} target="_blank" rel="noreferrer"
                 className="group py-5 md:py-7 grid grid-cols-12 gap-3 md:gap-6 items-baseline hover:text-accent transition-colors">
-                <p className="col-span-12 md:col-span-3 label text-muted-foreground group-hover:text-accent">{a.pub}</p>
+                <p className="col-span-12 md:col-span-3 label text-muted-foreground group-hover:text-accent">{a.pub} <span className="opacity-70">&middot; {a.date}</span></p>
                 <p className="col-span-11 md:col-span-8 headline font-semibold text-lg md:text-2xl leading-tight tracking-[-0.01em]">{a.title}</p>
                 <p className="col-span-1 label text-right">↗</p>
               </a>
@@ -331,6 +531,7 @@ export default function Home() {
         </ul>
       </section>
 
+      
       {/* SUPPORTED BY */}
       <section className="container-editorial mt-20 md:mt-32">
         <h2 className="display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] mb-8 md:mb-12">

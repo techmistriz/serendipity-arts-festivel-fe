@@ -93,7 +93,8 @@ export default function Volunteer() {
           </Block>
 
           <a
-            href="mailto:volunteers@serendipityartsfestival.com?subject=Volunteer%20Application%20-%20SAF%202026"
+            // href="mailto:volunteers@serendipityartsfestival.com?subject=Volunteer%20Application%20-%20SAF%202026"
+            href="/volunteer/apply"
             className="inline-block headline font-semibold uppercase text-lg md:text-xl bg-foreground text-background rounded-full px-10 py-5 hover:bg-accent transition-colors"
           >
             Apply now →
