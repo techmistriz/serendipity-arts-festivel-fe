@@ -13,7 +13,7 @@ import foundation from "@/public/images/home/Serendipity_Arts_Logo-2.png";
 export const FESTIVAL_LOGO = festival;
 export const FOUNDATION_LOGO = foundation;
 
-export type Partner = { name: string; url: typeof festival; };
+export type Partner = { name: string; url: typeof festival };
 
 // export const PARTNERS: Partner[] = [
 //   { name: "Government of Goa", url: goaGovt },

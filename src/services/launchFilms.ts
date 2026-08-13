@@ -17,9 +17,7 @@ export async function getLaunchFilms(): Promise<LaunchFilm[]> {
   const response = await api.get<LaunchFilmsResponse>("/launch-films");
 
   if (!response.data.status) {
-    throw new Error(
-      response.data.message || "Failed to fetch launch films"
-    );
+    throw new Error(response.data.message || "Failed to fetch launch films");
   }
 
   return response.data.data;

@@ -20,9 +20,7 @@ export function useSponsors(limit = 5) {
         setSponsors(data);
       } catch (error) {
         setError(
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch sponsors"
+          error instanceof Error ? error.message : "Failed to fetch sponsors",
         );
       } finally {
         setLoading(false);

@@ -30,7 +30,7 @@ const ARCHIVES: { year: string; url: string; note?: string }[] = [
 
 export default function Footer() {
   return (
-        <footer className="relative rule-t mt-32 overflow-hidden">
+    <footer className="relative rule-t mt-32 overflow-hidden">
       {/* Glitch Bars */}
       <GlitchBar
         seed={41}
@@ -109,7 +109,7 @@ export default function Footer() {
               <li><Link href="/programmes">Programmes</Link></li>
               <li><Link href="/curators">Curators</Link></li>
               <li><Link href="/venues">Venues</Link></li>
-              <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/about">About us</Link></li>
               <li><Link href="/partners">Partners</Link></li>
               <li><Link href="/faq">FAQ</Link></li>
               <li><Link href="/contact">Contact</Link></li>
@@ -170,7 +170,7 @@ export default function Footer() {
           </div>
         </div>
 
-          <div className="mt-16 rule-t pt-6">
+        <div className="mt-16 rule-t pt-6">
           <p className="label text-muted-foreground mb-4">Past editions</p>
           <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm headline">
             {ARCHIVES.map((a) => (
@@ -192,7 +192,7 @@ export default function Footer() {
             © Serendipity Arts Festival. All rights reserved.
           </p>
 
-      
+
         </div>
       </div>
     </footer>

@@ -49,24 +49,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [justBooked, setJustBooked] = useState(false);
 
-useEffect(() => {
-  try {
-    const raw = localStorage.getItem(CART_KEY);
-    if (raw) setItems(JSON.parse(raw));
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(CART_KEY);
+      if (raw) setItems(JSON.parse(raw));
 
-    const savedBookings = localStorage.getItem(BOOKINGS_KEY);
-    if (savedBookings) setBookings(JSON.parse(savedBookings));
+      const savedBookings = localStorage.getItem(BOOKINGS_KEY);
+      if (savedBookings) setBookings(JSON.parse(savedBookings));
 
-    setIsVip(localStorage.getItem(VIP_KEY) === "1");
+      setIsVip(localStorage.getItem(VIP_KEY) === "1");
 
-    const w = localStorage.getItem(WISH_KEY);
-    if (w) setWishlist(JSON.parse(w));
-  } catch {}
-}, []);
+      const w = localStorage.getItem(WISH_KEY);
+      if (w) setWishlist(JSON.parse(w));
+    } catch { }
+  }, []);
 
-  useEffect(() => { try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch {} }, [items]);
-  useEffect(() => { try { localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings)); } catch {} }, [bookings]);
-  useEffect(() => { try { localStorage.setItem(WISH_KEY, JSON.stringify(wishlist)); } catch {} }, [wishlist]);
+  useEffect(() => { try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch { } }, [items]);
+  useEffect(() => { try { localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings)); } catch { } }, [bookings]);
+  useEffect(() => { try { localStorage.setItem(WISH_KEY, JSON.stringify(wishlist)); } catch { } }, [wishlist]);
 
   const add: CartCtx["add"] = (item, qty = 1) => {
     setItems((prev) => {
@@ -104,28 +104,28 @@ useEffect(() => {
   const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0);
 
   return (
-   <Ctx.Provider
-  value={{
-    items,
-    bookings,
-    add,
-    remove,
-    setQty,
-    clear,
-    confirmBooking,
-    count,
-    subtotal,
-    isVip,
-    wishlist,
-    toggleWish,
-    hasBooked,
-    justBooked,
-    markJustBooked,
-    clearJustBooked,
-  }}
->
-  {children}
-</Ctx.Provider>
+    <Ctx.Provider
+      value={{
+        items,
+        bookings,
+        add,
+        remove,
+        setQty,
+        clear,
+        confirmBooking,
+        count,
+        subtotal,
+        isVip,
+        wishlist,
+        toggleWish,
+        hasBooked,
+        justBooked,
+        markJustBooked,
+        clearJustBooked,
+      }}
+    >
+      {children}
+    </Ctx.Provider>
   );
 }
 

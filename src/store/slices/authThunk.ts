@@ -1,18 +1,10 @@
 import { AppDispatch } from "../store";
-import {
-  loginSuccess,
-  logout,
-  setLoading,
-} from "./auth/authSlice";
+import { loginSuccess, logout, setLoading } from "./auth/authSlice";
 
-import {
-  loginAPI,
-  logoutAPI,
-} from "@/src/services/auth.service";
+import { loginAPI, logoutAPI } from "@/src/services/auth.service";
 
 export const login =
-  (email: string, password: string) =>
-  async (dispatch: AppDispatch) => {
+  (email: string, password: string) => async (dispatch: AppDispatch) => {
     try {
       dispatch(setLoading(true));
 
@@ -30,7 +22,7 @@ export const login =
         loginSuccess({
           user,
           token,
-        })
+        }),
       );
 
       return response.data;
@@ -41,15 +33,13 @@ export const login =
     }
   };
 
-  
-export const logoutUser =
-  () => async (dispatch: AppDispatch) => {
-    try {
-      await logoutAPI();
-    } catch {}
+export const logoutUser = () => async (dispatch: AppDispatch) => {
+  try {
+    await logoutAPI();
+  } catch {}
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 
-    dispatch(logout());
-  };
+  dispatch(logout());
+};

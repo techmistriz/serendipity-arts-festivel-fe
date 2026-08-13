@@ -18,7 +18,7 @@ const PAGES: SearchHit[] = [
   { kind: "Page", title: "Venues", href: "/venues" },
   { kind: "Page", title: "About us", href: "/about" },
   { kind: "Page", title: "Cart", href: "/cart" },
-   { kind: "Page", title: "Register", href: "/register" },
+  { kind: "Page", title: "Register", href: "/register" },
   { kind: "Page", title: "Login", href: "/login" },
   { kind: "Page", title: "Dashboard", href: "/dashboard" },
   { kind: "Page", title: "Volunteer", href: "/volunteer" },
@@ -43,11 +43,7 @@ const PROGRAMME_HITS = PROGRAMMES.map((p) => ({
   href: "/programmes",
 }));
 
-const INDEX = [
-  ...PAGES,
-  ...CURATOR_HITS,
-  ...PROGRAMME_HITS,
-];
+const INDEX = [...PAGES, ...CURATOR_HITS, ...PROGRAMME_HITS];
 
 export function searchSite(query: string, limit = 20) {
   const q = query.toLowerCase().trim();
@@ -57,6 +53,6 @@ export function searchSite(query: string, limit = 20) {
   return INDEX.filter(
     (item) =>
       item.title.toLowerCase().includes(q) ||
-      item.subtitle?.toLowerCase().includes(q)
+      item.subtitle?.toLowerCase().includes(q),
   ).slice(0, limit);
 }

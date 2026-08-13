@@ -25,10 +25,10 @@ export const registerSEA = (data: SEARequest) => {
 };
 
 export interface ArchiveUserPayload {
-    email: string;
-    role_id: number;
+  email: string;
+  role_id: number;
 }
 
 export const archiveUser = (data: ArchiveUserPayload) => {
-    return api.post("/auth/archive-user", data);
+  return api.post("/auth/archive-user", data);
 };

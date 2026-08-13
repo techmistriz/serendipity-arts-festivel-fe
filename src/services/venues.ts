@@ -69,12 +69,8 @@ export async function getVenues(): Promise<ApiVenue[]> {
   return response.data.data || [];
 }
 
-export async function getVenueDetail(
-  id: number
-): Promise<VenueDetail> {
-  const response = await api.get<VenueDetailResponse>(
-    `/venue-detail/${id}`
-  );
+export async function getVenueDetail(id: number): Promise<VenueDetail> {
+  const response = await api.get<VenueDetailResponse>(`/venue-detail/${id}`);
 
   return response.data.data;
 }

@@ -4,8 +4,7 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://your-api-url.com",
   headers: {
     "Content-Type": "application/json",
-Accept: "application/json",
-
+    Accept: "application/json",
   },
   timeout: 30000,
 });
@@ -22,7 +21,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor
@@ -37,7 +36,7 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

@@ -8,23 +8,21 @@ export type Curator = {
   bio: string[];
 };
 
-
-import anish from "@/public/images/curators/anisha-rachel-oommen-lQ4kx0db.jpg"
-import ankur from "@/public/images/curators/ankur-tewari-PgCapfpt.jpg"
-import anuradha from "@/public/images/curators/anuradha-kapur-Dq1_lS0Y.jpg"
-import aruna from "@/public/images/curators/aruna-sairam-Dbc3YYNb.jpg"
-import ashley from "@/public/images/curators/ashley-lobo-BCdCMoiP.jpg"
-import kshitij from "@/public/images/curators/kshitij-jalori-BPM-ad3s.jpg"
-import latika from "@/public/images/curators/latika-gupta-DJNuot68.jpg"
-import mahesh from "@/public/images/curators/mahesh-dattani-Dri71bY0.jpg"
-import padmini from "@/public/images/curators/padmini-chettur-DpB3USq1.jpg"
-import ram from "@/public/images/curators/ram-rahman.jpg"
-import salil from "@/public/images/curators/salil-chaturvedi-Rf994ziw.jpg"
-import sheba from "@/public/images/curators/sheba-chhachhi (1).jpg"
-import sreyansi from "@/public/images/curators/sreyansi-singh.webp"
-import sudhir from "@/public/images/curators/sudhir-rajbhar.jpg"
-import surjit from "@/public/images/curators/surjit-nongmeikapam-BN0JDjiM.jpg"
-
+import anish from "@/public/images/curators/anisha-rachel-oommen-lQ4kx0db.jpg";
+import ankur from "@/public/images/curators/ankur-tewari-PgCapfpt.jpg";
+import anuradha from "@/public/images/curators/anuradha-kapur-Dq1_lS0Y.jpg";
+import aruna from "@/public/images/curators/aruna-sairam-Dbc3YYNb.jpg";
+import ashley from "@/public/images/curators/ashley-lobo-BCdCMoiP.jpg";
+import kshitij from "@/public/images/curators/kshitij-jalori-BPM-ad3s.jpg";
+import latika from "@/public/images/curators/latika-gupta-DJNuot68.jpg";
+import mahesh from "@/public/images/curators/mahesh-dattani-Dri71bY0.jpg";
+import padmini from "@/public/images/curators/padmini-chettur-DpB3USq1.jpg";
+import ram from "@/public/images/curators/ram-rahman.jpg";
+import salil from "@/public/images/curators/salil-chaturvedi-Rf994ziw.jpg";
+import sheba from "@/public/images/curators/sheba-chhachhi (1).jpg";
+import sreyansi from "@/public/images/curators/sreyansi-singh.webp";
+import sudhir from "@/public/images/curators/sudhir-rajbhar.jpg";
+import surjit from "@/public/images/curators/surjit-nongmeikapam-BN0JDjiM.jpg";
 
 export const CURATORS: Curator[] = [
   {
@@ -121,7 +119,7 @@ export const CURATORS: Curator[] = [
     img: sudhir,
     short: "Interdisciplinary artist. Founder, CHAMAR.",
     bio: [
-      "Sudhir Rajbhar is a Mumbai-based interdisciplinary artist, designer, and social entrepreneur renowned for founding CHAMAR — a sustainable fashion brand that reclaims the derogatory term \"Chamar\" and transforms it into a symbol of pride and craftsmanship.",
+      'Sudhir Rajbhar is a Mumbai-based interdisciplinary artist, designer, and social entrepreneur renowned for founding CHAMAR — a sustainable fashion brand that reclaims the derogatory term "Chamar" and transforms it into a symbol of pride and craftsmanship.',
       "Beyond fashion, Rajbhar is dedicated to preserving the cultural heritage of leatherwork. He has received grants from institutions like the Royal Ontario Museum and the Guggenheim Museum to build an archive chronicling the history of Indian leather workers, aiming to restore the craft heritage.",
     ],
   },
@@ -132,14 +130,15 @@ export const CURATORS: Curator[] = [
     short: "Fashion and textile designer. Banarasi weaves, modern tailoring.",
     bio: [
       "Kshitij Jalori is a fashion and textile designer celebrated for his structural mastery of Banarasi weaves, and his exquisite embroideries which serve as a critical bridge between traditional handcraft and global luxury.",
-      "Launching his eponymous label in 2019, he has built a brand identity defined by the \"amalgamation of architecture, art, and culture.\" His work is a sophisticated dialogue between the intricate soul of Indian handlooms and the sharp, structured silhouettes of modern tailoring that fuse India's timeless heritage with international appeal.",
+      'Launching his eponymous label in 2019, he has built a brand identity defined by the "amalgamation of architecture, art, and culture." His work is a sophisticated dialogue between the intricate soul of Indian handlooms and the sharp, structured silhouettes of modern tailoring that fuse India\'s timeless heritage with international appeal.',
     ],
   },
   {
     name: "Latika Gupta",
     discipline: "Visual Arts",
     img: latika,
-    short: "Art historian and curator. Director, Sher-Gil Sundaram Arts Foundation.",
+    short:
+      "Art historian and curator. Director, Sher-Gil Sundaram Arts Foundation.",
     bio: [
       "Latika Gupta is an art historian and curator based in Delhi. She was associate editor at MARG Publications from 2016-2020, and is currently part of the editorial collective of '100 Histories of 100 Worlds in 1 Object', and an associate editor at South Asian Studies.",
       "She has been co-mentor for the Curatorial Intensive South Asia programme (Khoj & Goethe-Institut/MMB) from 2019-2025.",
@@ -175,10 +174,10 @@ export const CURATORS: Curator[] = [
     img: ram,
     short: "Independent photographer and curator. Founding member, SAHMAT.",
     bio: [
-"Ram Rahman is an independent photographer and curator. Ram has lived in New York and New Delhi. His photographs have been shown in India and around the world and he has curated solo exhibitions of photographers Sunil Janah, Madan Mahatta, JH Thakker, Jyoti Bhatt and others. As a founding member of the artists collective SAHMAT, the Safdar Hashmi Memorial Trust, Ram has been involved in curating exhibits and events for over 36 years.",
-"Ram's work has been exhibited in 3 Serendipity events in Goa, The Gwangju Biennale in Korea and The Chennai Photo Biennale. Ram has lectured on Delhi's modern architecture in Goa, MoMA in New York and in Delhi. He curated an exhibit of Delhi's modern architecture at the KNMA in Delhi in 2000.",
-"His work is in the collections of MoMA, New York, The MET, New York, The Centre Pompidou, Paris, The Tate Modern, London, The National Museum of Asian Art, Smithsonian, Washington DC, KNMA, Delhi and Zapurza Museum in Pune, besides private collections."
-],
+      "Ram Rahman is an independent photographer and curator. Ram has lived in New York and New Delhi. His photographs have been shown in India and around the world and he has curated solo exhibitions of photographers Sunil Janah, Madan Mahatta, JH Thakker, Jyoti Bhatt and others. As a founding member of the artists collective SAHMAT, the Safdar Hashmi Memorial Trust, Ram has been involved in curating exhibits and events for over 36 years.",
+      "Ram's work has been exhibited in 3 Serendipity events in Goa, The Gwangju Biennale in Korea and The Chennai Photo Biennale. Ram has lectured on Delhi's modern architecture in Goa, MoMA in New York and in Delhi. He curated an exhibit of Delhi's modern architecture at the KNMA in Delhi in 2000.",
+      "His work is in the collections of MoMA, New York, The MET, New York, The Centre Pompidou, Paris, The Tate Modern, London, The National Museum of Asian Art, Smithsonian, Washington DC, KNMA, Delhi and Zapurza Museum in Pune, besides private collections.",
+    ],
   },
   {
     name: "Sreyansi Singh",

@@ -42,7 +42,9 @@ export interface SearchResponse {
   message: string;
 }
 
-export async function searchSiteApi(keyword: string): Promise<SearchResponse["data"]> {
+export async function searchSiteApi(
+  keyword: string,
+): Promise<SearchResponse["data"]> {
   const response = await api.get<SearchResponse>("/search", {
     params: {
       keyword,

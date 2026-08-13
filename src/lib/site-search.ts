@@ -31,33 +31,43 @@ const PAGES: SearchHit[] = [
 ];
 
 const VENUES: { name: string; subVenues: string[] }[] = [
-  { 
-    name: "The Old GMC Complex", 
-    subVenues: ["Ground Floor Galleries", "First Floor Wing", "Central Courtyard", "Second Floor Wing"] 
+  {
+    name: "The Old GMC Complex",
+    subVenues: [
+      "Ground Floor Galleries",
+      "First Floor Wing",
+      "Central Courtyard",
+      "Second Floor Wing",
+    ],
   },
-  { 
-    name: "Art Park", 
-    subVenues: ["Main Lawn", "Culinary Pavilion", "Workshop Tent", "Shopping Village"] 
+  {
+    name: "Art Park",
+    subVenues: [
+      "Main Lawn",
+      "Culinary Pavilion",
+      "Workshop Tent",
+      "Shopping Village",
+    ],
   },
-  { 
-    name: "Promenade", 
-    subVenues: ["North Deck", "Central Bandstand", "South Deck"] 
+  {
+    name: "Promenade",
+    subVenues: ["North Deck", "Central Bandstand", "South Deck"],
   },
-  { 
-    name: "Samba Square", 
-    subVenues: ["Central Stage", "Shaded Pavilion"] 
+  {
+    name: "Samba Square",
+    subVenues: ["Central Stage", "Shaded Pavilion"],
   },
-  { 
-    name: "Arena at DB Ground", 
-    subVenues: ["Main Arena", "Backstage Lounge"] 
+  {
+    name: "Arena at DB Ground",
+    subVenues: ["Main Arena", "Backstage Lounge"],
   },
-  { 
-    name: "ESG Building", 
-    subVenues: ["Cinema Hall 1", "Cinema Hall 2", "Panel Room"] 
+  {
+    name: "ESG Building",
+    subVenues: ["Cinema Hall 1", "Cinema Hall 2", "Panel Room"],
   },
-  { 
-    name: "Directorate of Accounts", 
-    subVenues: ["Ground Floor", "First Floor", "Second Floor", "The Studio"] 
+  {
+    name: "Directorate of Accounts",
+    subVenues: ["Ground Floor", "First Floor", "Second Floor", "The Studio"],
   },
 ];
 
@@ -86,19 +96,24 @@ const PROGRAMME_HITS: SearchHit[] = PROGRAMMES.map((p) => ({
   search: { p: p.id },
 }));
 
-const INDEX: SearchHit[] = [...PAGES, ...VENUE_HITS, ...CURATOR_HITS, ...PROGRAMME_HITS];
+const INDEX: SearchHit[] = [
+  ...PAGES,
+  ...VENUE_HITS,
+  ...CURATOR_HITS,
+  ...PROGRAMME_HITS,
+];
 
 export function searchSite(query: string, limit = 20): SearchHit[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
-  
+
   const scored: { h: SearchHit; s: number }[] = [];
-  
+
   for (const hit of INDEX) {
     const title = hit.title.toLowerCase();
     const subtitle = (hit.subtitle ?? "").toLowerCase();
     let score = 0;
-    
+
     // Exact match gets highest score
     if (title === q) score = 100;
     // Starts with query
@@ -107,12 +122,12 @@ export function searchSite(query: string, limit = 20): SearchHit[] {
     else if (title.includes(q)) score = 40;
     // Subtitle contains query
     else if (subtitle.includes(q)) score = 20;
-    
+
     if (score > 0) {
       scored.push({ h: hit, s: score });
     }
   }
-  
+
   return scored
     .sort((a, b) => b.s - a.s)
     .slice(0, limit)

@@ -1,14 +1,9 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Invalid email"),
+  email: z.string().min(1, "Email is required").email("Invalid email"),
 
-  fullName: z
-    .string()
-    .min(3, "Full name is required"),
+  fullName: z.string().min(3, "Full name is required"),
 
   gender: z.string().optional(),
 
@@ -23,18 +18,15 @@ export const registerSchema = z.object({
   whatsapp: z
     .string()
     .optional()
-    .refine(
-      (value) => !value || /^[0-9]{10}$/.test(value),
-      {
-        message: "Enter valid WhatsApp number",
-      }
-    ),
+    .refine((value) => !value || /^[0-9]{10}$/.test(value), {
+      message: "Enter valid WhatsApp number",
+    }),
 
   otp: z.string().optional(),
 
   terms: z.literal(true, {
-  message: "Accept Terms & Conditions",
-}),
+    message: "Accept Terms & Conditions",
+  }),
 
   newsletter: z.boolean().optional(),
 });
