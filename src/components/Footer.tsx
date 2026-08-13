@@ -30,7 +30,7 @@ const ARCHIVES: { year: string; url: string; note?: string }[] = [
 
 export default function Footer() {
   return (
-    <footer className="relative mt-32 overflow-hidden border-t">
+        <footer className="relative rule-t mt-32 overflow-hidden">
       {/* Glitch Bars */}
       <GlitchBar
         seed={41}
@@ -76,7 +76,7 @@ export default function Footer() {
                 alt="Serendipity Arts Festival"
                 width={220}
                 height={90}
-                className="h-14 w-auto object-contain md:h-20"
+                className="h-20 w-auto object-contain md:h-28"
               />
             </div>
 

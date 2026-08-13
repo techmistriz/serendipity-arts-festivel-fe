@@ -68,8 +68,8 @@ const { user, token, isAuthenticated } = useAppSelector(
   : null;
 
   return (
-    <div className="container-editorial pt-10 md:pt-24 pb-32">
-      <h1 className="display uppercase text-[15vw] md:text-[12vw] leading-[0.9]">
+    <div className="container-editorial pt-12 md:pt-24 pb-32">
+      <h1 className="display uppercase text-[14vw] md:text-[10vw] leading-[0.9]">
         Cart
       </h1>
 
