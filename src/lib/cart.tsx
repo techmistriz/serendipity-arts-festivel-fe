@@ -24,11 +24,9 @@ type CartCtx = {
   confirmBooking: () => void;
   count: number;
   subtotal: number;
-  isRegistered: boolean;
-  markRegistered: () => void;
 
   isVip: boolean;
- 
+
   wishlist: string[];
   toggleWish: (id: string) => void;
   hasBooked: (id: string) => boolean;
@@ -40,7 +38,6 @@ type CartCtx = {
 const Ctx = createContext<CartCtx | null>(null);
 
 const CART_KEY = "saf-cart";
-const REG_KEY = "saf-registered";
 const VIP_KEY = "saf-vip";
 const WISH_KEY = "saf-wishlist";
 const BOOKINGS_KEY = "saf-bookings";
@@ -48,23 +45,24 @@ const BOOKINGS_KEY = "saf-bookings";
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [bookings, setBookings] = useState<CartItem[]>([]);
-  const [isRegistered, setIsRegistered] = useState(false);
   const [isVip, setIsVip] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [justBooked, setJustBooked] = useState(false);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(CART_KEY);
-      if (raw) setItems(JSON.parse(raw));
-      const savedBookings = localStorage.getItem(BOOKINGS_KEY);
-      if (savedBookings) setBookings(JSON.parse(savedBookings));
-      setIsRegistered(localStorage.getItem(REG_KEY) === "1");
-      setIsVip(localStorage.getItem(VIP_KEY) === "1");
-      const w = localStorage.getItem(WISH_KEY);
-      if (w) setWishlist(JSON.parse(w));
-    } catch {}
-  }, []);
+useEffect(() => {
+  try {
+    const raw = localStorage.getItem(CART_KEY);
+    if (raw) setItems(JSON.parse(raw));
+
+    const savedBookings = localStorage.getItem(BOOKINGS_KEY);
+    if (savedBookings) setBookings(JSON.parse(savedBookings));
+
+    setIsVip(localStorage.getItem(VIP_KEY) === "1");
+
+    const w = localStorage.getItem(WISH_KEY);
+    if (w) setWishlist(JSON.parse(w));
+  } catch {}
+}, []);
 
   useEffect(() => { try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch {} }, [items]);
   useEffect(() => { try { localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings)); } catch {} }, [bookings]);
@@ -94,13 +92,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
     setJustBooked(true);
   };
-const markRegistered = () => {
-  try {
-    localStorage.setItem(REG_KEY, "1");
-  } catch {}
 
-  setIsRegistered(true);
-};
 
   const toggleWish = (id: string) =>
     setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
@@ -123,8 +115,6 @@ const markRegistered = () => {
     confirmBooking,
     count,
     subtotal,
-    isRegistered,
-    markRegistered,
     isVip,
     wishlist,
     toggleWish,

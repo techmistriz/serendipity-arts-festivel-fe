@@ -8,6 +8,7 @@ import { LayoutGrid, Search, ShoppingBag } from "lucide-react";
 import { searchSiteApi } from "../services/search";
 import { useAppDispatch, useAppSelector } from "@/src/store/hooks";
 import { logoutUser } from "@/src/store/slices/authThunk";
+import { useCart } from "../lib/cart";
 
 const MENU = [
   { label: "Home", href: "/" },
@@ -49,7 +50,11 @@ export default function Header() {
     (state) => state.auth.isAuthenticated
   );
 
-  const count = 0;
+
+  const { items } = useCart();
+
+  const count = items.reduce((total, item) => total + item.qty, 0);
+
 
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -149,10 +154,10 @@ export default function Header() {
   }, [open, searchOpen]);
 
 
- const logout = async () => {
-  await dispatch(logoutUser());
-  router.push("/");
-};
+  const logout = async () => {
+    await dispatch(logoutUser());
+    router.push("/");
+  };
 
   return (
     <>

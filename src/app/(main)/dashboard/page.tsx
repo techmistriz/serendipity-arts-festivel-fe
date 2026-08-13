@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/src/store/hooks";
 import { logoutUser } from "@/src/store/slices/authThunk";
 import { useRouter } from "next/navigation";
+import { fmtTime, PROGRAMMES } from "@/src/data/programmes-data";
 
 const DAY_NAME = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const dayName = (d: number) => DAY_NAME[(d - 13 + 0) % 7];
@@ -32,35 +33,40 @@ export default function DashboardPage() {
         { id: "3", title: "Artist Talk: Contemporary Art", venue: "Gallery Hall", dates: [16, 17], time: "3:00 PM", qty: 1, price: 0 },
     ];
 
-    const wishlistItems = [
-        { id: "w1", title: "Theatre Performance", category: "Theatre", img: "/placeholder.jpg", venue: "Main Stage", date: "15 Dec", time: "7:30 PM" },
-        { id: "w2", title: "Music Concert", category: "Music", img: "/placeholder.jpg", venue: "Open Air", date: "16 Dec", time: "8:00 PM" },
-    ];
+   const wishlistItems = PROGRAMMES.slice(0, 2).map((p) => ({
+  id: p.id,
+  title: p.title,
+  category: p.category,
+  img: p.img,
+  venue: p.venue,
+  date: `${p.slots[0].day} Dec`,
+  time: fmtTime(p.slots[0].time),
+}));
 
     const totalTickets = bookings.reduce((s, b) => s + b.qty, 0);
     const venuesCovered = new Set(bookings.map((b) => b.venue)).size;
 
 
     const router = useRouter();
-   const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
-const { user, isAuthenticated } = useAppSelector(
-  (state) => state.auth
-);
+    const { user, isAuthenticated } = useAppSelector(
+        (state) => state.auth
+    );
 
-const isLoggedIn = isAuthenticated;
+    const isLoggedIn = isAuthenticated;
 
-const handleLogout = async () => {
-  await dispatch(logoutUser());
-  router.replace("/login");
-};
+    const handleLogout = async () => {
+        await dispatch(logoutUser());
+        router.replace("/login");
+    };
 
 
-// useEffect(() => {
-//   if (!isAuthenticated) {
-//     router.replace("/login?next=/dashboard");
-//   }
-// }, [isAuthenticated, router]);
+    // useEffect(() => {
+    //   if (!isAuthenticated) {
+    //     router.replace("/login?next=/dashboard");
+    //   }
+    // }, [isAuthenticated, router]);
 
     if (!isLoggedIn) {
         return (
@@ -89,12 +95,12 @@ const handleLogout = async () => {
                         {user?.name || "Guest"}
                     </h1>
                 </div>
-               <button
-   onClick={handleLogout}
-  className="label border border-foreground px-5 py-3 hover:bg-foreground hover:text-background transition-colors"
->
-  Sign out
-</button>
+                <button
+                    onClick={handleLogout}
+                    className="label border border-foreground px-5 py-3 hover:bg-foreground hover:text-background transition-colors"
+                >
+                    Sign out
+                </button>
             </div>
 
             {/* Stat row */}
@@ -153,7 +159,8 @@ const handleLogout = async () => {
                         <ul className="rule-t">
                             {wishlistItems.map((p) => (
                                 <li key={p.id} className="rule-b py-6 grid grid-cols-12 gap-4 items-center">
-                                    <Image src={p.img} alt={p.title} className="col-span-2 md:col-span-1 w-full aspect-square object-cover" />
+                                    <Image src={p.img} alt={p.title} width={200}
+                                        height={200} className="col-span-2 md:col-span-1 w-full aspect-square object-cover" />
                                     <div className="col-span-7 md:col-span-8">
                                         <p className="label text-muted-foreground">{p.category}</p>
                                         <p className="headline font-semibold text-lg md:text-xl leading-tight mt-1">{p.title}</p>

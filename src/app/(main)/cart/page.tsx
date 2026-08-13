@@ -16,7 +16,6 @@ const {
   remove,
   setQty,
   subtotal,
-  isRegistered,
   confirmBooking,
   isVip,
 } = useCart();
@@ -26,23 +25,17 @@ const { user, token, isAuthenticated } = useAppSelector(
 );
 
 
-
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
 
   const checkout = () => {
-    if (!isRegistered) {
-      router.push("/register?next=/cart");
-      return;
-    }
+  if (!isAuthenticated) {
+    router.push("/login?next=/cart");
+    return;
+  }
 
-    if (!isAuthenticated) {
-      router.push("/login?next=/cart");
-      return;
-    }
-
-    setShowSuccess(true);
-  };
+  setShowSuccess(true);
+};
 
   const finish = () => {
     confirmBooking();
@@ -66,19 +59,13 @@ const { user, token, isAuthenticated } = useAppSelector(
     );
   }
 
-  const gate = !isRegistered
-    ? {
-      label: "Register first to complete your booking.",
-      cta: "Register →",
-      to: "/register",
+ const gate = !isAuthenticated
+  ? {
+      label: "Log in to continue to checkout.",
+      cta: "Log in →",
+      to: "/login",
     }
-    : !isAuthenticated
-      ? {
-        label: "You're registered — log in to continue to checkout.",
-        cta: "Log in →",
-        to: "/login",
-      }
-      : null;
+  : null;
 
   return (
     <div className="container-editorial pt-10 md:pt-24 pb-32">

@@ -412,7 +412,6 @@ function BookingSheet({ programme, intent, onClose, onOpen }: { programme: Progr
         items,
         bookings,
         isVip,
-        isRegistered,
         markJustBooked,
     } = useCart();
 
