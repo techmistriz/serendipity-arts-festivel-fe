@@ -1,7 +1,6 @@
-@import "tw-animate-css";
 @import "tailwindcss";
+@import "tw-animate-css";
 
-/* Stack Sans Headline is loaded from Google Fonts in src/routes/__root.tsx */
 @font-face {
   font-family: "Stack Sans Notch";
   src: url("/fonts/StackSansNotch.ttf") format("truetype");
@@ -10,29 +9,22 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "Stack Sans Headline";
-  src: url("/fonts/StackSansHeadline.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-   --font-display: "Stack Sans Notch", var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    "Stack Sans Notch", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-sans: "Stack Sans Headline", var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-serif: "Stack Sans Headline", var(--font-inter-tight), serif;
+  --font-serif:
+    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-hand: "Stack Sans Headline", var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-hand:
+    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-mono: var(--font-inter-tight), monospace;
-
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --radius-sm: 2px;
   --radius-md: 3px;
   --radius-lg: 4px;
@@ -71,7 +63,7 @@
   --muted: oklch(0.955 0.003 90);
   --muted-foreground: oklch(0.42 0.005 90);
   --rule: oklch(0.14 0 0);
-  --accent: #4F6FCF;
+  --accent: #4f6fcf;
   --accent-foreground: oklch(0.985 0 0);
 }
 
@@ -83,7 +75,7 @@
   --muted: oklch(0.2 0 0);
   --muted-foreground: oklch(0.7 0.005 90);
   --rule: oklch(0.28 0 0);
-  --accent: #A5DFDD;
+  --accent: #a5dfdd;
   --accent-foreground: oklch(0.14 0 0);
 }
 
@@ -112,7 +104,6 @@
   font-weight: 700;
   letter-spacing: 0;
   line-height: 0.9;
-   font-feature-settings: "ss01", "ss02", "cv11";
 }
 
 @utility display-serif {
@@ -133,8 +124,6 @@
   font-family: var(--font-display);
 }
 
-
-
 @utility pink-underline {
   text-decoration: underline;
   text-decoration-color: var(--color-accent);
@@ -143,8 +132,12 @@
 }
 
 @keyframes ed-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 @utility marquee {
   animation: ed-marquee 40s linear infinite;
@@ -177,74 +170,152 @@
   max-width: 1600px;
 }
 @media (min-width: 768px) {
-  .container-editorial { padding-inline: 2.5rem; }
+  .container-editorial {
+    padding-inline: 2.5rem;
+  }
 }
 @media (min-width: 1280px) {
-  .container-editorial { padding-inline: 4rem; }
+  .container-editorial {
+    padding-inline: 4rem;
+  }
 }
 
 @keyframes ed-fade-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @utility ed-fade {
   animation: ed-fade-up 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes glitch-x {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 @keyframes glitch-x-rev {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 @keyframes glitch-y {
-  from { transform: translateY(0); }
-  to { transform: translateY(-50%); }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
 }
 @keyframes glitch-y-rev {
-  from { transform: translateY(-50%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 @keyframes glitch-vibrate {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-1px, 1px); }
-  40% { transform: translate(1px, -1px); }
-  60% { transform: translate(-1px, -1px); }
-  80% { transform: translate(1px, 1px); }
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-1px, 1px);
+  }
+  40% {
+    transform: translate(1px, -1px);
+  }
+  60% {
+    transform: translate(-1px, -1px);
+  }
+  80% {
+    transform: translate(1px, 1px);
+  }
 }
 @keyframes glitch-bulge {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(1.9); }
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.9);
+  }
 }
 @keyframes glitch-bulge-x {
-  0%, 100% { transform: scaleX(1); }
-  50% { transform: scaleX(1.9); }
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(1.9);
+  }
 }
 @keyframes sound-bulge {
-  from { transform: scaleY(0.3); }
-  to { transform: scaleY(var(--amp, 1.6)); }
+  from {
+    transform: scaleY(0.3);
+  }
+  to {
+    transform: scaleY(var(--amp, 1.6));
+  }
 }
 
 /* Bars stream in from viewport edges — start fully offscreen (using vw
    so container width doesn't clamp travel on narrow mobile columns),
    arrive at the gather point by 40%, HOLD until 85%, then fade. */
 @keyframes gather-left {
-  0%   { transform: translateX(-100vw);           opacity: 0; }
-  8%   {                                          opacity: 1; }
-  40%  { transform: translateX(var(--tx, 45cqw)); opacity: 1; }
-  85%  { transform: translateX(var(--tx, 45cqw)); opacity: 1; }
-  100% { transform: translateX(var(--tx, 45cqw)); opacity: 0; }
+  0% {
+    transform: translateX(-100vw);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(var(--tx, 45cqw));
+    opacity: 1;
+  }
+  85% {
+    transform: translateX(var(--tx, 45cqw));
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--tx, 45cqw));
+    opacity: 0;
+  }
 }
 @keyframes gather-right {
-  0%   { transform: translateX(100vw);             opacity: 0; }
-  8%   {                                           opacity: 1; }
-  40%  { transform: translateX(var(--tx, -45cqw)); opacity: 1; }
-  85%  { transform: translateX(var(--tx, -45cqw)); opacity: 1; }
-  100% { transform: translateX(var(--tx, -45cqw)); opacity: 0; }
+  0% {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(var(--tx, -45cqw));
+    opacity: 1;
+  }
+  85% {
+    transform: translateX(var(--tx, -45cqw));
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--tx, -45cqw));
+    opacity: 0;
+  }
 }
-
 
 /* Traveling bulge — a wave of scaleY passes across a dense matrix of bars,
    like zooming a lens across a strip of lines. */
@@ -252,17 +323,23 @@
    like zooming a lens across a strip of lines. Wider bulge peak so the
    wave reads clearly as it travels. */
 @keyframes bulge-wave {
-  0%, 100% { transform: scaleY(1); }
-  6%       { transform: scaleY(2.2); }
-  12%      { transform: scaleY(1); }
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  6% {
+    transform: scaleY(2.2);
+  }
+  12% {
+    transform: scaleY(1);
+  }
 }
 
-
 @utility headline {
-  font-family: var(--font-sans);
+  font-family:
+    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 1.6;
 }
 
 @layer components {
@@ -283,34 +360,58 @@
 }
 
 @keyframes nav-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
 }
-.nav-blink { animation: nav-blink 0.9s ease-in-out infinite; }
+.nav-blink {
+  animation: nav-blink 0.9s ease-in-out infinite;
+}
 
 /* Side panel slide-in (disclaimer drawer) */
 @keyframes ed-slide-in-kf {
-  from { transform: translateX(24px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
-.ed-slide-in { animation: ed-slide-in-kf 0.28s ease-out both; }
+.ed-slide-in {
+  animation: ed-slide-in-kf 0.28s ease-out both;
+}
 
 /* ── Accessibility mode (toggled by the accessibility widget) ───────── */
-html { font-size: calc(100% * var(--a11y-font-scale, 1)); }
+html {
+  font-size: calc(100% * var(--a11y-font-scale, 1));
+}
 
 html.a11y-contrast {
-  --background: #ffffff;
-  --foreground: #000000;
-  --muted-foreground: #000000;
-  --rule: #000000;
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+  --color-muted-foreground: #000000;
+  --color-rule: #000000;
 }
 /* Filters are applied to page content only, never to the a11y widget itself,
    otherwise the widget can be washed out / clipped by the filter context. */
-html.a11y-contrast body > *:not(#saf-a11y-root) { filter: contrast(1.15); }
+html.a11y-contrast body > *:not(#saf-a11y-root) {
+  filter: contrast(1.15);
+}
 html.a11y-contrast img,
-html.a11y-contrast video { filter: contrast(1.1); }
+html.a11y-contrast video {
+  filter: contrast(1.1);
+}
 
-html.a11y-underline a { text-decoration: underline; text-underline-offset: 3px; }
+html.a11y-underline a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 html.a11y-reduce-motion *,
 html.a11y-reduce-motion *::before,
@@ -321,11 +422,16 @@ html.a11y-reduce-motion *::after {
   scroll-behavior: auto !important;
 }
 
-html.a11y-grayscale body > *:not(#saf-a11y-root) { filter: grayscale(1); }
-html.a11y-contrast.a11y-grayscale body > *:not(#saf-a11y-root) { filter: grayscale(1) contrast(1.15); }
+html.a11y-grayscale body > *:not(#saf-a11y-root) {
+  filter: grayscale(1);
+}
+html.a11y-contrast.a11y-grayscale body > *:not(#saf-a11y-root) {
+  filter: grayscale(1) contrast(1.15);
+}
 
-#saf-a11y-root { filter: none !important; }
-
+#saf-a11y-root {
+  filter: none !important;
+}
 
 html.a11y-readable-font,
 html.a11y-readable-font body,
@@ -343,22 +449,25 @@ html.a11y-readable-font label {
 
 html.a11y-big-cursor,
 html.a11y-big-cursor * {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'><path d='M4 2 L4 20 L9 15.5 L12 22 L15 20.5 L12 14.5 L19 14 Z' fill='black' stroke='white' stroke-width='1.2'/></svg>") 4 2, auto;
+  cursor:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'><path d='M4 2 L4 20 L9 15.5 L12 22 L15 20.5 L12 14.5 L19 14 Z' fill='black' stroke='white' stroke-width='1.2'/></svg>")
+      4 2,
+    auto;
 }
 
 /* ── Extra accessibility modes ──────────────────────────────────────── */
-html.a11y-invert body > *:not(#saf-a11y-root) { filter: invert(1) hue-rotate(180deg); }
-html.a11y-invert.a11y-grayscale body > *:not(#saf-a11y-root) { filter: invert(1) grayscale(1); }
+html.a11y-invert body > *:not(#saf-a11y-root) {
+  filter: invert(1) hue-rotate(180deg);
+}
+html.a11y-invert.a11y-grayscale body > *:not(#saf-a11y-root) {
+  filter: invert(1) grayscale(1);
+}
 
-html.a11y-highlight-links a,
-html.a11y-highlight-links button {
+html.a11y-highlight-links a:not(#saf-a11y-root a),
+html.a11y-highlight-links button:not(#saf-a11y-root button) {
   background: #ffea00 !important;
   color: #000 !important;
   box-shadow: 0 0 0 2px #ffea00;
-}
-#saf-a11y-root a,
-#saf-a11y-root button {
-  box-shadow: none !important;
 }
 
 html.a11y-spacing p,
@@ -374,13 +483,18 @@ html.a11y-spacing h3 {
 
 html.a11y-line-height p,
 html.a11y-line-height li,
-html.a11y-line-height blockquote { line-height: 2 !important; }
+html.a11y-line-height blockquote {
+  line-height: 2 !important;
+}
 
 html.a11y-hide-images img:not(#saf-a11y-root img),
 html.a11y-hide-images video,
-html.a11y-hide-images svg:not(#saf-a11y-root svg) { visibility: hidden !important; }
+html.a11y-hide-images svg:not(#saf-a11y-root svg) {
+  visibility: hidden !important;
+}
 
-html.a11y-focus :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+html.a11y-focus
+  :is(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: 4px solid #ff00c8 !important;
   outline-offset: 3px !important;
 }
@@ -389,7 +503,9 @@ html.a11y-left-align p,
 html.a11y-left-align h1,
 html.a11y-left-align h2,
 html.a11y-left-align h3,
-html.a11y-left-align li { text-align: left !important; }
+html.a11y-left-align li {
+  text-align: left !important;
+}
 
 html.a11y-dyslexia,
 html.a11y-dyslexia body,
@@ -416,6 +532,4 @@ html.a11y-dyslexia button {
   border-bottom: 2px solid #ff00c8;
   pointer-events: none;
   z-index: 99;
-};
-
-
+}
