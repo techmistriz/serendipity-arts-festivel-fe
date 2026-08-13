@@ -24,6 +24,7 @@ import {
 // Import form components
 import { GeneralForm, SeaForm, GuestForm } from "@/src/components/register/FormFields";
 import { useCheckArchiveUser } from "@/src/components/register/hooks/useCheckArchiveUser";
+import Loader from "@/src/components/common/Loader";
 
 function RegisterContent() {
     const router = useRouter();
@@ -535,7 +536,7 @@ function RegisterContent() {
 
 export default function RegisterPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loader/>}>
             <RegisterContent />
         </Suspense>
     );
