@@ -30,7 +30,9 @@ function RegisterContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const next = searchParams.get("next") || "";
-    const initialMode = (searchParams.get("mode") as "general" | "guest" | "sea") || "general";
+    // const initialMode = (searchParams.get("mode") as "general" | "guest" | "sea") || "general";
+
+    const initialMode = "general" as const;
 
 
 
@@ -421,7 +423,8 @@ function RegisterContent() {
 
             {/* Mode tabs */}
             <div className="mt-8 flex flex-wrap gap-2">
-                {(["general", "guest", "sea"] as const).map((m) => (
+                {/* {(["general", "guest", "sea"] as const).map((m) => ( */}
+                {(["general"] as const).map((m) => (
                     <button
                         key={m}
                         onClick={() => handleModeChange(m)}
@@ -484,7 +487,7 @@ function RegisterContent() {
                     <p className="mt-8 label">
                         Already have an account?{" "}
                         <Link
-                            href="/login"
+                            href="/register"
                             className="text-foreground underline underline-offset-4 hover:text-accent"
                         >
                             Login here
@@ -536,7 +539,7 @@ function RegisterContent() {
 
 export default function RegisterPage() {
     return (
-        <Suspense fallback={<Loader/>}>
+        <Suspense fallback={<Loader />}>
             <RegisterContent />
         </Suspense>
     );

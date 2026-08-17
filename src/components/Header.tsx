@@ -16,10 +16,10 @@ const MENU = [
   { label: "Curators", href: "/curators" },
   { label: "Venues", href: "/venues" },
   { label: "About us", href: "/about" },
-  { label: "Cart", href: "/cart" },
+  // { label: "Cart", href: "/cart" },
   { label: "Register", href: "/register" },
-  { label: "Login", href: "/login" },
-  { label: "Dashboard", href: "/dashboard" },
+  // { label: "Login", href: "/login" },
+  // { label: "Dashboard", href: "/dashboard" },
   { label: "Volunteer", href: "/volunteer" },
   { label: "Volunteer Registration", href: "/volunteer/apply" },
   { label: "Wayfinding", href: "/wayfinding" },
@@ -177,7 +177,7 @@ export default function Header() {
             >
               <Search className="h-5 w-5" strokeWidth={1.75} />
             </button>
-            <Link href="/dashboard" aria-label="Dashboard"
+            {/* <Link href="/dashboard" aria-label="Dashboard"
               className="relative hover:text-accent transition-colors">
               <LayoutGrid className="h-5 w-5" strokeWidth={1.75} />
             </Link>
@@ -209,7 +209,7 @@ export default function Header() {
                   </Link>
                 )}
               </>
-            )}
+            )} */}
             <button
               onClick={() => setOpen(true)}
               className="label notch flex items-center gap-2 hover:text-accent transition-colors"
