@@ -162,7 +162,7 @@ export default function Home() {
       </section>
 
       {/* PROGRAMMES */}
-      <section className="container-editorial mt-20 md:mt-32">
+      {/* <section className="container-editorial mt-20 md:mt-32">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
           <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
             Programmes
@@ -189,7 +189,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-14">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-14">
           {[...PROGRAMMES].sort((a, b) => a.title.localeCompare(b.title)).map((p, i) => (
             <Link key={i} href="/programmes" className="group block">
               <GlitchBorder seed={i + 5} thickness={1} hoverBoost={14} delayMs={200} className="overflow-hidden">
@@ -205,14 +205,14 @@ export default function Home() {
               </div>
             </Link>
           ))}
-        </div> */}
+        </div>
 
-        {/* <div className="mt-10 flex justify-end">
+        <div className="mt-10 flex justify-end">
           <Link href="/programmes" className="label hover:text-accent transition-colors">
             All programmes &nbsp;→
           </Link>
-        </div> */}
-      </section>
+        </div>
+      </section> */}
 
       {/* CURATORS */}
       <section className="container-editorial mt-20 md:mt-32">
