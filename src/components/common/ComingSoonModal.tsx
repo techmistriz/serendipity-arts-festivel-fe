@@ -30,7 +30,7 @@ export default function ComingSoonPopup({
         </h2>
 
         {/* Description */}
-        <p className=" display mx-auto mt-6 max-w-md text-base leading-7 text-muted-foreground md:text-lg">
+        <p className="  mx-auto mt-6 max-w-md text-base leading-7 text-muted-foreground md:text-lg">
           Our programmes will be available soon.
           <br />
           Please check back later.
