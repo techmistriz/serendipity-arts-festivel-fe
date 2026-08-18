@@ -9,10 +9,11 @@ import { searchSiteApi } from "../services/search";
 import { useAppDispatch, useAppSelector } from "@/src/store/hooks";
 import { logoutUser } from "@/src/store/slices/authThunk";
 import { useCart } from "../lib/cart";
+import ComingSoonPopup from "./common/ComingSoonModal";
 
 const MENU = [
   { label: "Home", href: "/" },
-  { label: "Programmes", href: "/programmes" },
+  { label: "Programmes", href: "/programmes", comingSoon: true },
   { label: "Curators", href: "/curators" },
   { label: "Venues", href: "/venues" },
   { label: "About us", href: "/about" },
@@ -20,11 +21,11 @@ const MENU = [
   { label: "Register", href: "/register" },
   // { label: "Login", href: "/login" },
   // { label: "Dashboard", href: "/dashboard" },
-  { label: "Volunteer", href: "/volunteer" },
-  { label: "Volunteer Registration", href: "/volunteer/apply" },
-  { label: "Wayfinding", href: "/wayfinding" },
-  { label: "Icons", href: "/icons" },
-  { label: "SEA", href: "/sea" },
+  // { label: "Volunteer", href: "/volunteer" },
+  // { label: "Volunteer Registration", href: "/volunteer/apply" },
+  // { label: "Wayfinding", href: "/wayfinding" },
+  // { label: "Icons", href: "/icons" },
+  // { label: "SEA", href: "/sea" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
   { label: "Privacy", href: "/privacy" },
@@ -63,6 +64,7 @@ export default function Header() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [programPopupOpen, setProgramPopupOpen] = useState(false);
 
 
   const isHome = pathname === "/";
@@ -304,7 +306,8 @@ export default function Header() {
           </div>
           <nav className="container-editorial pt-8 pb-16 md:pt-16">
             <ul>
-              {MENU.map((m) => (
+              {/* temporary */}
+              {/* {MENU.map((m) => (
                 <li key={m.href} className="rule-b">
                   <Link
                     href={m.href}
@@ -320,11 +323,54 @@ export default function Header() {
                     </span>
                   </Link>
                 </li>
+              ))} */}
+
+              {MENU.map((m) => (
+                <li key={m.href} className="rule-b">
+                  {m.comingSoon ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpen(false);
+                        setProgramPopupOpen(true);
+                      }}
+                      className="group flex w-full items-baseline justify-between py-4 text-left md:py-7"
+                    >
+                      <span className="display uppercase text-[11vw] leading-[0.95] transition-colors group-hover:text-accent md:text-[7vw]">
+                        {m.label}
+                      </span>
+
+                      <span className="label hidden text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 md:inline">
+                        &rarr;
+                      </span>
+                    </button>
+                  ) : (
+                    <Link
+                      href={m.href}
+                      onClick={() => setOpen(false)}
+                      className="group flex items-baseline justify-between py-4 md:py-7"
+                    >
+                      <span className="display uppercase text-[11vw] leading-[0.95] transition-colors group-hover:text-accent md:text-[7vw]">
+                        {m.label}
+                      </span>
+
+                      <span className="label hidden text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 md:inline">
+                        &rarr;
+                      </span>
+                    </Link>
+                  )}
+                </li>
               ))}
             </ul>
           </nav>
         </div>
       )}
+
+      <ComingSoonPopup
+        open={programPopupOpen}
+        onClose={() => setProgramPopupOpen(false)}
+      />
+
     </>
   );
 }
