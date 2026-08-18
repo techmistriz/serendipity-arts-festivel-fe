@@ -109,7 +109,7 @@ function LoginContent() {
               <button
                 type="button"
                 onClick={() => setForgot(true)}
-                className="label text-accent hover:underline underline-offset-4"
+                className="label text-accent hover:underline underline-offset-4 cursor-pointer"
               >
                 Forgot password?
               </button>

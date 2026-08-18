@@ -487,7 +487,7 @@ function RegisterContent() {
                     <p className="mt-8 label">
                         Already have an account?{" "}
                         <Link
-                            href="/register"
+                            href="/login"
                             className="text-foreground underline underline-offset-4 hover:text-accent"
                         >
                             Login here

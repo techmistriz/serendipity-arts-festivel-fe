@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 const DISABLED_ROUTES = [
   "/programmes",
   "/cart",
-  "/login",
+  // "/login",
   "/dashboard",
   "/volunteer",
   "/volunteer/apply",
@@ -32,7 +32,7 @@ export const config = {
   matcher: [
     "/programmes/:path*",
     "/cart/:path*",
-    "/login/:path*",
+    // "/login/:path*",
     "/dashboard/:path*",
     "/volunteer/:path*",
     "/wayfinding/:path*",

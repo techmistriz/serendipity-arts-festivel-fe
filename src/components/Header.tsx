@@ -212,6 +212,13 @@ export default function Header() {
                 )}
               </>
             )} */}
+
+             {(!isHome || scrolled) && (
+                  <Link href="/register"
+                    className="label notch bg-foreground text-background rounded-full px-4 py-2 hover:bg-accent transition-colors">
+                    Register
+                  </Link>
+                )}
             <button
               onClick={() => setOpen(true)}
               className="label notch flex items-center gap-2 hover:text-accent transition-colors"
