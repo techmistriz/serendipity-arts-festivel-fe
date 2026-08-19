@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useCart } from "@/context/cart-context";
+import { useCart } from "@/hooks/use-cart";
 
 export default function Added() {
   return (

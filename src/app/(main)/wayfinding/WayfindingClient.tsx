@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { GOA_NODES, GOA_VENUE_POINTS } from "@/data/goa-map";
-import { useCart } from "@/context/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import { goaVenueSlug } from "@/lib/venue-slug";
 import { GoogleWayfindingMap } from "@/components/maps/google-wayfinding-map";
 

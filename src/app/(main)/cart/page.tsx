@@ -1,7 +1,7 @@
 "use client";
 
 import { BookingSuccess } from "@/components/common/BookingSuccess";
-import { useCart } from "@/context/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

@@ -6,7 +6,6 @@ import { createPortal } from "react-dom";
 import { categoryStyle, tagStyle, priceStyle } from "@/lib/tag-colors";
 
 import { Heart } from "lucide-react";
-// import { useCart } from "@/context/cart-context";
 import {
   PROGRAMMES,
   type Programme,
@@ -20,7 +19,7 @@ import {
 } from "@/data/programmes-data";
 import { RecommendModal } from "@/components/common/RecommendModal";
 
-import { useCart } from "@/context/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import GlitchBar from "@/components/common/GlitchBar";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 import Link from "next/link";
@@ -518,7 +517,7 @@ function BookingSheet({
 
   const [showRegisterGate, setShowRegisterGate] = useState(false);
 
-  const { add, items, bookings, isVip, markJustBooked } = useCart();
+  const { add, items, bookings, isVip } = useCart();
 
   const router = useRouter();
 
@@ -594,7 +593,6 @@ function BookingSheet({
         qty,
       );
     }
-    markJustBooked();
   };
 
   const handleAddToCart = () => {

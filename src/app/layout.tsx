@@ -5,7 +5,6 @@ import { AccessibilityWidget } from "@/components/common/AccessibilityWidget";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { siteConfig } from "@/config/site";
-import { CartProvider } from "@/context/cart-context";
 import { ReduxProvider } from "@/redux/provider";
 
 const interTight = Inter_Tight({
@@ -37,12 +36,10 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col">
         <ReduxProvider>
-          <CartProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <AccessibilityWidget />
-          </CartProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <AccessibilityWidget />
         </ReduxProvider>
       </body>
     </html>

@@ -2,6 +2,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 
 import authReducer from "@/redux/slices/authSlice";
+import cartReducer from "@/redux/slices/cartSlice";
 
 export const createNoopStorage = () => ({
   getItem: () => Promise.resolve(null),
@@ -19,9 +20,10 @@ export const rootPersistConfig = {
   key: "serendipity-arts-festival",
   storage,
   keyPrefix: "redux-",
-  whitelist: ["auth"],
+  whitelist: ["auth", "cart"],
 };
 
 export const rootReducer = combineReducers({
   auth: authReducer,
+  cart: cartReducer,
 });
