@@ -66,6 +66,7 @@ function LoginContent() {
       console.error("API Error:", error);
     }
   };
+
   return (
     <div className="container-editorial pt-12 md:pt-24 pb-32 max-w-lg">
       <h1 className="display uppercase text-[14vw] md:text-[7vw] leading-[0.9]">Login</h1>

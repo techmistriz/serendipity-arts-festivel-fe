@@ -1,9 +1,16 @@
 import axios from "axios";
 
 import { store } from "@/redux/store";
+import { siteConfig } from "@/config/site";
 
+/**
+ * The application's single HTTP client for browser-to-backend API calls.
+ *
+ * Services import this instance so API configuration, Passport token handling,
+ * and expired-session behaviour remain consistent everywhere.
+ */
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: siteConfig.api_base_url,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
