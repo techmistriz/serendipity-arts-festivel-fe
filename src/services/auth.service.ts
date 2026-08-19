@@ -1,35 +1,26 @@
 import api from "@/lib/api-client";
 import type { ApiResponse } from "@/types/api";
-import type { User } from "@/redux/slices/auth/types";
+import type { AuthSession, LoginCredentials } from "@/types/auth";
 
-type LoginResponse = ApiResponse<{ user: User; token: string }>;
+const post = async <T>(path: string, payload?: unknown) =>
+  (await api.post<ApiResponse<T>>(path, payload)).data;
 
-export const loginAPI = (data: { email: string; password: string }) => {
-  return api.post<LoginResponse>("/auth/login", data);
-};
+export const authService = {
+  async login(credentials: LoginCredentials): Promise<AuthSession> {
+    const response = await post<AuthSession>("/auth/login", credentials);
 
-export const logoutAPI = () => {
-  return api.post("/auth/logout");
-};
+    if (!response.status || !response.data?.token || !response.data.user) {
+      throw new Error(response.message || "Unable to sign in.");
+    }
 
-export const forgotPasswordAPI = (email: string) => {
-  return api.post<ApiResponse>("/auth/forgot-password", {
-    email,
-  });
-};
-
-export const resetPasswordAPI = async (
-  token: string,
-  email: string,
-  password: string,
-  password_confirmation: string,
-) => {
-  const response = await api.post<ApiResponse>("/auth/reset-password", {
-    token,
-    email,
-    password,
-    password_confirmation,
-  });
-
-  return response.data;
+    return response.data;
+  },
+  logout: () => post<null>("/auth/logout"),
+  forgotPassword: (email: string) => post<null>("/auth/forgot-password", { email }),
+  resetPassword: (payload: {
+    token: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+  }) => post<null>("/auth/reset-password", payload),
 };

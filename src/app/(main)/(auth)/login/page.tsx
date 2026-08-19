@@ -2,13 +2,12 @@
 
 import { Suspense } from "react";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { login } from "@/redux/slices/authThunk";
+import { useAuth } from "@/hooks/use-auth";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { forgotPasswordAPI } from "@/services/auth.service";
+import { authService } from "@/services/auth.service";
 
 type LoginForm = {
   email: string;
@@ -27,8 +26,7 @@ function LoginContent() {
   const [forgot, setForgot] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const dispatch = useAppDispatch();
-  const loading = useAppSelector((state) => state.auth.loading);
+  const { isLoading, signIn } = useAuth();
 
   const {
     register,
@@ -44,7 +42,7 @@ function LoginContent() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      await dispatch(login(data.email, data.password));
+      await signIn(data);
 
       router.push(next || "/dashboard");
     } catch (error: unknown) {
@@ -59,7 +57,7 @@ function LoginContent() {
     console.log("Submitting forgot password:", data);
 
     try {
-      const response = await forgotPasswordAPI(data.email);
+      const response = await authService.forgotPassword(data.email);
 
       console.log("API Success:", response);
 
@@ -123,10 +121,10 @@ function LoginContent() {
           </div>
           <button
             type="submit"
-            disabled={loading}
+            disabled={isLoading}
             className="headline font-semibold uppercase text-lg md:text-xl bg-foreground text-background rounded-full px-8 py-4 disabled:opacity-50"
           >
-            {loading ? "Signing in..." : "Sign in →"}
+            {isLoading ? "Signing in..." : "Sign in →"}
           </button>
           <p className="label pt-4">
             New here?{" "}

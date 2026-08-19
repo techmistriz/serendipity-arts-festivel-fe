@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 
-import { resetPasswordAPI } from "@/services/auth.service";
+import { authService } from "@/services/auth.service";
 
 type ResetPasswordForm = {
   password: string;
@@ -46,12 +46,12 @@ function ResetPasswordContent() {
     try {
       setLoading(true);
 
-      const response = await resetPasswordAPI(
+      const response = await authService.resetPassword({
         token,
         email,
-        data.password,
-        data.password_confirmation,
-      );
+        password: data.password,
+        password_confirmation: data.password_confirmation,
+      });
 
       console.log("Reset password success:", response);
 

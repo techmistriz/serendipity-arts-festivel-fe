@@ -13,7 +13,7 @@ import artParkImg from "@public/images/home/art-park-v2.jpg";
 import sambaImg from "@public/images/home/samba-square-2026.jpg";
 import gmcImg from "@public/images/home/old-gmc-v2.jpg";
 import promenadeImg from "@public/images/home/promenade-v2.jpg";
-import { useAppSelector } from "@/redux/hooks";
+import { useAuth } from "@/hooks/use-auth";
 // import { GlitchBorder } from "@/components/site/GlitchBorder";
 // import { GlitchLines } from "@/components/site/GlitchLines";
 // import { RecommendModal } from "@/components/site/RecommendModal";
@@ -102,7 +102,7 @@ const tornStyle = { clipPath: TORN_CLIP, WebkitClipPath: TORN_CLIP } as const;
 
 export default function Home() {
   const featuredCurators = [...CURATORS].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 4);
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated } = useAuth();
   const [recOpen, setRecOpen] = useState(false);
   const [filmOpen, setFilmOpen] = useState(false);
   const [pressOpen, setPressOpen] = useState(false);

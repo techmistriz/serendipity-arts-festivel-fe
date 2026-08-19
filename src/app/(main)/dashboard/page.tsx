@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Heart } from "lucide-react";
 import Image from "next/image";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { logoutUser } from "@/redux/slices/authThunk";
+import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { fmtTime, PROGRAMMES } from "@/data/programmes-data";
 
@@ -71,14 +70,12 @@ export default function DashboardPage() {
   const venuesCovered = new Set(bookings.map((b) => b.venue)).size;
 
   const router = useRouter();
-  const dispatch = useAppDispatch();
-
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, signOut, user } = useAuth();
 
   const isLoggedIn = isAuthenticated;
 
   const handleLogout = async () => {
-    await dispatch(logoutUser());
+    await signOut();
     router.replace("/login");
   };
 

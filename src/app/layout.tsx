@@ -8,7 +8,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { siteConfig } from "@/config/site";
 import { CartProvider } from "@/context/cart-context";
-import ReduxProvider from "@/redux/provider";
+import { ReduxProvider } from "@/redux/provider";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],

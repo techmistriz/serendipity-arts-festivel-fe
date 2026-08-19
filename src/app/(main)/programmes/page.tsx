@@ -26,7 +26,7 @@ import { GlitchBorder } from "@/components/common/GlitchBorder";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { useAppSelector } from "@/redux/hooks";
+import { useAuth } from "@/hooks/use-auth";
 
 // Category slug ↔ display name mapping. Consumed by /programmes/$category.
 export const CATEGORY_SLUGS: Record<string, string> = {
@@ -502,7 +502,7 @@ function BookingSheet({
   onClose: () => void;
   onOpen: (p: Programme) => void;
 }) {
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated } = useAuth();
 
   const [qty, setQty] = useState(1);
   const [slotIdx, setSlotIdx] = useState(0);

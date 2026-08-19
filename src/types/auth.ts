@@ -57,3 +57,26 @@ export interface SEARequest {
   terms: boolean;
   is_old_user: 0 | 1;
 }
+
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface AuthSession {
+  user: AuthUser;
+  token: string;
+}
+
+export interface AuthState {
+  user: AuthUser | null;
+  token: string | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}

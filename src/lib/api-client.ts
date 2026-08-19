@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { clearStoredSession, getStoredAuthToken } from "@/lib/auth-session";
+
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
@@ -11,7 +13,8 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = typeof window === "undefined" ? null : localStorage.getItem("token");
+    const token = getStoredAuthToken();
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -31,8 +34,7 @@ apiClient.interceptors.response.use(
       error.response?.status === 401 &&
       typeof window !== "undefined"
     ) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      clearStoredSession();
       window.dispatchEvent(new Event("saf:session-expired"));
     }
     return Promise.reject(error);

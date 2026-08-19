@@ -6,13 +6,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-import { useAppSelector } from "@/redux/hooks";
-import { RootState } from "@/redux/store";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function CartPage() {
   const { items, remove, setQty, subtotal, confirmBooking, isVip } = useCart();
 
-  const { user, token, isAuthenticated } = useAppSelector((state: RootState) => state.auth);
+  const { isAuthenticated } = useAuth();
 
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
