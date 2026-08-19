@@ -2,16 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import Loader from "@/components/common/Loader";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { getErrorMessage } from "@/utils/error";
 
 import { getCuratorDetail, getCurators } from "./api";
 import { CuratorCard } from "./_components/CuratorCard";
-import { CuratorFilters, type CuratorDisciplineFilter } from "./_components/CuratorFilters";
+import { CuratorFilters } from "./_components/CuratorFilters";
 import { CuratorDetailModal } from "./_components/CuratorDetailModal";
-import type { CuratorDetailData, CuratorDiscipline, CuratorListItem } from "./types";
+import {
+  CuratorEmptyState,
+  CuratorErrorAlert,
+  CuratorLoadingState,
+} from "./_components/CuratorStatus";
+import { filterCuratorsByDiscipline, getCuratorDisciplines } from "./helpers";
+import type { CuratorDetailData, CuratorDisciplineFilter, CuratorListItem } from "./types";
 
 export default function CuratorsPageClient() {
   const [selectedDiscipline, setSelectedDiscipline] = useState<CuratorDisciplineFilter>("all");
@@ -86,12 +89,9 @@ export default function CuratorsPageClient() {
     }
   }, []);
 
-  const disciplines = useMemo(() => getDisciplines(curators), [curators]);
+  const disciplines = useMemo(() => getCuratorDisciplines(curators), [curators]);
   const visibleCurators = useMemo(
-    () =>
-      selectedDiscipline === "all"
-        ? curators
-        : curators.filter((curator) => curator.discipline?.id === selectedDiscipline),
+    () => filterCuratorsByDiscipline(curators, selectedDiscipline),
     [curators, selectedDiscipline],
   );
 
@@ -123,17 +123,26 @@ export default function CuratorsPageClient() {
         Arts and Special Projects.
       </p>
 
-      {listError && <ListError error={listError} onRetry={retryCurators} />}
+      {listError && (
+        <CuratorErrorAlert
+          title="Curators are unavailable"
+          error={listError}
+          onRetry={retryCurators}
+          className="mt-10"
+        />
+      )}
       {detailError && (
-        <DetailError
+        <CuratorErrorAlert
+          title="Curator details are unavailable"
           error={detailError}
           onRetry={retryCuratorDetail}
-          canRetry={Boolean(lastSelectedCurator)}
+          retryDisabled={!lastSelectedCurator}
+          className="mt-6"
         />
       )}
 
       {loading ? (
-        <LoadingState label="Loading curators" className="mt-40" />
+        <CuratorLoadingState label="Loading curators" variant="inline" />
       ) : (
         <>
           <CuratorFilters
@@ -154,101 +163,14 @@ export default function CuratorsPageClient() {
               ))}
             </div>
           ) : (
-            <EmptyState hasActiveFilter={selectedDiscipline !== "all"} />
+            <CuratorEmptyState hasActiveFilter={selectedDiscipline !== "all"} />
           )}
         </>
       )}
 
-      {detailLoading && <LoadingState label="Loading curator details" fullScreen />}
+      {detailLoading && <CuratorLoadingState label="Loading curator details" variant="overlay" />}
 
       <CuratorDetailModal activeCurator={activeCurator} onClose={() => setActiveCurator(null)} />
-    </div>
-  );
-}
-
-function getDisciplines(curators: CuratorListItem[]): CuratorDiscipline[] {
-  const disciplines = new Map<number, CuratorDiscipline>();
-
-  curators.forEach((curator) => {
-    if (curator.discipline) {
-      disciplines.set(curator.discipline.id, curator.discipline);
-    }
-  });
-
-  return Array.from(disciplines.values());
-}
-
-function ListError({ error, onRetry }: { error: string; onRetry: () => void }) {
-  return (
-    <Alert variant="destructive" className="mt-10">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <AlertTitle>Curators are unavailable</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </div>
-        <Button variant="outline" onClick={onRetry}>
-          Try again
-        </Button>
-      </div>
-    </Alert>
-  );
-}
-
-function DetailError({
-  error,
-  onRetry,
-  canRetry,
-}: {
-  error: string;
-  onRetry: () => void;
-  canRetry: boolean;
-}) {
-  return (
-    <Alert variant="destructive" className="mt-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <AlertTitle>Curator details are unavailable</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </div>
-        <Button variant="outline" onClick={onRetry} disabled={!canRetry}>
-          Try again
-        </Button>
-      </div>
-    </Alert>
-  );
-}
-
-function EmptyState({ hasActiveFilter }: { hasActiveFilter: boolean }) {
-  return (
-    <div className="mt-16 text-center">
-      <p className="headline text-sm uppercase text-muted-foreground">
-        {hasActiveFilter ? "No curators match this discipline" : "No curators are available yet"}
-      </p>
-    </div>
-  );
-}
-
-function LoadingState({
-  label,
-  className,
-  fullScreen = false,
-}: {
-  label: string;
-  className?: string;
-  fullScreen?: boolean;
-}) {
-  return (
-    <div
-      className={
-        fullScreen
-          ? "fixed inset-0 z-40 flex items-center justify-center bg-background/80 backdrop-blur-sm"
-          : className
-      }
-      role="status"
-      aria-live="polite"
-    >
-      <Loader />
-      <span className="sr-only">{label}</span>
     </div>
   );
 }

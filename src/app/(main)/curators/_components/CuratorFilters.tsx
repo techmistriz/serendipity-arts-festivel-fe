@@ -1,6 +1,4 @@
-import type { CuratorDiscipline } from "../types";
-
-export type CuratorDisciplineFilter = "all" | number;
+import type { CuratorDiscipline, CuratorDisciplineFilter } from "../types";
 
 type CuratorFiltersProps = {
   disciplines: CuratorDiscipline[];

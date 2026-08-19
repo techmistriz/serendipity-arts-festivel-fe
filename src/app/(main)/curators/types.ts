@@ -35,3 +35,5 @@ export interface CuratorDetailData {
   curator: CuratorDetail;
   programs: CuratorProgram[];
 }
+
+export type CuratorDisciplineFilter = "all" | number;
