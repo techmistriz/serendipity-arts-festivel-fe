@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { tornPaperStyle } from "@/config/constants";
-import collageHero from "@public/collage-hero-hd.jpg";
+import { homeImages } from "@/config/images";
 
 export function HomeIntroduction() {
   return (
@@ -11,7 +11,7 @@ export function HomeIntroduction() {
         style={tornPaperStyle}
       >
         <Image
-          src={collageHero}
+          src={homeImages.collageHero}
           alt="Serendipity Arts Festival collage"
           fill
           sizes="(max-width: 768px) 100vw, min(100vw - 80px, 1600px)"

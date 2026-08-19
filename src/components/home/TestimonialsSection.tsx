@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 
+import { homeImages } from "@/config/images";
 import { TESTIMONIALS } from "@/data/testimonials";
-import testimonialsBox from "@public/testimonials-box.png";
 
 import { HomePromoPanel } from "./HomePromoPanel";
 import { HomeSectionHeader } from "./HomeSectionHeader";
@@ -17,7 +17,7 @@ export function TestimonialsSection() {
   return (
     <section className="container-editorial mt-20 md:mt-32">
       <HomeSectionHeader title="Testimonials">
-        <HomePromoPanel image={testimonialsBox}>
+        <HomePromoPanel image={homeImages.testimonialsBox}>
           <p className="notch text-xl leading-[1] font-semibold tracking-[-0.01em] text-white uppercase md:text-2xl">
             The first hand experience
           </p>

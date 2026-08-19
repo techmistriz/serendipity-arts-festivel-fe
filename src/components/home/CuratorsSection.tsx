@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { GlitchBorder } from "@/components/common/GlitchBorder";
+import { homeImages } from "@/config/images";
 import { CURATORS } from "@/data/curators";
-import curatorsBox from "@public/curators-box.jpg";
 
 import { HomePromoPanel } from "./HomePromoPanel";
 import { HomeSectionHeader } from "./HomeSectionHeader";
@@ -20,7 +20,7 @@ export function CuratorsSection() {
           rel="noopener noreferrer"
           className="md:col-span-5"
         >
-          <HomePromoPanel image={curatorsBox}>
+          <HomePromoPanel image={homeImages.curatorsBox}>
             <p className="notch text-xl leading-[1] font-semibold tracking-[-0.01em] text-white uppercase md:text-2xl">
               Meet the festival curators over the years
             </p>

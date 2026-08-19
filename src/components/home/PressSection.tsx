@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import pressBox from "@public/press-box.png";
+import { homeImages } from "@/config/images";
 
 import { HomePromoPanel } from "./HomePromoPanel";
 import { HomeSectionHeader } from "./HomeSectionHeader";
@@ -61,7 +61,7 @@ export function PressSection() {
   return (
     <section className="container-editorial mt-20 md:mt-32">
       <HomeSectionHeader title="Press">
-        <HomePromoPanel image={pressBox} imageClassName="scale-[1.7] object-[30%_85%]">
+        <HomePromoPanel image={homeImages.pressBox} imageClassName="scale-[1.7] object-[30%_85%]">
           <p className="notch text-xl leading-[1] font-semibold tracking-[-0.01em] text-white uppercase md:text-2xl">
             Watch the coverages
           </p>

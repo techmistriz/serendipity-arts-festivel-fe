@@ -1,4 +1,4 @@
-import venuesBox from "@public/venues-box.png";
+import { homeImages } from "@/config/images";
 
 import { HomePromoPanel } from "./HomePromoPanel";
 import { HomeSectionHeader } from "./HomeSectionHeader";
@@ -7,7 +7,7 @@ export function VenuesSection() {
   return (
     <section className="container-editorial mt-20 md:mt-32">
       <HomeSectionHeader title="Venues">
-        <HomePromoPanel image={venuesBox} imageClassName="scale-150 object-[22%_78%]">
+        <HomePromoPanel image={homeImages.venuesBox} imageClassName="scale-150 object-[22%_78%]">
           <p className="notch text-xl leading-[1] font-semibold tracking-[-0.01em] text-white uppercase md:text-2xl">
             Serendipity Dash
           </p>
