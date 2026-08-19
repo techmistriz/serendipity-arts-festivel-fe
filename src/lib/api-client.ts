@@ -39,6 +39,7 @@ apiClient.interceptors.response.use(
     if (
       axios.isAxiosError(error) &&
       error.response?.status === 401 &&
+      Boolean(store.getState().auth.token) &&
       typeof window !== "undefined"
     ) {
       window.dispatchEvent(new Event("saf:session-expired"));

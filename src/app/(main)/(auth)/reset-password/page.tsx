@@ -3,10 +3,10 @@
 import { Suspense, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 
 import { authService } from "@/services/auth.service";
+import { getErrorMessage } from "@/utils/error";
 
 type ResetPasswordForm = {
   password: string;
@@ -46,28 +46,17 @@ function ResetPasswordContent() {
     try {
       setLoading(true);
 
-      const response = await authService.resetPassword({
+      await authService.resetPassword({
         token,
         email,
         password: data.password,
         password_confirmation: data.password_confirmation,
       });
 
-      console.log("Reset password success:", response);
-
       setSuccess(true);
     } catch (error: unknown) {
-      console.error("Reset password error:", error);
-
-      const responseData = error instanceof AxiosError ? error.response?.data : null;
       setApiError(
-        (typeof responseData === "object" && responseData !== null && "message" in responseData
-          ? String(responseData.message)
-          : undefined) ||
-          (typeof responseData === "object" && responseData !== null && "error" in responseData
-            ? String(responseData.error)
-            : undefined) ||
-          "Unable to reset your password. The link may have expired.",
+        getErrorMessage(error, "Unable to reset your password. The link may have expired."),
       );
     } finally {
       setLoading(false);

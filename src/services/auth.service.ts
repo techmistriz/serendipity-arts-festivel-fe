@@ -5,22 +5,60 @@ import type { AuthSession, LoginCredentials } from "@/types/auth";
 const post = async <T>(path: string, payload?: unknown) =>
   (await api.post<ApiResponse<T>>(path, payload)).data;
 
+const getSuccessfulData = <T>(response: ApiResponse<T>, fallback: string): T => {
+  if (!response.status) {
+    throw new Error(response.message || fallback);
+  }
+
+  return response.data;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object";
+
+const isAuthSession = (value: unknown): value is AuthSession => {
+  if (!isRecord(value) || !isRecord(value.user)) return false;
+
+  const user = value.user;
+
+  return (
+    typeof value.token === "string" &&
+    value.token.length > 0 &&
+    typeof user.id === "number" &&
+    typeof user.name === "string" &&
+    typeof user.email === "string"
+  );
+};
+
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthSession> {
-    const response = await post<AuthSession>("/auth/login", credentials);
+    const response = await post<unknown>("/auth/login", credentials);
+    const session = getSuccessfulData(response, "Unable to sign in.");
 
-    if (!response.status || !response.data?.token || !response.data.user) {
-      throw new Error(response.message || "Unable to sign in.");
+    if (!isAuthSession(session)) {
+      throw new Error("The server returned an invalid sign-in response.");
     }
 
-    return response.data;
+    return session;
   },
-  logout: () => post<null>("/auth/logout"),
-  forgotPassword: (email: string) => post<null>("/auth/forgot-password", { email }),
-  resetPassword: (payload: {
+  async logout(): Promise<void> {
+    getSuccessfulData(await post<null>("/auth/logout"), "Unable to sign out.");
+  },
+  async forgotPassword(email: string): Promise<void> {
+    getSuccessfulData(
+      await post<null>("/auth/forgot-password", { email }),
+      "Unable to send a reset link.",
+    );
+  },
+  async resetPassword(payload: {
     token: string;
     email: string;
     password: string;
     password_confirmation: string;
-  }) => post<null>("/auth/reset-password", payload),
+  }): Promise<void> {
+    getSuccessfulData(
+      await post<null>("/auth/reset-password", payload),
+      "Unable to reset your password.",
+    );
+  },
 };
