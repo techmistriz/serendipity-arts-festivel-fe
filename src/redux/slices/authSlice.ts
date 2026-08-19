@@ -5,7 +5,7 @@ import type { AuthSession, AuthState } from "@/types/auth";
 const initialState: AuthState = {
   user: null,
   token: null,
-  loading: true,
+  loading: false,
   isAuthenticated: false,
 };
 
