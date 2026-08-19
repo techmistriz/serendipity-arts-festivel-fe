@@ -1,118 +1,166 @@
 "use client";
 
+import DOMPurify from "dompurify";
+import Image from "next/image";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import GlitchBar from "@/components/common/GlitchBar";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-
-import {
-  getCurators,
-  getCuratorDetail,
-  type ApiCurator,
-  type ApiProgram,
-  type CuratorDetail,
-} from "@/services/curators";
-
 import Loader from "@/components/common/Loader";
-import Image from "next/image";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Modal,
+  ModalClose,
+  ModalContent,
+  ModalDescription,
+  ModalHeader,
+  ModalTitle,
+} from "@/components/ui/Modal";
+import {
+  getCuratorDetail,
+  getCurators,
+  type CuratorDetailData,
+  type CuratorListItem,
+  type CuratorProgram,
+} from "@/services/curators";
+import { getErrorMessage } from "@/utils/error";
+import { formatDate } from "@/utils/format";
+import { resolveApiMediaUrl } from "@/utils/media";
 
-const IMAGE_BASE_URL = "http://localhost:8000";
+type DisciplineFilter = "all" | number;
 
-interface ActiveCurator {
-  curator: CuratorDetail;
-  programs: ApiProgram[];
-}
+const BIO_ALLOWED_TAGS = [
+  "a",
+  "b",
+  "blockquote",
+  "br",
+  "em",
+  "h2",
+  "h3",
+  "i",
+  "li",
+  "ol",
+  "p",
+  "strong",
+  "ul",
+];
 
-export default function Curators() {
-  const [discipline, setDiscipline] = useState("All");
-
-  const [curators, setCurators] = useState<ApiCurator[]>([]);
-
-  const [active, setActive] = useState<ActiveCurator | null>(null);
-
+export default function CuratorsClient() {
+  const [selectedDiscipline, setSelectedDiscipline] = useState<DisciplineFilter>("all");
+  const [curators, setCurators] = useState<CuratorListItem[]>([]);
+  const [activeCurator, setActiveCurator] = useState<CuratorDetailData | null>(null);
+  const [lastSelectedCurator, setLastSelectedCurator] = useState<CuratorListItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [listError, setListError] = useState<string | null>(null);
+  const [detailError, setDetailError] = useState<string | null>(null);
 
-  // ----------Image URL------------
-
-  const getImageUrl = (image: string | null) => {
-    if (!image) {
-      return "/images/placeholder.jpg";
-    }
-
-    if (/^https?:\/\//i.test(image)) {
-      return image;
-    }
-
-    return `${IMAGE_BASE_URL}/${image.replace(/^\//, "")}`;
-  };
-
-  // ----------Get curators-----------
+  const detailCache = useRef(new Map<string, CuratorDetailData>());
+  const detailRequest = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    async function loadCurators() {
-      try {
-        setLoading(true);
+    const controller = new AbortController();
 
-        const data = await getCurators();
+    void getCurators(controller.signal)
+      .then((data) => {
+        if (!controller.signal.aborted) {
+          setCurators(data);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) {
+          setListError(getErrorMessage(error, "Unable to load curators. Please try again."));
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      });
 
-        const visibleCurators = data.filter(
-          (curator) => curator.discipline && curator.discipline.name,
-        );
-
-        setCurators(visibleCurators);
-      } catch (error) {
-        console.error("Failed to load curators:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadCurators();
+    return () => controller.abort();
   }, []);
 
-  // ----------Get curator detail-------------
+  useEffect(() => {
+    return () => detailRequest.current?.abort();
+  }, []);
 
-  const handleCuratorClick = async (curator: ApiCurator) => {
+  const openCurator = useCallback(async (curator: CuratorListItem) => {
+    setLastSelectedCurator(curator);
+    setDetailError(null);
+
+    const cachedDetail = detailCache.current.get(curator.slug);
+    if (cachedDetail) {
+      setActiveCurator(cachedDetail);
+      return;
+    }
+
+    detailRequest.current?.abort();
+    const controller = new AbortController();
+    detailRequest.current = controller;
+    setDetailLoading(true);
+
     try {
-      setDetailLoading(true);
+      const detail = await getCuratorDetail(curator.slug, controller.signal);
 
-      const data = await getCuratorDetail(curator.slug);
+      if (controller.signal.aborted) return;
 
-      setActive({
-        curator: data.curator,
-        programs: data.programs || [],
-      });
+      detailCache.current.set(curator.slug, detail);
+      setActiveCurator(detail);
     } catch (error) {
-      console.error("Failed to load curator detail:", error);
+      if (!controller.signal.aborted) {
+        setDetailError(getErrorMessage(error, "Unable to load curator details. Please try again."));
+      }
     } finally {
-      setDetailLoading(false);
+      if (!controller.signal.aborted) {
+        setDetailLoading(false);
+      }
+    }
+  }, []);
+
+  const disciplines = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          curators
+            .filter((curator) => curator.discipline)
+            .map((curator) => [curator.discipline!.id, curator.discipline!] as const),
+        ).values(),
+      ),
+    [curators],
+  );
+
+  const visibleCurators = useMemo(
+    () =>
+      selectedDiscipline === "all"
+        ? curators
+        : curators.filter((curator) => curator.discipline?.id === selectedDiscipline),
+    [curators, selectedDiscipline],
+  );
+
+  const retryCuratorDetail = () => {
+    if (lastSelectedCurator) {
+      void openCurator(lastSelectedCurator);
     }
   };
 
-  // --------Disciplines-----------
+  const retryCurators = () => {
+    setLoading(true);
+    setListError(null);
 
-  const disciplines = [
-    "All",
-    ...Array.from(
-      new Set(curators.map((curator) => curator.discipline?.name).filter(Boolean) as string[]),
-    ),
-  ];
-
-  // ---------Filter -----------
-
-  const list =
-    discipline === "All"
-      ? curators
-      : curators.filter((curator) => curator.discipline?.name === discipline);
-
-  const sortedList = list.slice().sort((a, b) => a.name.localeCompare(b.name));
+    void getCurators()
+      .then(setCurators)
+      .catch((error: unknown) => {
+        setListError(getErrorMessage(error, "Unable to load curators. Please try again."));
+      })
+      .finally(() => setLoading(false));
+  };
 
   return (
-    <div className="container-editorial pt-10 md:pt-20 pb-32">
-      {/* Page heading */}
-
-      <h1 className="display uppercase text-[13vw] md:text-[9vw] leading-[0.9]">Curators</h1>
+    <div className="container-editorial pt-10 pb-32 md:pt-20">
+      <h1 className="display text-[13vw] leading-[0.9] uppercase md:text-[9vw]">Curators</h1>
 
       <p className="mt-6 max-w-2xl text-muted-foreground">
         The artists, scholars and practitioners shaping the 2026 edition — an interdisciplinary
@@ -120,297 +168,320 @@ export default function Curators() {
         Arts and Special Projects.
       </p>
 
-      {/* ----------Loading ---------- */}
-
-      {loading && (
-        <div className="mt-40">
-          <Loader />
-        </div>
+      {listError && (
+        <Alert variant="destructive" className="mt-10">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <AlertTitle>Curators are unavailable</AlertTitle>
+              <AlertDescription>{listError}</AlertDescription>
+            </div>
+            <Button variant="outline" onClick={retryCurators}>
+              Try again
+            </Button>
+          </div>
+        </Alert>
       )}
 
-      {!loading && (
+      {detailError && (
+        <Alert variant="destructive" className="mt-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <AlertTitle>Curator details are unavailable</AlertTitle>
+              <AlertDescription>{detailError}</AlertDescription>
+            </div>
+            <Button variant="outline" onClick={retryCuratorDetail} disabled={!lastSelectedCurator}>
+              Try again
+            </Button>
+          </div>
+        </Alert>
+      )}
+
+      {loading ? (
+        <div className="mt-40" role="status" aria-live="polite">
+          <Loader />
+          <span className="sr-only">Loading curators</span>
+        </div>
+      ) : (
         <>
-          {/* ----------Disciplines -------- */}
-
-          <div className="mt-10 md:mt-14 rule-t pt-6 flex flex-wrap gap-x-4 gap-y-2">
-            {disciplines.map((item) => (
+          <div
+            className="mt-10 flex flex-wrap gap-x-4 gap-y-2 border-t border-rule pt-6 md:mt-14"
+            aria-label="Filter curators by discipline"
+            role="toolbar"
+          >
+            <button
+              type="button"
+              onClick={() => setSelectedDiscipline("all")}
+              aria-pressed={selectedDiscipline === "all"}
+              className={filterClassName(
+                selectedDiscipline === "all",
+                selectedDiscipline !== "all",
+              )}
+            >
+              All
+            </button>
+            {disciplines.map((discipline) => (
               <button
-                key={item}
+                key={discipline.id}
                 type="button"
-                onClick={() => setDiscipline(item)}
-                className={`display uppercase text-sm md:text-lg leading-none transition-colors ${
-                  discipline === item
-                    ? "text-foreground underline underline-offset-[6px] decoration-2 decoration-accent"
-                    : discipline !== "All"
-                      ? "text-muted-foreground/60 hover:text-foreground"
-                      : "text-foreground hover:text-accent"
-                }`}
+                onClick={() => setSelectedDiscipline(discipline.id)}
+                aria-pressed={selectedDiscipline === discipline.id}
+                className={filterClassName(
+                  selectedDiscipline === discipline.id,
+                  selectedDiscipline !== "all",
+                )}
               >
-                {item}
+                {discipline.name}
               </button>
             ))}
           </div>
 
-          {/* --------- Curator Grid ----------- */}
-
-          <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-14 items-stretch">
-            {sortedList.map((curator) => (
-              <button
-                key={curator.id}
-                type="button"
-                onClick={() => handleCuratorClick(curator)}
-                className="group flex h-full flex-col text-left"
-              >
-                <GlitchBorder
-                  seed={curator.name.length + 4}
-                  thickness={1}
-                  hoverBoost={14}
-                  delayMs={200}
-                  className="overflow-hidden"
+          {visibleCurators.length > 0 ? (
+            <div className="mt-12 grid grid-cols-2 items-stretch gap-x-4 gap-y-10 md:mt-16 md:grid-cols-3 md:gap-x-6 md:gap-y-14 lg:grid-cols-4">
+              {visibleCurators.map((curator) => (
+                <button
+                  key={curator.id}
+                  type="button"
+                  onClick={() => void openCurator(curator)}
+                  disabled={detailLoading}
+                  aria-label={`View details for ${curator.name}`}
+                  className="group flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait disabled:opacity-70"
                 >
-                  <Image
-                    src={getImageUrl(curator.curator_image)}
-                    alt={curator.name}
-                    width={800}
-                    height={600}
-                    className="w-full aspect-[4/5] object-cover"
-                  />
-                </GlitchBorder>
+                  <GlitchBorder
+                    seed={curator.name.length + 4}
+                    thickness={1}
+                    hoverBoost={14}
+                    delayMs={200}
+                    className="overflow-hidden"
+                  >
+                    <CuratorImage image={curator.curator_image} alt={curator.name} />
+                  </GlitchBorder>
 
-                <p className="label text-muted-foreground mt-3">{curator.discipline?.name}</p>
+                  <p className="label mt-3 text-muted-foreground">
+                    {curator.discipline?.name ?? "Independent"}
+                  </p>
 
-                <h3 className="headline font-semibold text-base md:text-xl mt-1 min-h-[2.4em] leading-[1.2] group-hover:text-accent transition-colors">
-                  {curator.name}
-                </h3>
+                  <h2 className="headline mt-1 min-h-[2.4em] text-base leading-[1.2] font-semibold transition-colors group-hover:text-accent md:text-xl">
+                    {curator.name}
+                  </h2>
 
-                <p className="text-xs md:text-sm text-muted-foreground mt-1 line-clamp-2 headline">
-                  {curator.short_description}
-                </p>
+                  {curator.short_description && (
+                    <p className="headline mt-1 line-clamp-2 text-xs text-muted-foreground md:text-sm">
+                      {curator.short_description}
+                    </p>
+                  )}
 
-                <span className="mt-auto pt-3 inline-block self-start headline text-[11px] uppercase tracking-[0.08em] border border-foreground px-3 py-1.5 group-hover:bg-foreground group-hover:text-background transition-colors">
-                  More info +
-                </span>
-              </button>
-            ))}
-          </div>
-
-          {/* ---------Empty state ----------- */}
-
-          {sortedList.length === 0 && (
+                  <span className="headline mt-auto inline-block self-start border border-foreground px-3 py-1.5 pt-3 text-[11px] tracking-[0.08em] uppercase transition-colors group-hover:bg-foreground group-hover:text-background">
+                    More info +
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : (
             <div className="mt-16 text-center">
-              <p className="headline text-sm uppercase text-muted-foreground">No curators found</p>
+              <p className="headline text-sm uppercase text-muted-foreground">
+                {selectedDiscipline === "all"
+                  ? "No curators are available yet"
+                  : "No curators match this discipline"}
+              </p>
             </div>
           )}
         </>
       )}
 
-      {/* -------------Detail Loading --------- */}
-
-      {/* {detailLoading && (
-                <div className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm flex items-center justify-center">
-                    <Loader />
-                </div>
-            )} */}
-
-      {/* -----------Detail Modal -------- */}
-
-      {active && !detailLoading && (
-        <CuratorDetailModal
-          curator={active.curator}
-          programs={active.programs}
-          onClose={() => setActive(null)}
-          getImageUrl={getImageUrl}
-        />
+      {detailLoading && (
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+          role="status"
+          aria-live="polite"
+        >
+          <Loader />
+          <span className="sr-only">Loading curator details</span>
+        </div>
       )}
+
+      <CuratorDetailModal activeCurator={activeCurator} onClose={() => setActiveCurator(null)} />
     </div>
   );
 }
 
-/* --------- CURATOR DETAIL MODAL-------- */
+function CuratorImage({ image, alt }: { image: string | null; alt: string }) {
+  const src = resolveApiMediaUrl(image);
+
+  if (!src) {
+    return (
+      <div className="flex aspect-[4/5] w-full items-end bg-muted p-4 text-xs tracking-[0.08em] text-muted-foreground uppercase">
+        Image unavailable
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={800}
+      height={1000}
+      sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+      className="aspect-[4/5] w-full object-cover"
+    />
+  );
+}
 
 function CuratorDetailModal({
-  curator,
-  programs,
+  activeCurator,
   onClose,
-  getImageUrl,
 }: {
-  curator: CuratorDetail;
-  programs: ApiProgram[];
+  activeCurator: CuratorDetailData | null;
   onClose: () => void;
-  getImageUrl: (image: string | null) => string;
 }) {
+  const curator = activeCurator?.curator;
+  const sanitizedBio = useMemo(
+    () =>
+      curator?.bio
+        ? String(
+            DOMPurify.sanitize(curator.bio, {
+              ALLOWED_TAGS: BIO_ALLOWED_TAGS,
+              ALLOWED_ATTR: ["href"],
+            }),
+          )
+        : null,
+    [curator],
+  );
+  const instagramUrl = getSafeExternalUrl(curator?.instagram_link);
+
   return (
-    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm overflow-y-auto ed-fade">
-      {/* Left glitch bar */}
+    <Modal open={Boolean(activeCurator)} onOpenChange={(open) => !open && onClose()}>
+      {curator && (
+        <ModalContent
+          showCloseButton={false}
+          className="max-h-[calc(100dvh-2rem)] max-w-6xl gap-0 overflow-y-auto p-0"
+        >
+          <GlitchBar
+            seed={13}
+            direction="v"
+            variant="vibrate"
+            speed={0.35}
+            count={90}
+            className="pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-1.5"
+          />
+          <GlitchBar
+            seed={31}
+            direction="v"
+            variant="bulge"
+            speed={1.8}
+            count={90}
+            className="pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-1.5"
+          />
 
-      <GlitchBar
-        seed={13}
-        direction="v"
-        variant="vibrate"
-        speed={0.35}
-        count={90}
-        className="fixed left-0 top-0 bottom-0 w-1.5 z-10"
-      />
+          <div className="container-editorial relative px-6 pt-6 pb-16 md:px-10 md:pt-10">
+            <ModalHeader className="flex flex-row items-center justify-between border-b border-rule pb-4">
+              <p className="label">Curator</p>
+              <ModalClose asChild>
+                <button type="button" className="label transition-colors hover:text-accent">
+                  Close ×
+                </button>
+              </ModalClose>
+            </ModalHeader>
+            <ModalTitle className="sr-only">{curator.name}</ModalTitle>
+            <ModalDescription className="sr-only">Details for {curator.name}</ModalDescription>
 
-      {/* Right glitch bar */}
-
-      <GlitchBar
-        seed={31}
-        direction="v"
-        variant="bulge"
-        speed={1.8}
-        count={90}
-        className="fixed right-0 top-0 bottom-0 w-1.5 z-10"
-      />
-
-      <div className="container-editorial pt-6 md:pt-10 pb-16">
-        {/* ------------Modal Header ---------- */}
-
-        <div className="flex items-center justify-between rule-b pb-4">
-          <p className="label">Curator</p>
-
-          <button type="button" onClick={onClose} className="label hover:text-accent">
-            Close ×
-          </button>
-        </div>
-
-        {/* --------Main Content ----------- */}
-
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
-          {/* -------- Image --------- */}
-
-          <div className="md:col-span-5">
-            <GlitchBorder
-              seed={curator.name.length + 23}
-              thickness={1}
-              hoverBoost={14}
-              delayMs={200}
-              className="overflow-hidden"
-            >
-              <Image
-                src={getImageUrl(curator.curator_image)}
-                alt={curator.name}
-                width={900}
-                height={700}
-                className="w-full aspect-[4/5] object-cover"
-              />
-            </GlitchBorder>
-          </div>
-
-          {/* ------Content ----------- */}
-
-          <div className="md:col-span-7">
-            {/* Discipline */}
-
-            {curator.discipline && (
-              <p className="label text-muted-foreground">{curator.discipline.name}</p>
-            )}
-
-            {/* Name */}
-
-            <h2 className="mt-2 display uppercase text-3xl md:text-6xl leading-[0.92] tracking-[-0.02em]">
-              {curator.name}
-            </h2>
-
-            {/* Short Description */}
-
-            {curator.short_description && (
-              <p className="mt-6 max-w-prose text-base md:text-lg leading-relaxed headline">
-                {curator.short_description}
-              </p>
-            )}
-
-            {/* Bio */}
-
-            {curator.bio && (
-              <div
-                className="mt-6 max-w-prose text-base md:text-lg leading-relaxed headline"
-                dangerouslySetInnerHTML={{
-                  __html: curator.bio,
-                }}
-              />
-            )}
-
-            {/* Instagram */}
-
-            {(curator.instagram_link || curator.instagram_handle) && (
-              <div className="mt-8">
-                {curator.instagram_link && curator.instagram_link !== "##" ? (
-                  <a
-                    href={curator.instagram_link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="headline text-xs uppercase tracking-[0.06em] border border-foreground px-5 py-3 hover:bg-foreground hover:text-background transition-colors inline-block"
-                  >
-                    {curator.instagram_handle || "Instagram"} →
-                  </a>
-                ) : curator.instagram_handle ? (
-                  <span className="headline text-xs uppercase tracking-[0.06em] border border-foreground px-5 py-3 inline-block">
-                    {curator.instagram_handle}
-                  </span>
-                ) : null}
+            <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-10">
+              <div className="md:col-span-5">
+                <GlitchBorder
+                  seed={curator.name.length + 23}
+                  thickness={1}
+                  hoverBoost={14}
+                  delayMs={200}
+                  className="overflow-hidden"
+                >
+                  <CuratorImage image={curator.curator_image} alt={curator.name} />
+                </GlitchBorder>
               </div>
-            )}
 
-            {/* ----------Programs ----------- */}
+              <div className="md:col-span-7">
+                {curator.discipline && (
+                  <p className="label text-muted-foreground">{curator.discipline.name}</p>
+                )}
 
-            <CuratorProgrammes programs={programs} onNavigate={onClose} />
+                <h2 className="display mt-2 text-3xl leading-[0.92] tracking-[-0.02em] uppercase md:text-6xl">
+                  {curator.name}
+                </h2>
+
+                {curator.short_description && (
+                  <p className="headline mt-6 max-w-prose text-base leading-relaxed md:text-lg">
+                    {curator.short_description}
+                  </p>
+                )}
+
+                {sanitizedBio && (
+                  <div
+                    className="headline mt-6 max-w-prose space-y-4 text-base leading-relaxed md:text-lg [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+                    dangerouslySetInnerHTML={{ __html: sanitizedBio }}
+                  />
+                )}
+
+                {(instagramUrl || curator.instagram_handle) && (
+                  <div className="mt-8">
+                    {instagramUrl ? (
+                      <a
+                        href={instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="headline inline-block border border-foreground px-5 py-3 text-xs tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background"
+                      >
+                        {curator.instagram_handle || "Instagram"} →
+                      </a>
+                    ) : (
+                      <span className="headline inline-block border border-foreground px-5 py-3 text-xs tracking-[0.06em] uppercase">
+                        {curator.instagram_handle}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <CuratorProgrammes programs={activeCurator.programs} onNavigate={onClose} />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </ModalContent>
+      )}
+    </Modal>
   );
 }
-
-/* --------- CURATOR PROGRAMMES -------- */
 
 function CuratorProgrammes({
   programs,
   onNavigate,
 }: {
-  programs: ApiProgram[];
+  programs: CuratorProgram[];
   onNavigate: () => void;
 }) {
-  if (!programs || programs.length === 0) {
-    return null;
-  }
+  if (programs.length === 0) return null;
 
   return (
-    <div className="mt-10 rule-t pt-6">
-      <p className="label text-muted-foreground mb-4">
+    <div className="mt-10 border-t border-rule pt-6">
+      <p className="label mb-4 text-muted-foreground">
         Curation at the Serendipity Arts Festival 2026
       </p>
 
       <ul className="divide-y divide-rule">
         {programs.map((program) => {
-          const firstDetail = program.program_details?.[0];
+          const firstDetail = program.program_details[0];
 
           return (
             <li key={program.id}>
               <Link
-                href={`/programmes/${program.slug}`}
+                href={`/programmes?p=${encodeURIComponent(String(program.id))}`}
                 onClick={onNavigate}
-                className="group py-3 flex items-baseline justify-between gap-4 hover:text-accent transition-colors"
+                className="group flex items-baseline justify-between gap-4 py-3 transition-colors hover:text-accent"
               >
-                {/* Program name */}
-
-                <span className="headline font-semibold text-base md:text-xl leading-tight">
+                <span className="headline text-base leading-tight font-semibold md:text-xl">
                   {program.name}
                 </span>
-
-                {/* Category + date */}
-
-                <span className="label text-muted-foreground shrink-0 text-right headline group-hover:text-accent transition-colors">
-                  {program.category?.name && <>{program.category.name}</>}
-
-                  {firstDetail?.event_date && (
-                    <>
-                      {" · "}
-                      {formatProgramDate(firstDetail.event_date)}
-                    </>
-                  )}
-
-                  {" →"}
+                <span className="headline label shrink-0 text-right text-muted-foreground transition-colors group-hover:text-accent">
+                  {program.category?.name}
+                  {program.category?.name && firstDetail?.event_date ? " · " : null}
+                  {firstDetail?.event_date ? formatDate(firstDetail.event_date) : null} →
                 </span>
               </Link>
             </li>
@@ -418,12 +489,10 @@ function CuratorProgrammes({
         })}
       </ul>
 
-      {/* See all programmes */}
-
       <Link
         href="/programmes"
         onClick={onNavigate}
-        className="mt-6 inline-block headline text-xs uppercase tracking-[0.06em] border border-foreground px-5 py-3 hover:bg-foreground hover:text-background transition-colors"
+        className="headline mt-6 inline-block border border-foreground px-5 py-3 text-xs tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background"
       >
         See all programmes →
       </Link>
@@ -431,24 +500,26 @@ function CuratorProgrammes({
   );
 }
 
-/* --------- DATE FORMATTER -------- */
-
-function formatProgramDate(date: string) {
-  const [day, month, year] = date.split("-");
-
-  if (!day || !month || !year) {
-    return date;
+function filterClassName(isSelected: boolean, hasActiveFilter: boolean) {
+  if (isSelected) {
+    return "display text-sm leading-none text-foreground underline decoration-2 decoration-accent underline-offset-[6px] uppercase transition-colors md:text-lg";
   }
 
-  const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+  return `display text-sm leading-none uppercase transition-colors md:text-lg ${
+    hasActiveFilter
+      ? "text-muted-foreground/60 hover:text-foreground"
+      : "text-foreground hover:text-accent"
+  }`;
+}
 
-  if (Number.isNaN(parsed.getTime())) {
-    return date;
+function getSafeExternalUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+
+  try {
+    const parsedUrl = new URL(url);
+
+    return parsedUrl.protocol === "https:" ? parsedUrl.toString() : null;
+  } catch {
+    return null;
   }
-
-  return parsed.toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
