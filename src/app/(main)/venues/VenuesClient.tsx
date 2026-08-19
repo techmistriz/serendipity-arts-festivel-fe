@@ -16,6 +16,8 @@ import {
 } from "@/src/services/venues";
 import { stripHtml } from "@/src/utils/html";
 import Loader from "@/src/components/common/Loader";
+import { GOA_NODES, GOA_VENUE_POINTS } from "@/src/lib/goa-map";
+import { GoogleWayfindingMap } from "@/src/components/GoogleWayfindingMap";
 
 
 const getImageUrl = (image: string | null) => {
@@ -138,6 +140,27 @@ export default function Venues() {
 
             )}
 
+            {/* Wayfinding */}
+            <section className="mt-20 md:mt-28">
+                <h2 className="display uppercase text-[9vw] md:text-[5vw] leading-[0.9]">
+                    Wayfinding
+                </h2>
+
+                <p className="mt-4 max-w-2xl text-muted-foreground headline text-sm">
+                    Pick a start and an end venue to get the route — on foot, by car or by
+                    transit.
+                </p>
+
+                <div className="mt-8">
+                    <GoogleWayfindingMap
+                        ariaLabel="Google map of Serendipity Arts Festival venues across Panjim"
+                        points={GOA_VENUE_POINTS}
+                        nodes={GOA_NODES}
+                        caption="Panjim riverfront · all venues sit within a twenty minute walk. Highlighted pins are venues on your booking list."
+                    />
+                </div>
+            </section>
+
             {/* Detail loading */}
             {/* {detailLoading && (
                 <div className="fixed inset-0 z-50 bg-background/80 flex items-center justify-center">
@@ -170,7 +193,7 @@ function VenueDetail({ venue, onClose }: { venue: ApiVenueDetail; onClose: () =>
                 <div className="mt-8 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
                     <div className="md:col-span-6">
                         <GlitchBorder seed={venue.title.length + 31} thickness={1} hoverBoost={14} delayMs={200} className="overflow-hidden">
-                            <img
+                            <Image
                                 src={getImageUrl(venue.featured_image)}
                                 alt={venue.title}
                                 width={900}
@@ -185,7 +208,7 @@ function VenueDetail({ venue, onClose }: { venue: ApiVenueDetail; onClose: () =>
                             __html: venue.description || "",
                         }} />
                         {/* Sub venues */}
-                        {subVenues.length > 0 && (
+                        {/* {subVenues.length > 0 && (
                             <div className="mt-8">
                                 <p className="label text-muted-foreground mb-3">Sub-venues</p>
 
@@ -208,7 +231,7 @@ function VenueDetail({ venue, onClose }: { venue: ApiVenueDetail; onClose: () =>
                                 </p>
                             </div>
 
-                        )}
+                        )} */}
 
                         {/* Directions */}
                         {venue.google_map_url && (

@@ -9,6 +9,7 @@ export type MapPoint = {
   lat: number;
   lng: number;
   address?: string;
+  placeId?: string;
 };
 
 export type MapRoad = {
