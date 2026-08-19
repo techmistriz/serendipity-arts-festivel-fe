@@ -8,21 +8,21 @@ export type Curator = {
   bio: string[];
 };
 
-import anish from "@/public/images/curators/anisha-rachel-oommen-lQ4kx0db.jpg";
-import ankur from "@/public/images/curators/ankur-tewari-PgCapfpt.jpg";
-import anuradha from "@/public/images/curators/anuradha-kapur-Dq1_lS0Y.jpg";
-import aruna from "@/public/images/curators/aruna-sairam-Dbc3YYNb.jpg";
-import ashley from "@/public/images/curators/ashley-lobo-BCdCMoiP.jpg";
-import kshitij from "@/public/images/curators/kshitij-jalori-BPM-ad3s.jpg";
-import latika from "@/public/images/curators/latika-gupta-DJNuot68.jpg";
-import mahesh from "@/public/images/curators/mahesh-dattani-Dri71bY0.jpg";
-import padmini from "@/public/images/curators/padmini-chettur-DpB3USq1.jpg";
-import ram from "@/public/images/curators/ram-rahman.jpg";
-import salil from "@/public/images/curators/salil-chaturvedi-Rf994ziw.jpg";
-import sheba from "@/public/images/curators/sheba-chhachhi (1).jpg";
-import sreyansi from "@/public/images/curators/sreyansi-singh.webp";
-import sudhir from "@/public/images/curators/sudhir-rajbhar.jpg";
-import surjit from "@/public/images/curators/surjit-nongmeikapam-BN0JDjiM.jpg";
+import anish from "@public/images/curators/anisha-rachel-oommen-lQ4kx0db.jpg";
+import ankur from "@public/images/curators/ankur-tewari-PgCapfpt.jpg";
+import anuradha from "@public/images/curators/anuradha-kapur-Dq1_lS0Y.jpg";
+import aruna from "@public/images/curators/aruna-sairam-Dbc3YYNb.jpg";
+import ashley from "@public/images/curators/ashley-lobo-BCdCMoiP.jpg";
+import kshitij from "@public/images/curators/kshitij-jalori-BPM-ad3s.jpg";
+import latika from "@public/images/curators/latika-gupta-DJNuot68.jpg";
+import mahesh from "@public/images/curators/mahesh-dattani-Dri71bY0.jpg";
+import padmini from "@public/images/curators/padmini-chettur-DpB3USq1.jpg";
+import ram from "@public/images/curators/ram-rahman.jpg";
+import salil from "@public/images/curators/salil-chaturvedi-Rf994ziw.jpg";
+import sheba from "@public/images/curators/sheba-chhachhi (1).jpg";
+import sreyansi from "@public/images/curators/sreyansi-singh.webp";
+import sudhir from "@public/images/curators/sudhir-rajbhar.jpg";
+import surjit from "@public/images/curators/surjit-nongmeikapam-BN0JDjiM.jpg";
 
 export const CURATORS: Curator[] = [
   {
@@ -53,8 +53,8 @@ export const CURATORS: Curator[] = [
     img: ankur,
     short: "Singer-songwriter. Former Creative Architect, Coke Studio Bharat.",
     bio: [
-      "Ankur Tewari is one of India's leading singer-songwriters and composers, with a career that spans independent music, cinema, and large-scale cultural projects.",
-      "Known for his work in Indian pop and folk, Ankur is a Recording Academy Voting Member and the former Creative Architect of the award-winning Coke Studio Bharat, where he designed collaborations that showcased the depth and diversity of India's music.",
+      "Ankur Tewari is one of India’s leading singer-songwriters and composers, with a career that spans independent music, cinema, and large-scale cultural projects.",
+      "Known for his work in Indian pop and folk, Ankur is a Recording Academy Voting Member and the former Creative Architect of the award-winning Coke Studio Bharat, where he designed collaborations that showcased the depth and diversity of India’s music.",
       "As a music supervisor, Ankur has been part of landmark films such as Kho Gaye Hum Kahaan, Gully Boy, and The Archies, all praised for their soundtracks and their influence on how music is used in Indian cinema.",
     ],
   },
@@ -66,7 +66,7 @@ export const CURATORS: Curator[] = [
     bio: [
       "Aruna Sairam is a Padma Shri award-winning Carnatic vocalist and composer, celebrated for her rich, resonant voice, and deep command of South Indian classical traditions.",
       "Trained by her mother Rajalakshmi Sethuraman and the legendary T. Brinda, she is known for bringing bhakti, abhangs, and spiritual repertoire into contemporary concert life.",
-      "A recipient of the Sangita Kalanidhi, the Sangeet Natak Akademi Award, and the Chevalier de l'Ordre des Arts et des Lettres, she is also widely respected for her philanthropy and collaborations.",
+      "A recipient of the Sangita Kalanidhi, the Sangeet Natak Akademi Award, and the Chevalier de l’Ordre des Arts et des Lettres, she is also widely respected for her philanthropy and collaborations.",
     ],
   },
   {
@@ -87,7 +87,7 @@ export const CURATORS: Curator[] = [
     short: "Choreographer, Imphal. Artistic Director, Nachom Arts Foundation.",
     bio: [
       "Surjit Nongmeikapam is a choreographer, performing artist, and cultural practitioner based in Imphal, Manipur, whose work reimagines traditional performance frameworks through contemporary movement.",
-      "His works have received several awards, and he has presented internationally at platforms such as ImpulsTanz, Tanz im August, and Sadler's Wells.",
+      "His works have received several awards, and he has presented internationally at platforms such as ImpulsTanz, Tanz im August, and Sadler’s Wells.",
       "As Artistic Director of the Nachom Arts Foundation, he is committed to nurturing a sustainable contemporary dance ecology in Manipur through artistic production, pedagogy, and institutional engagement.",
     ],
   },
@@ -137,8 +137,7 @@ export const CURATORS: Curator[] = [
     name: "Latika Gupta",
     discipline: "Visual Arts",
     img: latika,
-    short:
-      "Art historian and curator. Director, Sher-Gil Sundaram Arts Foundation.",
+    short: "Art historian and curator. Director, Sher-Gil Sundaram Arts Foundation.",
     bio: [
       "Latika Gupta is an art historian and curator based in Delhi. She was associate editor at MARG Publications from 2016-2020, and is currently part of the editorial collective of '100 Histories of 100 Worlds in 1 Object', and an associate editor at South Asian Studies.",
       "She has been co-mentor for the Curatorial Intensive South Asia programme (Khoj & Goethe-Institut/MMB) from 2019-2025.",
@@ -151,9 +150,9 @@ export const CURATORS: Curator[] = [
     img: sheba,
     short: "Lens-based artist. Gender, body, city, cultural memory.",
     bio: [
-      "Sheba Chhachhi's lens-based works investigate contemporary questions about gender, the body, the city, cultural memory and eco-philosophy, through intimate, sensorial encounters.",
-      "Chhachhi began as an activist and photographer documenting the women's movement in India. By the 1990s, she moved to creating collaborative staged photographs, eventually turning to large multimedia installations. Her works retrieve marginal worlds: of women, mendicants, forgotten forms of labour, and often draw on pre-modern thought and visual histories, interweaving the mythic and the social.",
-      "Chhachhi has exhibited widely in India and internationally; her works are held in significant public and private collections, including MoMA, New York, Tate Modern, UK, The Metropolitan Museum of Art, New York, and the National Gallery of Modern Art, India. She was awarded the Juror's Prize for contemporary art in Asia by the Singapore Art Museum in 2011 and in 2018 the Thun Prize for Art & Ethics. She lives and works in New Delhi.",
+      "Sheba Chhachhi’s lens-based works investigate contemporary questions about gender, the body, the city, cultural memory and eco-philosophy, through intimate, sensorial encounters.",
+      "Chhachhi began as an activist and photographer documenting the women’s movement in India. By the 1990s, she moved to creating collaborative staged photographs, eventually turning to large multimedia installations. Her works retrieve marginal worlds: of women, mendicants, forgotten forms of labour, and often draw on pre-modern thought and visual histories, interweaving the mythic and the social.",
+      "Chhachhi has exhibited widely in India and internationally; her works are held in significant public and private collections, including MoMA, New York, Tate Modern, UK, The Metropolitan Museum of Art, New York, and the National Gallery of Modern Art, India. She was awarded the Juror’s Prize for contemporary art in Asia by the Singapore Art Museum in 2011 and in 2018 the Thun Prize for Art & Ethics. She lives and works in New Delhi.",
     ],
   },
   {
@@ -175,7 +174,7 @@ export const CURATORS: Curator[] = [
     short: "Independent photographer and curator. Founding member, SAHMAT.",
     bio: [
       "Ram Rahman is an independent photographer and curator. Ram has lived in New York and New Delhi. His photographs have been shown in India and around the world and he has curated solo exhibitions of photographers Sunil Janah, Madan Mahatta, JH Thakker, Jyoti Bhatt and others. As a founding member of the artists collective SAHMAT, the Safdar Hashmi Memorial Trust, Ram has been involved in curating exhibits and events for over 36 years.",
-      "Ram's work has been exhibited in 3 Serendipity events in Goa, The Gwangju Biennale in Korea and The Chennai Photo Biennale. Ram has lectured on Delhi's modern architecture in Goa, MoMA in New York and in Delhi. He curated an exhibit of Delhi's modern architecture at the KNMA in Delhi in 2000.",
+      "Ram’s work has been exhibited in 3 Serendipity events in Goa, The Gwangju Biennale in Korea and The Chennai Photo Biennale. Ram has lectured on Delhi’s modern architecture in Goa, MoMA in New York and in Delhi. He curated an exhibit of Delhi’s modern architecture at the KNMA in Delhi in 2000.",
       "His work is in the collections of MoMA, New York, The MET, New York, The Centre Pompidou, Paris, The Tate Modern, London, The National Museum of Asian Art, Smithsonian, Washington DC, KNMA, Delhi and Zapurza Museum in Pune, besides private collections.",
     ],
   },

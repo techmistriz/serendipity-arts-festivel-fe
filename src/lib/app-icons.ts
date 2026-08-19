@@ -23,9 +23,7 @@ export const APP_ICONS: AppIcon[] = [
   {
     name: "Search",
     slug: "search",
-    body: S(
-      `<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>`,
-    ),
+    body: S(`<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>`),
   },
   {
     name: "Art Pass",
@@ -51,9 +49,7 @@ export const APP_ICONS: AppIcon[] = [
   {
     name: "My Batch",
     slug: "my-batch",
-    body: S(
-      `<circle cx="12" cy="9" r="4.5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/>`,
-    ),
+    body: S(`<circle cx="12" cy="9" r="4.5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/>`),
   },
   {
     name: "Festival",
@@ -65,9 +61,7 @@ export const APP_ICONS: AppIcon[] = [
   {
     name: "Profile",
     slug: "profile",
-    body: S(
-      `<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>`,
-    ),
+    body: S(`<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>`),
   },
   {
     name: "Settings",

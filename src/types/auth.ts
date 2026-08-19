@@ -57,15 +57,3 @@ export interface SEARequest {
   terms: boolean;
   is_old_user: 0 | 1;
 }
-
-export interface ApiResponse<T = any> {
-  status: any;
-  success: boolean;
-  message: string;
-  data: T;
-}
-
-export interface ArchiveUserPayload {
-  email: string;
-  role_id: number;
-}

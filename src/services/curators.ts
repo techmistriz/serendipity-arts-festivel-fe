@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "@/lib/api-client";
 
 export interface ApiDiscipline {
   id: number;

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-
 import { Inter_Tight, Stack_Sans_Headline } from "next/font/google";
 
-import { AccessibilityWidget } from "../components/common/AccessibilityWidget";
-import ReduxProvider from "../store/provider";
-import { CartProvider } from "../lib/cart";
+import { AccessibilityWidget } from "@/components/common/AccessibilityWidget";
+import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
+import { siteConfig } from "@/config/site";
+import { CartProvider } from "@/context/cart-context";
+import ReduxProvider from "@/redux/provider";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -23,8 +23,8 @@ const stackSansHeadline = Stack_Sans_Headline({
 });
 
 export const metadata: Metadata = {
-  title: "Serendipity Arts Festival",
-  description: "Official website of Serendipity Arts Festival",
+  title: siteConfig.name,
+  description: siteConfig.description,
 };
 
 export default function RootLayout({
@@ -42,9 +42,7 @@ export default function RootLayout({
           <CartProvider>
             <Header />
 
-            <main className="flex-1">
-              {children}
-            </main>
+            <main className="flex-1">{children}</main>
 
             <Footer />
 

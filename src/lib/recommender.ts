@@ -3,7 +3,7 @@
 // category/tags match one of the mapped keywords below.
 // import { PROGRAMMES, type Programme } from "./programmes-data";
 
-import { Programme, PROGRAMMES } from "../data/programmes-data";
+import { Programme, PROGRAMMES } from "@/data/programmes-data";
 
 export type RecommenderOption = {
   id: string;
@@ -30,22 +30,22 @@ export const RECOMMENDER_OPTIONS: RecommenderOption[] = [
   },
   {
     id: "foodie",
-    label: "I'm a foodie and love different cuisines",
+    label: "I’m a foodie and love different cuisines",
     match: ["Culinary Arts"],
   },
   {
     id: "children",
-    label: "I have children who'd enjoy stimulating programmes",
-    match: ["Children's Programmes"],
+    label: "I have children who’d enjoy stimulating programmes",
+    match: ["Children’s Programmes"],
   },
   {
     id: "crafts",
-    label: "I'm into crafts — workshop or exhibition, either works",
+    label: "I’m into crafts — workshop or exhibition, either works",
     match: ["Crafts", "Workshop"],
   },
   {
     id: "films",
-    label: "I'm a film enthusiast and love underrated films",
+    label: "I’m a film enthusiast and love underrated films",
     match: ["Film Screening"],
   },
   {
@@ -61,10 +61,7 @@ export const RECOMMENDER_OPTIONS: RecommenderOption[] = [
   },
 ];
 
-export function recommendProgrammes(
-  selected: string[],
-  limit = 12,
-): Programme[] {
+export function recommendProgrammes(selected: string[], limit = 12): Programme[] {
   if (!selected.length) return [];
   const wantedRaw = new Set<string>();
   for (const id of selected) {

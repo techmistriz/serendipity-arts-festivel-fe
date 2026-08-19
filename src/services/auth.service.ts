@@ -1,7 +1,11 @@
-import api from "./axios";
+import api from "@/lib/api-client";
+import type { ApiResponse } from "@/types/api";
+import type { User } from "@/redux/slices/auth/types";
+
+type LoginResponse = ApiResponse<{ user: User; token: string }>;
 
 export const loginAPI = (data: { email: string; password: string }) => {
-  return api.post("/auth/login", data);
+  return api.post<LoginResponse>("/auth/login", data);
 };
 
 export const logoutAPI = () => {
@@ -9,8 +13,7 @@ export const logoutAPI = () => {
 };
 
 export const forgotPasswordAPI = (email: string) => {
-  console.log("Calling forgot password API with:", email);
-  return api.post("/auth/forgot-password", {
+  return api.post<ApiResponse>("/auth/forgot-password", {
     email,
   });
 };
@@ -21,7 +24,7 @@ export const resetPasswordAPI = async (
   password: string,
   password_confirmation: string,
 ) => {
-  const response = await api.post("/auth/reset-password", {
+  const response = await api.post<ApiResponse>("/auth/reset-password", {
     token,
     email,
     password,

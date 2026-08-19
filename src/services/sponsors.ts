@@ -1,5 +1,5 @@
-import { Sponsors, SponsorsResponse } from "../types/sponsor";
-import api from "./axios";
+import type { Sponsors, SponsorsResponse } from "@/types/sponsor";
+import api from "@/lib/api-client";
 
 export async function getSponsors(limit?: number): Promise<Sponsors[]> {
   const response = await api.get<SponsorsResponse>("/sponsors", {

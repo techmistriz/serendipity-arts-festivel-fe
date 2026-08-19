@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import GlitchBar from "./common/GlitchBar";
-import FESTIVAL_LOGO from "@/public/images/footer/Serendipity_Arts_Festival_Logos-01_1.webp"
-import FOUNDATION_LOGO from "@/public/images/footer/Serendipity_Arts_Logo-2.png"
-
-
+import GlitchBar from "@/components/common/GlitchBar";
+import FESTIVAL_LOGO from "@public/images/footer/Serendipity_Arts_Festival_Logos-01_1.webp";
+import FOUNDATION_LOGO from "@public/images/footer/Serendipity_Arts_Logo-2.png";
 
 const ARCHIVES: { year: string; url: string; note?: string }[] = [
   { year: "2025", url: "https://archive2025.serendipityartsfestival.com/" },
   { year: "2024", url: "https://archive2024.serendipityartsfestival.com/" },
   { year: "2023", url: "https://archive2023.serendipityartsfestival.com/" },
-  { year: "2022", url: "https://serendipityarts.org/wp-content/uploads/2025/06/SAF-2022.pdf", note: "catalogue" },
+  {
+    year: "2022",
+    url: "https://serendipityarts.org/wp-content/uploads/2025/06/SAF-2022.pdf",
+    note: "catalogue",
+  },
   { year: "2021", url: "https://serendipityartsvirtual.com/#home/projects" },
   { year: "2020", url: "https://www.serendipityartsfestival-safxyou.com/" },
   {
@@ -32,13 +34,7 @@ export default function Footer() {
   return (
     <footer className="relative rule-t mt-32 overflow-hidden">
       {/* Glitch Bars */}
-      <GlitchBar
-        seed={41}
-        direction="h"
-        speed={5}
-        count={140}
-        className="h-4 w-full"
-      />
+      <GlitchBar seed={41} direction="h" speed={5} count={140} className="h-4 w-full" />
 
       <GlitchBar
         seed={73}
@@ -92,10 +88,7 @@ export default function Footer() {
                 className="flex-1 bg-transparent py-2 text-base outline-none placeholder:text-muted-foreground"
               />
 
-              <button
-                type="submit"
-                className="label transition-colors hover:text-accent"
-              >
+              <button type="submit" className="label transition-colors hover:text-accent">
                 Subscribe →
               </button>
             </form>
@@ -106,14 +99,30 @@ export default function Footer() {
             <p className="label mb-4 text-muted-foreground">Navigate</p>
 
             <ul className="headline space-y-2 text-sm">
-              <li><Link href="/programmes">Programmes</Link></li>
-              <li><Link href="/curators">Curators</Link></li>
-              <li><Link href="/venues">Venues</Link></li>
-              <li><Link href="/about">About us</Link></li>
-              <li><Link href="/partners">Partners</Link></li>
-              <li><Link href="/faq">FAQ</Link></li>
-              <li><Link href="/contact">Contact</Link></li>
-              <li><Link href="/terms">Terms & Conditions</Link></li>
+              <li>
+                <Link href="/programmes">Programmes</Link>
+              </li>
+              <li>
+                <Link href="/curators">Curators</Link>
+              </li>
+              <li>
+                <Link href="/venues">Venues</Link>
+              </li>
+              <li>
+                <Link href="/about">About us</Link>
+              </li>
+              <li>
+                <Link href="/partners">Partners</Link>
+              </li>
+              <li>
+                <Link href="/faq">FAQ</Link>
+              </li>
+              <li>
+                <Link href="/contact">Contact</Link>
+              </li>
+              <li>
+                <Link href="/terms">Terms & Conditions</Link>
+              </li>
             </ul>
           </div>
 
@@ -143,11 +152,7 @@ export default function Footer() {
               </li>
 
               <li>
-                <a
-                  href="https://x.com/serendipityartf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href="https://x.com/serendipityartf" target="_blank" rel="noopener noreferrer">
                   X / Twitter
                 </a>
               </li>
@@ -183,7 +188,8 @@ export default function Footer() {
             ))}
           </ul>
           <p className="mt-3 text-xs text-muted-foreground headline max-w-2xl">
-            The 2022 and 2019 festival websites aren&rsquo;t available due to technical reasons — do explore their catalogues instead.
+            The 2022 and 2019 festival websites aren&rsquo;t available due to technical reasons — do
+            explore their catalogues instead.
           </p>
         </div>
 
@@ -191,8 +197,6 @@ export default function Footer() {
           <p className="label text-muted-foreground">
             © Serendipity Arts Festival. All rights reserved.
           </p>
-
-
         </div>
       </div>
     </footer>

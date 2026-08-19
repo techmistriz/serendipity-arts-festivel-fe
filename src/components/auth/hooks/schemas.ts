@@ -40,9 +40,7 @@ export const generalSchema = z.object({
 
   interests: z.array(z.string()).min(1, "Select at least one interest"),
 
-  visitedYears: z
-    .array(z.string())
-    .min(1, "Select at least one previous visit year"),
+  visitedYears: z.array(z.string()).min(1, "Select at least one previous visit year"),
 });
 
 export const seaSchema = z.object({

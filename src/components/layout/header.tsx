@@ -3,35 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LayoutGrid, Search, ShoppingBag } from "lucide-react";
+import { Search } from "lucide-react";
 
-import { searchSiteApi } from "../services/search";
-import { useAppDispatch, useAppSelector } from "@/src/store/hooks";
-import { logoutUser } from "@/src/store/slices/authThunk";
-import { useCart } from "../lib/cart";
-import ComingSoonPopup from "./common/ComingSoonModal";
-
-const MENU = [
-  { label: "Home", href: "/" },
-  { label: "Programmes", href: "/programmes", comingSoon: true },
-  { label: "Curators", href: "/curators" },
-  { label: "Venues", href: "/venues" },
-  { label: "About us", href: "/about" },
-  // { label: "Cart", href: "/cart" },
-  { label: "Register", href: "/register" },
-  // { label: "Login", href: "/login" },
-  // { label: "Dashboard", href: "/dashboard" },
-  // { label: "Volunteer", href: "/volunteer" },
-  // { label: "Volunteer Registration", href: "/volunteer/apply" },
-  // { label: "Wayfinding", href: "/wayfinding" },
-  // { label: "Icons", href: "/icons" },
-  // { label: "SEA", href: "/sea" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms & Conditions", href: "/terms" },
-];
-
+import ComingSoonPopup from "@/components/common/ComingSoonModal";
+import { siteConfig } from "@/config/site";
+import { searchSiteApi } from "@/services/search";
 
 type SearchResult = {
   kind: "Programme" | "Curator" | "Venue" | "Vibe";
@@ -40,23 +16,9 @@ type SearchResult = {
   href: string;
 };
 
-
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-
-
-  const dispatch = useAppDispatch();
-
-  const isLoggedIn = useAppSelector(
-    (state) => state.auth.isAuthenticated
-  );
-
-
-  const { items } = useCart();
-
-  const count = items.reduce((total, item) => total + item.qty, 0);
-
 
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -66,10 +28,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [programPopupOpen, setProgramPopupOpen] = useState(false);
 
-
   const isHome = pathname === "/";
-
-
 
   const performSearch = async (keyword: string) => {
     if (!keyword.trim()) {
@@ -94,18 +53,14 @@ export default function Header() {
           kind: "Curator" as const,
           title: curator.name,
           subtitle: curator.discipline,
-          href: curator.slug
-            ? `/curators/${curator.slug}`
-            : "/curators",
+          href: curator.slug ? `/curators/${curator.slug}` : "/curators",
         })),
 
         ...data.venues.map((venue) => ({
           kind: "Venue" as const,
           title: venue.name,
           subtitle: "Venue",
-          href: venue.slug
-            ? `/venues/${venue.slug}`
-            : "/venues",
+          href: venue.slug ? `/venues/${venue.slug}` : "/venues",
         })),
 
         ...data.vibes.map((vibe) => ({
@@ -128,10 +83,7 @@ export default function Header() {
   useEffect(() => {
     const keyword = q.trim();
 
-    if (!keyword) {
-      setResults([]);
-      return;
-    }
+    if (!keyword) return;
 
     const timer = setTimeout(() => {
       performSearch(keyword);
@@ -139,7 +91,6 @@ export default function Header() {
 
     return () => clearTimeout(timer);
   }, [q]);
-
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 240);
@@ -156,18 +107,15 @@ export default function Header() {
     };
   }, [open, searchOpen]);
 
-
-  const logout = async () => {
-    await dispatch(logoutUser());
-    router.push("/");
-  };
-
   return (
     <>
       <header className="sticky top-0 z-40 bg-background/85 backdrop-blur-sm rule-b">
         <div className="container-editorial flex h-14 md:h-16 items-center justify-between">
-
-          <Link href="/" aria-label="Home" className="label notch hover:text-accent transition-colors">
+          <Link
+            href="/"
+            aria-label="Home"
+            className="label notch hover:text-accent transition-colors"
+          >
             Home
           </Link>
 
@@ -213,12 +161,14 @@ export default function Header() {
               </>
             )} */}
 
-             {(!isHome || scrolled) && (
-                  <Link href="/register"
-                    className="label notch bg-foreground text-background rounded-full px-4 py-2 hover:bg-accent transition-colors">
-                    Register
-                  </Link>
-                )}
+            {(!isHome || scrolled) && (
+              <Link
+                href="/register"
+                className="label notch bg-foreground text-background rounded-full px-4 py-2 hover:bg-accent transition-colors"
+              >
+                Register
+              </Link>
+            )}
             <button
               onClick={() => setOpen(true)}
               className="label notch flex items-center gap-2 hover:text-accent transition-colors"
@@ -236,13 +186,18 @@ export default function Header() {
 
       {/* Search */}
 
-
       {searchOpen && (
         <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md overflow-y-auto ed-fade">
           <div className="container-editorial pt-6 md:pt-10">
             <div className="flex items-center justify-between rule-b pb-4">
               <p className="label">Search the festival</p>
-              <button onClick={() => { setSearchOpen(false); setQ(""); }} className="label notch hover:text-accent">
+              <button
+                onClick={() => {
+                  setSearchOpen(false);
+                  setQ("");
+                }}
+                className="label notch hover:text-accent"
+              >
                 Close ×
               </button>
             </div>
@@ -256,7 +211,10 @@ export default function Header() {
                 className="flex-1 bg-transparent outline-none text-base md:text-xl headline"
               />
               {q && (
-                <button onClick={() => setQ("")} className="label text-muted-foreground hover:text-accent">
+                <button
+                  onClick={() => setQ("")}
+                  className="label text-muted-foreground hover:text-accent"
+                >
                   Clear ×
                 </button>
               )}
@@ -265,16 +223,12 @@ export default function Header() {
             <div className="mt-10 pb-16">
               <ul className="rule-t">
                 {searchLoading && (
-                  <li className="py-6 text-sm text-muted-foreground">
-                    Searching...
-                  </li>
+                  <li className="py-6 text-sm text-muted-foreground">Searching...</li>
                 )}
 
-                {!searchLoading && results.length === 0 && (
+                {!searchLoading && (!q || results.length === 0) && (
                   <li className="py-6 text-sm text-muted-foreground">
-                    {q
-                      ? "Nothing matches that yet."
-                      : "Try “dance”, “Art Park”, “volunteer”…"}
+                    {q ? "Nothing matches that yet." : "Try “dance”, “Art Park”, “volunteer”…"}
                   </li>
                 )}
                 {results.map((h, i) => (
@@ -290,7 +244,8 @@ export default function Header() {
                     >
                       <span className="headline font-semibold text-base md:text-xl">{h.title}</span>
                       <span className="label text-muted-foreground shrink-0">
-                        {h.kind}{h.subtitle ? ` \u00b7 ${h.subtitle}` : ""}
+                        {h.kind}
+                        {h.subtitle ? ` \u00b7 ${h.subtitle}` : ""}
                       </span>
                     </button>
                   </li>
@@ -307,7 +262,11 @@ export default function Header() {
             <Link href="/" onClick={() => setOpen(false)} className="label notch hover:text-accent">
               Home
             </Link>
-            <button onClick={() => setOpen(false)} className="label notch hover:text-accent transition-colors" aria-label="Close menu">
+            <button
+              onClick={() => setOpen(false)}
+              className="label notch hover:text-accent transition-colors"
+              aria-label="Close menu"
+            >
               Close &nbsp; &times;
             </button>
           </div>
@@ -332,7 +291,7 @@ export default function Header() {
                 </li>
               ))} */}
 
-              {MENU.map((m) => (
+              {siteConfig.navigation.map((m) => (
                 <li key={m.href} className="rule-b">
                   {m.comingSoon ? (
                     <button
@@ -373,11 +332,7 @@ export default function Header() {
         </div>
       )}
 
-      <ComingSoonPopup
-        open={programPopupOpen}
-        onClose={() => setProgramPopupOpen(false)}
-      />
-
+      <ComingSoonPopup open={programPopupOpen} onClose={() => setProgramPopupOpen(false)} />
     </>
   );
 }

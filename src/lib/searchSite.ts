@@ -1,8 +1,8 @@
 // import { PROGRAMMES } from "@/data/programmes-data";
 // import { CURATORS } from "@/data/curators";
 
-import { CURATORS } from "../data/curators";
-import { PROGRAMMES } from "../data/programmes-data";
+import { CURATORS } from "@/data/curators";
+import { PROGRAMMES } from "@/data/programmes-data";
 
 export type SearchHit = {
   kind: "Page" | "Venue" | "Curator" | "Programme";
@@ -51,8 +51,6 @@ export function searchSite(query: string, limit = 20) {
   if (!q) return [];
 
   return INDEX.filter(
-    (item) =>
-      item.title.toLowerCase().includes(q) ||
-      item.subtitle?.toLowerCase().includes(q),
+    (item) => item.title.toLowerCase().includes(q) || item.subtitle?.toLowerCase().includes(q),
   ).slice(0, limit);
 }

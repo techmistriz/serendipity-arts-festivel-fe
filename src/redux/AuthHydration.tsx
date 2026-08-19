@@ -17,7 +17,7 @@ export default function AuthHydration() {
           loginSuccess({
             token,
             user: JSON.parse(user),
-          })
+          }),
         );
       } catch (error) {
         console.error("Failed to restore auth:", error);

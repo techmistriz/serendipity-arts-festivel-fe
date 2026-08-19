@@ -1,6 +1,7 @@
 "use client";
 
-import { contactUsAPI } from "@/src/services/contact";
+import { contactUsAPI } from "@/services/contact";
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -15,7 +16,7 @@ const SUBJECTS = [
 ];
 
 const PARTICIPATION_NOTE =
-  "Thank you for your interest in participating! Our Festival programmes are selected by our curators, and this year's programming has already been closed. However, we regularly release open calls and grants for select projects — please follow us on Instagram @serendipityartsfoundation to stay updated on future opportunities.";
+  "Thank you for your interest in participating! Our Festival programmes are selected by our curators, and this year’s programming has already been closed. However, we regularly release open calls and grants for select projects — please follow us on Instagram @serendipityartsfoundation to stay updated on future opportunities.";
 
 type ContactFormData = {
   name: string;
@@ -29,12 +30,7 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-  } = useForm<ContactFormData>({
+  const { register, handleSubmit, watch, reset } = useForm<ContactFormData>({
     defaultValues: {
       name: "",
       email: "",
@@ -45,8 +41,7 @@ export default function Contact() {
 
   const subject = watch("subject");
 
-  const showParticipation =
-    subject === "Participation at the festival";
+  const showParticipation = subject === "Participation at the festival";
 
   const handleFormSubmit = async (data: ContactFormData) => {
     if (showParticipation) return;
@@ -55,9 +50,9 @@ export default function Contact() {
       setLoading(true);
       setError("");
 
-        // Print data BEFORE API call
-    console.log("Data being sent to Contact API:", data);
-    
+      // Print data BEFORE API call
+      console.log("Data being sent to Contact API:", data);
+
       const response = await contactUsAPI({
         name: data.name,
         email: data.email,
@@ -69,12 +64,14 @@ export default function Contact() {
 
       setSent(true);
       reset();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Contact API error:", error);
 
+      const responseData = error instanceof AxiosError ? error.response?.data : null;
       setError(
-        error?.response?.data?.message ||
-          "Something went wrong. Please try again."
+        typeof responseData === "object" && responseData !== null && "message" in responseData
+          ? String(responseData.message)
+          : "Something went wrong. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -84,13 +81,10 @@ export default function Contact() {
   if (sent) {
     return (
       <div className="container-editorial pt-16 md:pt-24 pb-40">
-        <h1 className="display uppercase text-[12vw] md:text-[8vw] leading-[0.9]">
-          Thank you.
-        </h1>
+        <h1 className="display uppercase text-[12vw] md:text-[8vw] leading-[0.9]">Thank you.</h1>
 
         <p className="mt-8 max-w-xl text-muted-foreground headline text-lg">
-          We've received your message and will get back to you as soon as
-          possible.
+          We’ve received your message and will get back to you as soon as possible.
         </p>
       </div>
     );
@@ -98,12 +92,10 @@ export default function Contact() {
 
   return (
     <div className="container-editorial pt-10 md:pt-20 pb-32">
-      <h1 className="display uppercase text-[13vw] md:text-[9vw] leading-[0.9]">
-        Contact
-      </h1>
+      <h1 className="display uppercase text-[13vw] md:text-[9vw] leading-[0.9]">Contact</h1>
 
       <p className="mt-6 max-w-2xl text-muted-foreground headline text-base md:text-lg">
-        Shoot us your queries, and we'll get back to you as soon as possible.
+        Shoot us your queries, and we’ll get back to you as soon as possible.
       </p>
 
       <div className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
@@ -114,38 +106,23 @@ export default function Contact() {
           </div>
         </aside>
 
-        <form
-          className="md:col-span-8 space-y-8"
-          onSubmit={handleSubmit(handleFormSubmit)}
-        >
+        <form className="md:col-span-8 space-y-8" onSubmit={handleSubmit(handleFormSubmit)}>
           <div>
             <p className="label text-muted-foreground">Full Name</p>
 
-            <input
-              required
-              {...register("name")}
-              className="input mt-2"
-            />
+            <input required {...register("name")} className="input mt-2" />
           </div>
 
           <div>
             <p className="label text-muted-foreground">Email</p>
 
-            <input
-              type="email"
-              required
-              {...register("email")}
-              className="input mt-2"
-            />
+            <input type="email" required {...register("email")} className="input mt-2" />
           </div>
 
           <div>
             <p className="label text-muted-foreground">Subject</p>
 
-            <select
-              className="input mt-2"
-              {...register("subject")}
-            >
+            <select className="input mt-2" {...register("subject")}>
               {SUBJECTS.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -174,23 +151,12 @@ export default function Contact() {
           ) : (
             <>
               <div>
-                <p className="label text-muted-foreground">
-                  Your query
-                </p>
+                <p className="label text-muted-foreground">Your query</p>
 
-                <textarea
-                  required
-                  rows={6}
-                  {...register("message")}
-                  className="input mt-2"
-                />
+                <textarea required rows={6} {...register("message")} className="input mt-2" />
               </div>
 
-              {error && (
-                <p className="text-red-500 text-sm">
-                  {error}
-                </p>
-              )}
+              {error && <p className="text-red-500 text-sm">{error}</p>}
 
               <button
                 type="submit"

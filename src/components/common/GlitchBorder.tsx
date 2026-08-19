@@ -27,10 +27,7 @@ export function GlitchBorder({
   const style = { transitionDelay: `${delayMs}ms` } as React.CSSProperties;
 
   return (
-    <div
-      className={`relative border-black bg-black group ${className}`}
-      style={{ borderWidth: t }}
-    >
+    <div className={`relative border-black bg-black group ${className}`} style={{ borderWidth: t }}>
       {children}
       {/* Animated glitch strips revealed on hover — thicker + longer than the resting border */}
       <div
@@ -44,19 +41,37 @@ export function GlitchBorder({
         </div>
         {/* Bottom — scrolls right (reverse) */}
         <div className="absolute inset-x-0 bottom-0" style={{ height: boosted }}>
-          <GlitchBar seed={seed + 7} direction="h" reverse speed={2.6} count={160} className="w-full h-full" />
+          <GlitchBar
+            seed={seed + 7}
+            direction="h"
+            reverse
+            speed={2.6}
+            count={160}
+            className="w-full h-full"
+          />
         </div>
         {/* Left — scrolls up */}
         <div className="absolute inset-y-0 left-0" style={{ width: boosted }}>
-          <GlitchBar seed={seed + 13} direction="v" reverse speed={2.4} count={150} className="w-full h-full" />
+          <GlitchBar
+            seed={seed + 13}
+            direction="v"
+            reverse
+            speed={2.4}
+            count={150}
+            className="w-full h-full"
+          />
         </div>
         {/* Right — scrolls down */}
         <div className="absolute inset-y-0 right-0" style={{ width: boosted }}>
-          <GlitchBar seed={seed + 21} direction="v" speed={2.8} count={150} className="w-full h-full" />
+          <GlitchBar
+            seed={seed + 21}
+            direction="v"
+            speed={2.8}
+            count={150}
+            className="w-full h-full"
+          />
         </div>
       </div>
     </div>
   );
 }
-
-

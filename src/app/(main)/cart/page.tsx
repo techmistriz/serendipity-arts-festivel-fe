@@ -1,41 +1,30 @@
 "use client";
 
-import { BookingSuccess } from "@/src/components/common/BookingSuccess";
-import { useCart } from "@/src/lib/cart";
+import { BookingSuccess } from "@/components/common/BookingSuccess";
+import { useCart } from "@/context/cart-context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-import { useAppSelector } from "@/src/store/hooks";
-import { RootState } from "@/src/store/store";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
 
 export default function CartPage() {
+  const { items, remove, setQty, subtotal, confirmBooking, isVip } = useCart();
 
-const {
-  items,
-  remove,
-  setQty,
-  subtotal,
-  confirmBooking,
-  isVip,
-} = useCart();
-
-const { user, token, isAuthenticated } = useAppSelector(
-  (state: RootState) => state.auth
-);
-
+  const { user, token, isAuthenticated } = useAppSelector((state: RootState) => state.auth);
 
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
 
   const checkout = () => {
-  if (!isAuthenticated) {
-    router.push("/login?next=/cart");
-    return;
-  }
+    if (!isAuthenticated) {
+      router.push("/login?next=/cart");
+      return;
+    }
 
-  setShowSuccess(true);
-};
+    setShowSuccess(true);
+  };
 
   const finish = () => {
     confirmBooking();
@@ -52,26 +41,27 @@ const { user, token, isAuthenticated } = useAppSelector(
           Your cart is empty. Browse programmes and add the ones you want to book.
         </p>
 
-        <Link href="/programmes" className="mt-8 inline-block label border border-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-colors">
+        <Link
+          href="/programmes"
+          className="mt-8 inline-block label border border-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-colors"
+        >
           Browse programmes →
         </Link>
       </div>
     );
   }
 
- const gate = !isAuthenticated
-  ? {
-      label: "Log in to continue to checkout.",
-      cta: "Log in →",
-      to: "/login",
-    }
-  : null;
+  const gate = !isAuthenticated
+    ? {
+        label: "Log in to continue to checkout.",
+        cta: "Log in →",
+        to: "/login",
+      }
+    : null;
 
   return (
     <div className="container-editorial pt-12 md:pt-24 pb-32">
-      <h1 className="display uppercase text-[14vw] md:text-[10vw] leading-[0.9]">
-        Cart
-      </h1>
+      <h1 className="display uppercase text-[14vw] md:text-[10vw] leading-[0.9]">Cart</h1>
 
       {isVip && (
         <p className="mt-6 headline text-sm uppercase tracking-[0.06em] border border-accent text-accent inline-block px-3 py-2">
@@ -135,9 +125,7 @@ const { user, token, isAuthenticated } = useAppSelector(
 
               <button
                 type="button"
-                onClick={() =>
-                  setQty(it.id, Math.min(isVip ? 2 : 6, it.qty + 1))
-                }
+                onClick={() => setQty(it.id, Math.min(isVip ? 2 : 6, it.qty + 1))}
                 className="headline font-semibold text-xl w-8"
               >
                 +
@@ -159,9 +147,7 @@ const { user, token, isAuthenticated } = useAppSelector(
         <div>
           <p className="label text-muted-foreground">Subtotal</p>
 
-          <p className="display text-4xl md:text-6xl tabular-nums">
-            ₹{subtotal}
-          </p>
+          <p className="display text-4xl md:text-6xl tabular-nums">₹{subtotal}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 md:gap-4">

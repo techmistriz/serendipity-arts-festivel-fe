@@ -2,13 +2,13 @@
 
 import { Suspense } from "react";
 
-import { useAppDispatch, useAppSelector } from "@/src/store/hooks";
-import { login } from "@/src/store/slices/authThunk";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { login } from "@/redux/slices/authThunk";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { forgotPasswordAPI } from "@/src/services/auth.service";
+import { forgotPasswordAPI } from "@/services/auth.service";
 
 type LoginForm = {
   email: string;
@@ -18,8 +18,6 @@ type LoginForm = {
 type ForgotPasswordForm = {
   email: string;
 };
-
-
 
 function LoginContent() {
   const router = useRouter();
@@ -49,7 +47,7 @@ function LoginContent() {
       await dispatch(login(data.email, data.password));
 
       router.push(next || "/dashboard");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
 
       // Example:
@@ -78,10 +76,7 @@ function LoginContent() {
       </p>
 
       {!forgot ? (
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="mt-10 space-y-6"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-10 space-y-6">
           <div>
             <label className="label text-muted-foreground">Email ID or Phone number</label>
             <input
@@ -97,11 +92,7 @@ function LoginContent() {
               })}
             />
 
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.email.message}
-              </p>
-            )}
+            {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
           </div>
           <div>
             <div className="flex items-baseline justify-between">
@@ -127,9 +118,7 @@ function LoginContent() {
             />
 
             {errors.password && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.password.message}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
             )}
           </div>
           <button
@@ -152,12 +141,9 @@ function LoginContent() {
       ) : (
         <div className="mt-10 space-y-6">
           {!sent ? (
-            <form
-              onSubmit={handleForgotSubmit(onForgotSubmit)}
-              className="space-y-6"
-            >
+            <form onSubmit={handleForgotSubmit(onForgotSubmit)} className="space-y-6">
               <p className="text-muted-foreground headline">
-                Enter your email or phone number and we'll send a reset link.
+                Enter your email or phone number and we’ll send a reset link.
               </p>
               <input
                 type="email"
@@ -173,9 +159,7 @@ function LoginContent() {
               />
 
               {forgotErrors.email && (
-                <p className="text-sm text-red-500">
-                  {forgotErrors.email.message}
-                </p>
+                <p className="text-sm text-red-500">{forgotErrors.email.message}</p>
               )}
               <div className="flex flex-wrap gap-3">
                 <button
@@ -197,7 +181,7 @@ function LoginContent() {
             <div className="border border-foreground p-6">
               <p className="label text-accent">Check your inbox</p>
               <p className="mt-3 headline font-semibold uppercase text-2xl leading-[1]">
-                We've sent a reset link.
+                We’ve sent a reset link.
               </p>
               <p className="mt-3 text-sm text-muted-foreground headline">
                 Follow the link in the message to set a new password.

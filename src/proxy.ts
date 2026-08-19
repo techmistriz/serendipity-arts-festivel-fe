@@ -13,12 +13,11 @@ const DISABLED_ROUTES = [
   "/sea",
 ];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const isDisabledRoute = DISABLED_ROUTES.some(
-    (route) =>
-      pathname === route || pathname.startsWith(`${route}/`)
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
   if (isDisabledRoute) {

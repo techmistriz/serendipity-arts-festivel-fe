@@ -3,9 +3,9 @@ import {
   GeneralRegisterRequest,
   GuestRegisterRequest,
   SEARequest,
-  ApiResponse,
-} from "@/src/types/auth";
-import api from "./axios";
+} from "@/types/auth";
+import api from "@/lib/api-client";
+import type { ApiResponse } from "@/types/api";
 
 export const sendOTP = (data: SendOTPRequest) => {
   return api.post<ApiResponse>("/auth/send-otp", data);
@@ -30,5 +30,21 @@ export interface ArchiveUserPayload {
 }
 
 export const archiveUser = (data: ArchiveUserPayload) => {
-  return api.post("/auth/archive-user", data);
+  return api.post<ApiResponse<ArchivedUser>>("/auth/archive-user", data);
 };
+
+export interface ArchivedUser {
+  id: number;
+  email: string;
+  role_id: number;
+  name?: string;
+  gender?: string;
+  std_code?: string;
+  contact?: string | number;
+  country_id?: number;
+  state_id?: number;
+  city_id?: number;
+  age_group?: string;
+  visited_year?: string[];
+  subscribe?: 0 | 1;
+}

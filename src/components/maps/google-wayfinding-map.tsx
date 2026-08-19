@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MapNode, MapPoint } from "./WayfindingMap";
+import { MapNode, MapPoint } from "./wayfinding-map";
 
 declare global {
   interface Window {
-    google?: any;
+    google?: typeof google;
     __safMapsReady?: boolean;
     __safMapsInit?: () => void;
   }
@@ -20,7 +20,7 @@ const NODE_GLYPH: Record<MapNode["kind"], string> = {
   info: "i",
 };
 
-function loadMaps(): Promise<any> {
+function loadMaps(): Promise<typeof google> {
   if (typeof window === "undefined") {
     return Promise.reject(new Error("Google Maps can only load in the browser"));
   }
@@ -30,21 +30,18 @@ function loadMaps(): Promise<any> {
   }
 
   return new Promise((resolve, reject) => {
-    const key =
-      process.env.NEXT_PUBLIC_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
-
+    const key = process.env.NEXT_PUBLIC_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
 
     // console.log("Google Maps key exists:", !!key);
     // console.log("Google Maps key:", key);
 
-    const channel =
-      process.env.NEXT_PUBLIC_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
+    const channel = process.env.NEXT_PUBLIC_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
 
     if (!key) {
       reject(
         new Error(
-          "Google Maps API key missing. Check NEXT_PUBLIC_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"
-        )
+          "Google Maps API key missing. Check NEXT_PUBLIC_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY",
+        ),
       );
       return;
     }
@@ -122,12 +119,10 @@ function nodeSvg(glyph: string) {
 }
 
 function mapsUrl(p: MapPoint) {
-  const destination = p.address
-    ? `${p.name}, ${p.address}`
-    : `${p.lat},${p.lng}`;
+  const destination = p.address ? `${p.name}, ${p.address}` : `${p.lat},${p.lng}`;
 
   return `https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=${encodeURIComponent(
-    destination
+    destination,
   )}`;
 }
 
@@ -146,9 +141,9 @@ export function GoogleWayfindingMap({
   ariaLabel: string;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const rendererRef = useRef<any>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const rendererRef = useRef<google.maps.DirectionsRenderer | google.maps.Polyline | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<{ km: number; min: number } | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
@@ -171,15 +166,13 @@ export function GoogleWayfindingMap({
     [custom, fromPoint, toPoint, itineraryPoints],
   );
 
-
-
   useEffect(() => {
     let cancelled = false;
     loadMaps()
       .then((google) => {
         if (cancelled || !ref.current) return;
         const bounds = new google.maps.LatLngBounds();
-        [...points, ...nodes].forEach((p: any) => bounds.extend({ lat: p.lat, lng: p.lng }));
+        [...points, ...nodes].forEach((point) => bounds.extend({ lat: point.lat, lng: point.lng }));
         const map = new google.maps.Map(ref.current, {
           center: bounds.getCenter(),
           zoom: 15,
@@ -206,7 +199,8 @@ export function GoogleWayfindingMap({
           marker.addListener("click", () => {
             setSelected(p.slug);
             info.setContent(
-              `<div style="font-family:Inter,Arial,sans-serif;max-width:220px"><strong>${p.name}</strong>${p.address ? `<br/><span style="opacity:.7">${p.address}</span>` : ""
+              `<div style="font-family:Inter,Arial,sans-serif;max-width:220px"><strong>${p.name}</strong>${
+                p.address ? `<br/><span style="opacity:.7">${p.address}</span>` : ""
               }<br/><a href="${mapsUrl(p)}" target="_blank" rel="noreferrer">Walking directions →</a></div>`,
             );
             info.open({ map, anchor: marker });
@@ -228,7 +222,10 @@ export function GoogleWayfindingMap({
           markersRef.current.push(marker);
         });
       })
-      .catch((e) => !cancelled && setError(e.message));
+      .catch((error: unknown) => {
+        if (!cancelled)
+          setError(error instanceof Error ? error.message : "Unable to load the map.");
+      });
 
     return () => {
       cancelled = true;
@@ -264,10 +261,12 @@ export function GoogleWayfindingMap({
           lat: routePoints[routePoints.length - 1].lat,
           lng: routePoints[routePoints.length - 1].lng,
         },
-        waypoints: routePoints.slice(1, -1).map((p) => ({ location: { lat: p.lat, lng: p.lng }, stopover: true })),
+        waypoints: routePoints
+          .slice(1, -1)
+          .map((p) => ({ location: { lat: p.lat, lng: p.lng }, stopover: true })),
         travelMode: google.maps.TravelMode[mode],
       },
-      (res: any, status: string) => {
+      (res, status) => {
         if (status !== "OK" || !res) {
           // Directions unavailable: draw a straight-line route and estimate.
           const path = new google.maps.Polyline({
@@ -291,23 +290,25 @@ export function GoogleWayfindingMap({
           return;
         }
         renderer.setDirections(res);
-        const legs = res.routes[0].legs;
-        const m = legs.reduce((a: number, l: any) => a + l.distance.value, 0);
-        const s = legs.reduce((a: number, l: any) => a + l.duration.value, 0);
+        const legs = res.routes[0]?.legs ?? [];
+        const m = legs.reduce((total, leg) => total + (leg.distance?.value ?? 0), 0);
+        const s = legs.reduce((total, leg) => total + (leg.duration?.value ?? 0), 0);
         setSummary({ km: m / 1000, min: Math.max(1, Math.round(s / 60)) });
         setSteps(
           legs
-            .flatMap((l: any) => l.steps ?? [])
-            .map((st: any) => ({
-              text: String(st.instructions ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
-              dist: st.distance?.text ?? "",
+            .flatMap((leg) => leg.steps ?? [])
+            .map((step) => ({
+              text: String(step.instructions ?? "")
+                .replace(/<[^>]+>/g, " ")
+                .replace(/\s+/g, " ")
+                .trim(),
+              dist: step.distance?.text ?? "",
             }))
             .slice(0, 12),
         );
       },
     );
   }, [routePoints, mode, error]);
-
 
   return (
     <div className="border-[3px] border-black bg-background">
@@ -316,7 +317,12 @@ export function GoogleWayfindingMap({
           <p className="headline text-sm text-muted-foreground">Map unavailable: {error}</p>
         </div>
       ) : (
-        <div ref={ref} role="application" aria-label={ariaLabel} className="w-full h-[420px] md:h-[560px]" />
+        <div
+          ref={ref}
+          role="application"
+          aria-label={ariaLabel}
+          className="w-full h-[420px] md:h-[560px]"
+        />
       )}
 
       <div className="rule-t grid grid-cols-1 md:grid-cols-2">
@@ -331,12 +337,14 @@ export function GoogleWayfindingMap({
                   mapRef.current?.panTo({ lat: p.lat, lng: p.lng });
                   mapRef.current?.setZoom(17);
                 }}
-                className={`flex items-center gap-3 px-4 py-3 rule-b cursor-pointer ${selected === p.slug ? "bg-muted/40" : ""
-                  }`}
+                className={`flex items-center gap-3 px-4 py-3 rule-b cursor-pointer ${
+                  selected === p.slug ? "bg-muted/40" : ""
+                }`}
               >
                 <span
-                  className={`label w-7 h-7 grid place-items-center border-[3px] border-black shrink-0 ${on ? "bg-accent" : ""
-                    }`}
+                  className={`label w-7 h-7 grid place-items-center border-[3px] border-black shrink-0 ${
+                    on ? "bg-accent" : ""
+                  }`}
                 >
                   {i + 1}
                 </span>
@@ -389,8 +397,9 @@ export function GoogleWayfindingMap({
                   key={m}
                   type="button"
                   onClick={() => setMode(m)}
-                  className={`label notch border-[3px] border-black px-3 py-2 ${mode === m ? "bg-foreground text-background" : "hover:bg-muted"
-                    }`}
+                  className={`label notch border-[3px] border-black px-3 py-2 ${
+                    mode === m ? "bg-foreground text-background" : "hover:bg-muted"
+                  }`}
                 >
                   {m === "WALKING" ? "Walk" : m === "DRIVING" ? "Drive" : "Transit"}
                 </button>
@@ -418,8 +427,9 @@ export function GoogleWayfindingMap({
               </p>
               <p className="display text-2xl">
                 {summary
-                  ? `${summary.km.toFixed(1)} km · about ${summary.min} min ${mode === "WALKING" ? "on foot" : mode === "DRIVING" ? "by car" : "by transit"
-                  }`
+                  ? `${summary.km.toFixed(1)} km · about ${summary.min} min ${
+                      mode === "WALKING" ? "on foot" : mode === "DRIVING" ? "by car" : "by transit"
+                    }`
                   : "Calculating route…"}
               </p>
               {steps.length > 0 && (
@@ -437,7 +447,9 @@ export function GoogleWayfindingMap({
               <a
                 href={`https://www.google.com/maps/dir/${routePoints
                   .map((p) => `${p.lat},${p.lng}`)
-                  .join("/")}/data=!4m2!4m1!3e${mode === "WALKING" ? 2 : mode === "DRIVING" ? 0 : 3}`}
+                  .join(
+                    "/",
+                  )}/data=!4m2!4m1!3e${mode === "WALKING" ? 2 : mode === "DRIVING" ? 0 : 3}`}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-block label notch bg-foreground text-background px-5 py-3 hover:bg-accent"
@@ -451,7 +463,6 @@ export function GoogleWayfindingMap({
             </p>
           )}
         </div>
-
       </div>
 
       {caption && <p className="label text-muted-foreground px-4 py-3 rule-t">{caption}</p>}

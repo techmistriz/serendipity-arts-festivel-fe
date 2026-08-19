@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useMemo, useState } from "react";
 
@@ -58,7 +58,7 @@ function mapsUrl(p: MapPoint) {
 /**
  * Stylised but geographically-projected wayfinding map: named streets,
  * transport nodes, numbered venue pins and a walking route through the
- * venues on the visitor's itinerary.
+ * venues on the visitor’s itinerary.
  */
 export function WayfindingMap({
   points,
@@ -105,7 +105,9 @@ export function WayfindingMap({
 
   const { x, y } = proj;
   const line = (pts: [number, number][]) =>
-    pts.map((p, i) => `${i === 0 ? "M" : "L"} ${x(p[1]).toFixed(1)} ${y(p[0]).toFixed(1)}`).join(" ");
+    pts
+      .map((p, i) => `${i === 0 ? "M" : "L"} ${x(p[1]).toFixed(1)} ${y(p[0]).toFixed(1)}`)
+      .join(" ");
 
   const routePoints = useMemo(
     () => highlight.map((s) => points.find((p) => p.slug === s)).filter(Boolean) as MapPoint[],
@@ -114,7 +116,8 @@ export function WayfindingMap({
 
   const routeKm = useMemo(() => {
     let km = 0;
-    for (let i = 1; i < routePoints.length; i++) km += haversineKm(routePoints[i - 1], routePoints[i]);
+    for (let i = 1; i < routePoints.length; i++)
+      km += haversineKm(routePoints[i - 1], routePoints[i]);
     return km;
   }, [routePoints]);
 
@@ -127,7 +130,15 @@ export function WayfindingMap({
           <pattern id="wf-hatch" width="8" height="8" patternUnits="userSpaceOnUse">
             <path d="M0 8 L8 0" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
           </pattern>
-          <marker id="wf-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <marker
+            id="wf-arrow"
+            viewBox="0 0 10 10"
+            refX="8"
+            refY="5"
+            markerWidth="5"
+            markerHeight="5"
+            orient="auto-start-reverse"
+          >
             <path d="M0 0 L10 5 L0 10 z" className="fill-accent" />
           </marker>
         </defs>
@@ -153,8 +164,23 @@ export function WayfindingMap({
           const d = line(r.points);
           return (
             <g key={r.name}>
-              <path d={d} fill="none" stroke="currentColor" strokeWidth={r.major ? 16 : 9} opacity={0.12} strokeLinejoin="round" strokeLinecap="round" />
-              <path d={d} fill="none" stroke="currentColor" strokeWidth={1} opacity={0.35} strokeDasharray="6 6" />
+              <path
+                d={d}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={r.major ? 16 : 9}
+                opacity={0.12}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+              <path
+                d={d}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1}
+                opacity={0.35}
+                strokeDasharray="6 6"
+              />
               <path id={`wf-road-${r.name.replace(/\W+/g, "-")}`} d={d} fill="none" stroke="none" />
               <text className="label" fontSize={11} fill="currentColor" opacity={0.6}>
                 <textPath href={`#wf-road-${r.name.replace(/\W+/g, "-")}`} startOffset="42%">
@@ -180,11 +206,33 @@ export function WayfindingMap({
         {/* Transport nodes */}
         {nodes.map((n) => (
           <g key={n.name}>
-            <circle cx={x(n.lng)} cy={y(n.lat)} r={9} className="fill-background" stroke="currentColor" strokeWidth={3} />
-            <text x={x(n.lng)} y={y(n.lat) + 4} fontSize={10} textAnchor="middle" className="label" fill="currentColor">
+            <circle
+              cx={x(n.lng)}
+              cy={y(n.lat)}
+              r={9}
+              className="fill-background"
+              stroke="currentColor"
+              strokeWidth={3}
+            />
+            <text
+              x={x(n.lng)}
+              y={y(n.lat) + 4}
+              fontSize={10}
+              textAnchor="middle"
+              className="label"
+              fill="currentColor"
+            >
               {NODE_GLYPH[n.kind]}
             </text>
-            <text x={x(n.lng)} y={y(n.lat) + 24} fontSize={10} textAnchor="middle" className="label" fill="currentColor" opacity={0.65}>
+            <text
+              x={x(n.lng)}
+              y={y(n.lat) + 24}
+              fontSize={10}
+              textAnchor="middle"
+              className="label"
+              fill="currentColor"
+              opacity={0.65}
+            >
               {n.name.toUpperCase()}
             </text>
           </g>
@@ -205,7 +253,13 @@ export function WayfindingMap({
               style={{ cursor: "pointer" }}
             >
               {(on || active) && (
-                <circle cx={px} cy={py} r={20} className="fill-accent" opacity={active ? 0.22 : 0.12} />
+                <circle
+                  cx={px}
+                  cy={py}
+                  r={20}
+                  className="fill-accent"
+                  opacity={active ? 0.22 : 0.12}
+                />
               )}
               <rect
                 x={px - 11}
@@ -251,8 +305,20 @@ export function WayfindingMap({
           </text>
         </g>
         <g transform={`translate(${W - 44}, 40)`}>
-          <path d="M0 18 L0 -18 M0 -18 L-6 -8 M0 -18 L6 -8" stroke="currentColor" strokeWidth={3} fill="none" />
-          <text x={0} y={34} fontSize={11} textAnchor="middle" className="label" fill="currentColor">
+          <path
+            d="M0 18 L0 -18 M0 -18 L-6 -8 M0 -18 L6 -8"
+            stroke="currentColor"
+            strokeWidth={3}
+            fill="none"
+          />
+          <text
+            x={0}
+            y={34}
+            fontSize={11}
+            textAnchor="middle"
+            className="label"
+            fill="currentColor"
+          >
             N
           </text>
         </g>
@@ -271,8 +337,9 @@ export function WayfindingMap({
                 className={`flex items-center gap-3 px-4 py-3 rule-b ${hover === p.slug ? "bg-muted/40" : ""}`}
               >
                 <span
-                  className={`label w-7 h-7 grid place-items-center border-[3px] border-black shrink-0 ${on ? "bg-accent" : ""
-                    }`}
+                  className={`label w-7 h-7 grid place-items-center border-[3px] border-black shrink-0 ${
+                    on ? "bg-accent" : ""
+                  }`}
                 >
                   {i + 1}
                 </span>

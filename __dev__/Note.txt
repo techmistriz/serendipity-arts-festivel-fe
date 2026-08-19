@@ -1,0 +1,46 @@
+Serendipity Next.js Frontend Useful Commands
+
+Initial Setup
+- `node --version` (use Node 22.17.1 or newer; see `.nvmrc`)
+- `npm ci`
+- `cp .env.example .env` (set `LARAVEL_API_URL`; never commit `.env`)
+- `npm run prepare` (enables Husky hooks if they were not enabled during install)
+
+Development
+- `npm run dev`
+- `npm run dev -- --port 3001`
+- Open `http://localhost:3000`
+
+Quality Checks
+- `npm run format` (formats files; changes files)
+- `npm run format:check` (checks formatting only)
+- `npm run lint`
+- `npm run typecheck`
+- `npm run check` (required before requesting review / committing)
+
+Production Verification
+- `npm run build`
+- `npm run start` (runs the completed production build)
+- `npx next typegen` (refreshes generated route types when App Router routes change)
+
+Git / Husky
+- `git status`
+- `git diff --check` (checks whitespace errors)
+- `git add <file>`
+- `git commit -m "Add product size selector"`
+- `HUSKY=0 git commit -m "..."` (emergency only; explain why in the PR)
+
+Laravel API Integration
+- Ensure the backend is running: `cd ../black-sand-be && php artisan serve`
+- Check backend API routes: `cd ../black-sand-be && php artisan route:list --path=api`
+- Check the configured frontend API origin: `grep LARAVEL_API_URL .env`
+- Test the Laravel health/route response when an endpoint is available: `curl -i http://127.0.0.1:8000/api/v1/profile`
+
+Safe Cleanup
+- `rm -rf .next && npm run dev` (clears only generated Next.js output)
+- `npm cache verify`
+
+Important
+- Read `AGENTS.md`, `CONTRIBUTING.md`, and `docs/ARCHITECTURE.md` before changing code.
+- Use `src/services` for API calls and `src/redux` for shared client state.
+- Do not store auth tokens in localStorage, Redux persistence, or any `NEXT_PUBLIC_*` variable.

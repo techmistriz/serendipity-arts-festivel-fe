@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Sponsors } from "@/src/types/sponsor";
-import { getSponsors } from "../services/sponsors";
+import type { Sponsors } from "@/types/sponsor";
+import { getSponsors } from "@/services/sponsors";
 
 export function useSponsors(limit = 5) {
   const [sponsors, setSponsors] = useState<Sponsors[]>([]);
@@ -19,9 +19,7 @@ export function useSponsors(limit = 5) {
 
         setSponsors(data);
       } catch (error) {
-        setError(
-          error instanceof Error ? error.message : "Failed to fetch sponsors",
-        );
+        setError(error instanceof Error ? error.message : "Failed to fetch sponsors");
       } finally {
         setLoading(false);
       }

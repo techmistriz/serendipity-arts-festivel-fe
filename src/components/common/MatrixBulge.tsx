@@ -3,7 +3,7 @@
 // A dense matrix of vertical glitch lines, with a "traveling bulge" — a
 // wave of vertical scale-up moves across the strip like a lens zooming
 // past, giving the impression the whole matrix is in motion.
-import { PALETTE as _P } from "@/src/lib/glitch-palette";
+import { PALETTE as _P } from "@/lib/glitch-palette";
 import { useMemo } from "react";
 
 const PALETTE = _P;
@@ -33,7 +33,10 @@ export function MatrixBulge({ seed = 71, count = 90, duration = 3.6, className =
   }, [seed, count]);
 
   return (
-    <div className={`relative w-full overflow-hidden flex items-center gap-[3px] md:gap-[4px] ${className}`} aria-hidden>
+    <div
+      className={`relative w-full overflow-hidden flex items-center gap-[3px] md:gap-[4px] ${className}`}
+      aria-hidden
+    >
       {bars.map((b, i) => (
         <div
           key={i}

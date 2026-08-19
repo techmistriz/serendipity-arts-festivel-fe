@@ -1,11 +1,6 @@
 // Wayfinding geometry for the Panjim festival footprint.
 
-import {
-  MapArea,
-  MapNode,
-  MapPoint,
-  MapRoad,
-} from "../components/WayfindingMap";
+import { MapArea, MapNode, MapPoint, MapRoad } from "@/components/maps/wayfinding-map";
 
 export const GOA_VENUE_POINTS: MapPoint[] = [
   {
@@ -133,7 +128,7 @@ export const GOA_NODES: MapNode[] = [
   { name: "Parking", kind: "parking", lat: 15.4952, lng: 73.8266 },
 ];
 
-/** Match a programme's venue string to a map point slug. */
+/** Match a programme’s venue string to a map point slug. */
 export function goaVenueSlug(venue: string) {
   const v = venue.toLowerCase();
   if (v.includes("gmc")) return "old-gmc";

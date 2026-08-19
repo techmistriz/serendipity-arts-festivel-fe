@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "@/lib/api-client";
 
 export const contactUsAPI = async (data: {
   name: string;

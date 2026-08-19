@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import whiteLogo from "@/public/images/home/saf-logo-white-2026.png";
-import blackLogo from "@/public/images/home/saf-logo-2026.png";
-import { categoryStyle } from "@/src/lib/tag-colors";
-import GlitchBar from "@/src/components/common/GlitchBar";
-import { GlitchLines } from "@/src/components/common/GlitchLines";
-import { dateLabel, Programme, PROGRAMMES, timeLabel } from "@/src/data/programmes-data";
+import whiteLogo from "@public/images/home/saf-logo-white-2026.png";
+import blackLogo from "@public/images/home/saf-logo-2026.png";
+import { categoryStyle } from "@/lib/tag-colors";
+import GlitchBar from "@/components/common/GlitchBar";
+import { GlitchLines } from "@/components/common/GlitchLines";
+import { dateLabel, Programme, PROGRAMMES, timeLabel } from "@/data/programmes-data";
 import Image from "next/image";
 
 type Screen =
@@ -100,7 +100,11 @@ function AppSkin() {
             />
           )}
           {screen === "booking" && (
-            <Booking p={prog} onClose={() => setScreen("detail")} onBook={() => setScreen("success")} />
+            <Booking
+              p={prog}
+              onClose={() => setScreen("detail")}
+              onBook={() => setScreen("success")}
+            />
           )}
           {screen === "success" && <Success onCart={() => setScreen("home")} />}
           {screen === "festival" && <Festival onTab={setScreen} />}
@@ -172,10 +176,19 @@ function Splash() {
         playsInline
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <GlitchLines seed={5} columns={22} density={0.24} className="absolute inset-0 h-full w-full opacity-85 pointer-events-none" />
+      <GlitchLines
+        seed={5}
+        columns={22}
+        density={0.24}
+        className="absolute inset-0 h-full w-full opacity-85 pointer-events-none"
+      />
       <div className="absolute inset-0 bg-black/20" aria-hidden />
       <div className="absolute inset-0 flex flex-col justify-between p-6">
-        <Image src={whiteLogo} alt="Serendipity Arts Festival 2026" className="w-[62%] brightness-0 invert" />
+        <Image
+          src={whiteLogo}
+          alt="Serendipity Arts Festival 2026"
+          className="w-[62%] brightness-0 invert"
+        />
         <p className="display uppercase text-white text-right text-3xl leading-[1.05]">
           Panjim, Goa
           <br />
@@ -217,8 +230,17 @@ function Login({ onNext }: { onNext: () => void }) {
 function Welcome({ onStart }: { onStart: () => void }) {
   return (
     <div className="relative h-full">
-      <Image src={PROGRAMMES[1].img} alt="" className="absolute inset-0 h-full w-full object-cover" />
-      <GlitchLines seed={29} columns={20} density={0.28} className="absolute inset-0 h-full w-full opacity-80 pointer-events-none" />
+      <Image
+        src={PROGRAMMES[1].img}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <GlitchLines
+        seed={29}
+        columns={20}
+        density={0.28}
+        className="absolute inset-0 h-full w-full opacity-80 pointer-events-none"
+      />
       <div className="absolute inset-0 bg-black/30" aria-hidden />
       <div className="relative h-full grid place-items-center p-6">
         <div className="w-full border border-foreground bg-background p-6">
@@ -228,8 +250,8 @@ function Welcome({ onStart }: { onStart: () => void }) {
             SAF 2026
           </p>
           <p className="mt-4 headline text-sm leading-snug text-muted-foreground">
-            Browse programmes across music, dance, theatre, food and more. Book your favourites, plan
-            your festival and make the most of Goa.
+            Browse programmes across music, dance, theatre, food and more. Book your favourites,
+            plan your festival and make the most of Goa.
           </p>
           <button
             onClick={onStart}
@@ -276,14 +298,25 @@ function Home({
                 See you in <span className="text-accent">3 days</span>
               </p>
             </div>
-            <button className="label notch bg-foreground text-background px-3 py-2">Art Pass</button>
+            <button className="label notch bg-foreground text-background px-3 py-2">
+              Art Pass
+            </button>
           </div>
         </div>
 
         <div className="mt-5 px-4">
           <div className="relative border border-foreground overflow-hidden">
-            <Image src={PROGRAMMES[1].img} alt="Festival banner" className="w-full aspect-[16/10] object-cover" />
-            <GlitchLines seed={7} columns={18} density={0.3} className="absolute inset-0 h-full w-full" />
+            <Image
+              src={PROGRAMMES[1].img}
+              alt="Festival banner"
+              className="w-full aspect-[16/10] object-cover"
+            />
+            <GlitchLines
+              seed={7}
+              columns={18}
+              density={0.3}
+              className="absolute inset-0 h-full w-full"
+            />
           </div>
         </div>
 
@@ -294,12 +327,13 @@ function Home({
               const p = PROGRAMMES.find((x) => x.category === h) ?? PROGRAMMES[0];
               return (
                 <button key={h} onClick={() => onOpen(p)} className="shrink-0 w-40 text-left">
-                  <Image src={p.img} alt={h} className="w-full aspect-square object-cover border border-foreground" />
+                  <Image
+                    src={p.img}
+                    alt={h}
+                    className="w-full aspect-square object-cover border border-foreground"
+                  />
                   <p className="mt-2 headline font-semibold text-sm leading-tight">{h}s</p>
-                  <span
-                    className="mt-1 inline-block label px-2 py-0.5"
-                    style={categoryStyle(h)}
-                  >
+                  <span className="mt-1 inline-block label px-2 py-0.5" style={categoryStyle(h)}>
                     {h}
                   </span>
                 </button>
@@ -330,7 +364,11 @@ function Home({
 function Card({ p, onOpen }: { p: Programme; onOpen: (p: Programme) => void }) {
   return (
     <button onClick={() => onOpen(p)} className="text-left">
-      <Image src={p.img} alt={p.title} className="w-full aspect-square object-cover border border-foreground" />
+      <Image
+        src={p.img}
+        alt={p.title}
+        className="w-full aspect-square object-cover border border-foreground"
+      />
       <span className="mt-2 inline-block label px-2 py-0.5" style={categoryStyle(p.category)}>
         {p.category}
       </span>
@@ -342,7 +380,13 @@ function Card({ p, onOpen }: { p: Programme; onOpen: (p: Programme) => void }) {
   );
 }
 
-function Programmes({ onOpen, onTab }: { onOpen: (p: Programme) => void; onTab: (s: Screen) => void }) {
+function Programmes({
+  onOpen,
+  onTab,
+}: {
+  onOpen: (p: Programme) => void;
+  onTab: (s: Screen) => void;
+}) {
   const cats = ["All", "Exhibition", "Performance", "Workshop", "Talk", "Film Screening"];
   const [cat, setCat] = useState("All");
   const list = cat === "All" ? PROGRAMMES : PROGRAMMES.filter((p) => p.category === cat);
@@ -403,7 +447,11 @@ function Detail({ p, onBack, onBook }: { p: Programme; onBack: () => void; onBoo
               </span>
             ))}
           </div>
-          <Image src={p.img} alt={p.title} className="mt-3 w-full aspect-[4/3] object-cover border border-foreground" />
+          <Image
+            src={p.img}
+            alt={p.title}
+            className="mt-3 w-full aspect-[4/3] object-cover border border-foreground"
+          />
           <p className="mt-3 label text-muted-foreground">{p.venue}</p>
           <p className="label text-muted-foreground">
             {dateLabel(p)} · {timeLabel(p)}
@@ -443,7 +491,15 @@ function Detail({ p, onBack, onBook }: { p: Programme; onBack: () => void; onBoo
   );
 }
 
-function Booking({ p, onClose, onBook }: { p: Programme; onClose: () => void; onBook: () => void }) {
+function Booking({
+  p,
+  onClose,
+  onBook,
+}: {
+  p: Programme;
+  onClose: () => void;
+  onBook: () => void;
+}) {
   const fields: [string, string][] = [
     ["Venue", p.venue],
     ["Date", dateLabel(p)],

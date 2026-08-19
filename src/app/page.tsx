@@ -2,75 +2,114 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import dashMotif from "@/public/images/home/dash-motif.png";
-import prog1 from "@/public/images/prog-1.jpg";
-import prog2 from "@/public/images/prog-2.jpg";
-import prog3 from "@/public/images/prog-3.jpg";
-import venue1 from "@/public/images/venue-1.jpg";
-import venue2 from "@/public/images/venue-2.jpg";
-import whiteLogo from "@/public/images/home/saf-logo-white-2026.png";
-import artParkImg from "@/public/images/home/art-park-v2.jpg";
-import sambaImg from "@/public/images/home/samba-square-2026.jpg";
-import gmcImg from "@/public/images/home/old-gmc-v2.jpg";
-import promenadeImg from "@/public/images/home/promenade-v2.jpg";
-import { useAppSelector } from "@/src/store/hooks";
+import dashMotif from "@public/images/home/dash-motif.png";
+import prog1 from "@public/images/prog-1.jpg";
+import prog2 from "@public/images/prog-2.jpg";
+import prog3 from "@public/images/prog-3.jpg";
+import venue1 from "@public/images/venue-1.jpg";
+import venue2 from "@public/images/venue-2.jpg";
+import whiteLogo from "@public/images/home/saf-logo-white-2026.png";
+import artParkImg from "@public/images/home/art-park-v2.jpg";
+import sambaImg from "@public/images/home/samba-square-2026.jpg";
+import gmcImg from "@public/images/home/old-gmc-v2.jpg";
+import promenadeImg from "@public/images/home/promenade-v2.jpg";
+import { useAppSelector } from "@/redux/hooks";
 // import { GlitchBorder } from "@/components/site/GlitchBorder";
 // import { GlitchLines } from "@/components/site/GlitchLines";
 // import { RecommendModal } from "@/components/site/RecommendModal";
 // import { TESTIMONIALS } from "@/lib/testimonials";
 // import { PARTNERS } from "@/lib/partners";
-import { CURATORS } from "../data/curators";
-import { GlitchBorder } from "../components/common/GlitchBorder";
-import { GlitchLines } from "../components/common/GlitchLines";
-import { RecommendModal } from "../components/common/RecommendModal";
-import { TESTIMONIALS } from "../lib/testimonials";
+import { CURATORS } from "@/data/curators";
+import { GlitchBorder } from "@/components/common/GlitchBorder";
+import { GlitchLines } from "@/components/common/GlitchLines";
+import { RecommendModal } from "@/components/common/RecommendModal";
+import { TESTIMONIALS } from "@/lib/testimonials";
 import Image from "next/image";
-import { useSponsors } from "../hooks/useSponsors";
-import Loader from "../components/common/Loader";
-import { ScrollGlitchRain } from "../components/common/ScrollGlitchRain";
-import collageHero from "@/public/collage-hero-hd.jpg"
-import recommendBg from "@/public/recommend-bg-v2.png"
-import curatorsBox from "@/public/curators-box.jpg"
-import venuesBox from "@/public/venues-box.png"
-import testimonialsBox from "@/public/testimonials-box.png"
-import pressBox from "@/public/press-box.png"
+import { useSponsors } from "@/hooks/useSponsors";
+import Loader from "@/components/common/Loader";
+import { ScrollGlitchRain } from "@/components/common/ScrollGlitchRain";
+import collageHero from "@public/collage-hero-hd.jpg";
+import recommendBg from "@public/recommend-bg-v2.png";
+import curatorsBox from "@public/curators-box.jpg";
+import venuesBox from "@public/venues-box.png";
+import testimonialsBox from "@public/testimonials-box.png";
+import pressBox from "@public/press-box.png";
 import { redirect } from "next/navigation";
 
 const PROGRAMMES = [
-  { img: prog1, title: "Bodies in Translation", date: "14 Dec", venue: "Kala Academy", category: "Performance" },
-  { img: prog2, title: "The Weight of Silence", date: "13–20 Dec", venue: "Adil Shah Palace", category: "Exhibition" },
-  { img: prog3, title: "Hands That Remember", date: "16 Dec", venue: "PWD Complex", category: "Workshop" },
-  { img: venue1, title: "A River, Rehearsed", date: "17 Dec", venue: "Mandovi Promenade", category: "Performance" },
-  { img: prog2, title: "Ground Plans", date: "13–20 Dec", venue: "PWD Complex", category: "Exhibition" },
-  { img: venue2, title: "Salt & Signal", date: "15 Dec", venue: "Old GMC Building", category: "Film Screening" },
-  { img: prog3, title: "Kitchen as Studio", date: "16 Dec", venue: "Casa dos Anjos", category: "Workshop" },
-  { img: prog1, title: "River Songs", date: "19 Dec", venue: "Mandovi Promenade", category: "Performance" },
+  {
+    img: prog1,
+    title: "Bodies in Translation",
+    date: "14 Dec",
+    venue: "Kala Academy",
+    category: "Performance",
+  },
+  {
+    img: prog2,
+    title: "The Weight of Silence",
+    date: "13–20 Dec",
+    venue: "Adil Shah Palace",
+    category: "Exhibition",
+  },
+  {
+    img: prog3,
+    title: "Hands That Remember",
+    date: "16 Dec",
+    venue: "PWD Complex",
+    category: "Workshop",
+  },
+  {
+    img: venue1,
+    title: "A River, Rehearsed",
+    date: "17 Dec",
+    venue: "Mandovi Promenade",
+    category: "Performance",
+  },
+  {
+    img: prog2,
+    title: "Ground Plans",
+    date: "13–20 Dec",
+    venue: "PWD Complex",
+    category: "Exhibition",
+  },
+  {
+    img: venue2,
+    title: "Salt & Signal",
+    date: "15 Dec",
+    venue: "Old GMC Building",
+    category: "Film Screening",
+  },
+  {
+    img: prog3,
+    title: "Kitchen as Studio",
+    date: "16 Dec",
+    venue: "Casa dos Anjos",
+    category: "Workshop",
+  },
+  {
+    img: prog1,
+    title: "River Songs",
+    date: "19 Dec",
+    venue: "Mandovi Promenade",
+    category: "Performance",
+  },
 ];
-
 
 // Shared torn-paper outline so the hero and the section boxes read as one family.
 const TORN_CLIP =
   "polygon(1.5% 3%, 22% 0.6%, 47% 2.4%, 71% 0%, 92% 2.8%, 100% 12%, 98.4% 38%, 100% 63%, 97.6% 88%, 88% 100%, 63% 97.4%, 39% 100%, 15% 97.8%, 2.4% 92%, 0% 66%, 1.8% 41%, 0.4% 18%)";
 const tornStyle = { clipPath: TORN_CLIP, WebkitClipPath: TORN_CLIP } as const;
 
-
 export default function Home() {
   const featuredCurators = [...CURATORS].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 4);
-  const isAuthenticated = useAppSelector(
-    (state) => state.auth.isAuthenticated
-  );
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const [recOpen, setRecOpen] = useState(false);
   const [filmOpen, setFilmOpen] = useState(false);
   const [pressOpen, setPressOpen] = useState(false);
   const [ti, setTi] = useState(0);
   const t = TESTIMONIALS[ti];
 
-
-  const {
-    sponsors,
-    loading,
-    error,
-  } = useSponsors(8);
+  const { sponsors, loading, error } = useSponsors(8);
 
   return (
     <div>
@@ -79,7 +118,11 @@ export default function Home() {
       <section className="relative h-[72vh] min-h-[480px] w-full overflow-hidden bg-black text-white">
         <video
           src="/saf-aftermovie.mp4"
-          autoPlay muted loop playsInline preload="auto"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <GlitchLines
@@ -158,7 +201,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-
       </section>
 
       {/* PROGRAMMES */}
@@ -245,12 +287,26 @@ export default function Home() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
           {featuredCurators.map((c, i) => (
             <Link key={c.name} href="/curators" className="group block">
-              <GlitchBorder seed={i * 7 + 11} thickness={1} hoverBoost={14} delayMs={200} className="overflow-hidden">
-                <Image src={c.img} alt={c.name} loading="lazy"
-                  className="w-full aspect-[4/5] object-cover " />
+              <GlitchBorder
+                seed={i * 7 + 11}
+                thickness={1}
+                hoverBoost={14}
+                delayMs={200}
+                className="overflow-hidden"
+              >
+                <Image
+                  src={c.img}
+                  alt={c.name}
+                  loading="lazy"
+                  className="w-full aspect-[4/5] object-cover "
+                />
               </GlitchBorder>
-              <p className="headline font-semibold text-sm md:text-lg leading-tight mt-3 group-hover:text-accent transition-colors">{c.name}</p>
-              <p className="text-[11px] md:text-xs text-muted-foreground headline">{c.discipline}</p>
+              <p className="headline font-semibold text-sm md:text-lg leading-tight mt-3 group-hover:text-accent transition-colors">
+                {c.name}
+              </p>
+              <p className="text-[11px] md:text-xs text-muted-foreground headline">
+                {c.discipline}
+              </p>
             </Link>
           ))}
         </div>
@@ -275,7 +331,9 @@ export default function Home() {
             className="md:col-span-5 block relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover cursor-pointer"
             style={{
               backgroundImage: `url(${venuesBox.src})`,
-              backgroundPosition: "22% 78%", backgroundSize: "150%", ...tornStyle
+              backgroundPosition: "22% 78%",
+              backgroundSize: "150%",
+              ...tornStyle,
             }}
           >
             <div className="absolute inset-0 bg-foreground/55" aria-hidden />
@@ -284,7 +342,8 @@ export default function Home() {
                 Serendipity Dash
               </p>
               <p className="headline text-xs md:text-sm mt-2 max-w-lg text-white/85">
-                Run the festival streets that cross our festival venues over the years, dodge the vans and collect points. Our little game, playable in your browser.
+                Run the festival streets that cross our festival venues over the years, dodge the
+                vans and collect points. Our little game, playable in your browser.
               </p>
               <span className="mt-4 inline-block label notch border border-white text-white px-4 py-2.5 hover:bg-white hover:text-foreground transition-colors cursor-pointer">
                 Coming soon →
@@ -344,7 +403,7 @@ export default function Home() {
       </section> */}
 
       {/* TESTIMONIALS */}
-        <section className="container-editorial mt-20 md:mt-32">
+      <section className="container-editorial mt-20 md:mt-32">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
           <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
             Testimonials
@@ -387,16 +446,24 @@ export default function Home() {
           </div>
         )}
 
-
         <div className="border border-foreground p-5 md:p-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10">
             <div className="md:col-span-3">
               {t.img ? (
-                <Image src={t.img} alt={t.name} loading="lazy" className="w-32 md:w-full md:max-w-[220px] aspect-square object-cover border border-foreground" />
+                <Image
+                  src={t.img}
+                  alt={t.name}
+                  loading="lazy"
+                  className="w-32 md:w-full md:max-w-[220px] aspect-square object-cover border border-foreground"
+                />
               ) : (
-                <div className="w-32 md:w-full md:max-w-[220px] aspect-square grid place-items-center border border-foreground display text-3xl">{t.initials}</div>
+                <div className="w-32 md:w-full md:max-w-[220px] aspect-square grid place-items-center border border-foreground display text-3xl">
+                  {t.initials}
+                </div>
               )}
-              <p className="mt-3 headline font-semibold text-lg md:text-xl leading-tight">{t.name}</p>
+              <p className="mt-3 headline font-semibold text-lg md:text-xl leading-tight">
+                {t.name}
+              </p>
               <p className="headline text-xs md:text-sm text-muted-foreground">{t.role}</p>
             </div>
             <blockquote className="md:col-span-9 headline text-base md:text-2xl leading-[1.35]">
@@ -448,14 +515,19 @@ export default function Home() {
       </section>
 
       {/* PRESS COVERAGE — above About Us */}
-       <section className="container-editorial mt-20 md:mt-32">
+      <section className="container-editorial mt-20 md:mt-32">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
           <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
             Press
           </h2>
           <div
             className="md:col-span-5 relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover"
-            style={{ backgroundImage: `url(${pressBox.src})`, backgroundPosition: "30% 85%", backgroundSize: "170%", ...tornStyle }}
+            style={{
+              backgroundImage: `url(${pressBox.src})`,
+              backgroundPosition: "30% 85%",
+              backgroundSize: "170%",
+              ...tornStyle,
+            }}
           >
             <div className="absolute inset-0 bg-foreground/55" aria-hidden />
             <div className="relative">
@@ -487,13 +559,19 @@ export default function Home() {
               <details key={v.id} className="group">
                 <summary className="cursor-pointer list-none px-5 py-4 md:px-7 md:py-5 flex items-center justify-between gap-4 hover:text-accent transition-colors">
                   <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <span className="headline font-semibold text-base md:text-xl leading-tight">{v.pub}</span>
+                    <span className="headline font-semibold text-base md:text-xl leading-tight">
+                      {v.pub}
+                    </span>
                     <span className="label text-muted-foreground">{v.date}</span>
                   </span>
-                  <span className="label shrink-0 group-open:rotate-45 transition-transform">+</span>
+                  <span className="label shrink-0 group-open:rotate-45 transition-transform">
+                    +
+                  </span>
                 </summary>
                 <div className="px-5 pb-5 md:px-7 md:pb-7">
-                  <div className={`relative w-full ${v.short ? "max-w-[360px] aspect-[9/16]" : "aspect-video"}`}>
+                  <div
+                    className={`relative w-full ${v.short ? "max-w-[360px] aspect-[9/16]" : "aspect-video"}`}
+                  >
                     <iframe
                       src={`https://www.youtube.com/embed/${v.id}`}
                       title={`${v.pub} coverage of Serendipity Arts Festival`}
@@ -510,21 +588,59 @@ export default function Home() {
           </div>
         )}
 
-
         <ul className="rule-t">
           {[
-            { pub: "Firstpost", date: "12 May 2026", title: "Serendipity Arts Festival announces dates for its 11th edition and a curator-led vision for 2026", url: "https://www.firstpost.com/entertainment/serendipity-arts-festival-announces-dates-for-its-11th-edition-and-a-curator-led-vision-for-2026-14009352.html" },
-            { pub: "t2 Online", date: "13 May 2026", title: "Serendipity Arts Festival gears up for its 11th edition — announces curators", url: "https://t2online.in/events/events-1/serendipity-arts-festival-gears-up-for-its-11th-edition--announces-curators/2005066" },
-            { pub: "TNA Mag", date: "14 May 2026", title: "Serendipity Arts Festival 2026 — meet the curators", url: "https://tnamag.xyz/art-news/serendipity-arts-festival-2026-curators/" },
-            { pub: "The Tribune", date: "15 May 2026", title: "Serendipity Arts Festival to return for 11th edition", url: "https://www.tribuneindia.com/news/arts/serendipity-arts-festival-to-return-for-11th-edition/" },
-            { pub: "The Navhind Times", date: "14 May 2026", title: "Serendipity Arts Festival announces curators for 11th edition", url: "https://navhindtimes.in/zest/serendipity-arts-festival-announces-curators-for-11th-edition/" },
-            { pub: "Hindustan Times", date: "12 May 2026", title: "11th Serendipity Arts Festival to take place from December 13–20", url: "https://www.hindustantimes.com/lifestyle/art-culture/11th-serendipity-arts-festival-to-take-place-from-december-1320-101778580075113.html" },
+            {
+              pub: "Firstpost",
+              date: "12 May 2026",
+              title:
+                "Serendipity Arts Festival announces dates for its 11th edition and a curator-led vision for 2026",
+              url: "https://www.firstpost.com/entertainment/serendipity-arts-festival-announces-dates-for-its-11th-edition-and-a-curator-led-vision-for-2026-14009352.html",
+            },
+            {
+              pub: "t2 Online",
+              date: "13 May 2026",
+              title: "Serendipity Arts Festival gears up for its 11th edition — announces curators",
+              url: "https://t2online.in/events/events-1/serendipity-arts-festival-gears-up-for-its-11th-edition--announces-curators/2005066",
+            },
+            {
+              pub: "TNA Mag",
+              date: "14 May 2026",
+              title: "Serendipity Arts Festival 2026 — meet the curators",
+              url: "https://tnamag.xyz/art-news/serendipity-arts-festival-2026-curators/",
+            },
+            {
+              pub: "The Tribune",
+              date: "15 May 2026",
+              title: "Serendipity Arts Festival to return for 11th edition",
+              url: "https://www.tribuneindia.com/news/arts/serendipity-arts-festival-to-return-for-11th-edition/",
+            },
+            {
+              pub: "The Navhind Times",
+              date: "14 May 2026",
+              title: "Serendipity Arts Festival announces curators for 11th edition",
+              url: "https://navhindtimes.in/zest/serendipity-arts-festival-announces-curators-for-11th-edition/",
+            },
+            {
+              pub: "Hindustan Times",
+              date: "12 May 2026",
+              title: "11th Serendipity Arts Festival to take place from December 13–20",
+              url: "https://www.hindustantimes.com/lifestyle/art-culture/11th-serendipity-arts-festival-to-take-place-from-december-1320-101778580075113.html",
+            },
           ].map((a) => (
             <li key={a.url} className="rule-b">
-              <a href={a.url} target="_blank" rel="noreferrer"
-                className="group py-5 md:py-7 grid grid-cols-12 gap-3 md:gap-6 items-baseline hover:text-accent transition-colors">
-                <p className="col-span-12 md:col-span-3 label text-muted-foreground group-hover:text-accent">{a.pub} <span className="opacity-70">&middot; {a.date}</span></p>
-                <p className="col-span-11 md:col-span-8 headline font-semibold text-lg md:text-2xl leading-tight tracking-[-0.01em]">{a.title}</p>
+              <a
+                href={a.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group py-5 md:py-7 grid grid-cols-12 gap-3 md:gap-6 items-baseline hover:text-accent transition-colors"
+              >
+                <p className="col-span-12 md:col-span-3 label text-muted-foreground group-hover:text-accent">
+                  {a.pub} <span className="opacity-70">&middot; {a.date}</span>
+                </p>
+                <p className="col-span-11 md:col-span-8 headline font-semibold text-lg md:text-2xl leading-tight tracking-[-0.01em]">
+                  {a.title}
+                </p>
                 <p className="col-span-1 label text-right">↗</p>
               </a>
             </li>
@@ -532,7 +648,6 @@ export default function Home() {
         </ul>
       </section>
 
-      
       {/* SUPPORTED BY */}
       <section className="container-editorial mt-20 md:mt-32">
         <h2 className="display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] mb-8 md:mb-12">
@@ -542,10 +657,12 @@ export default function Home() {
         {loading ? (
           <Loader />
         ) : (
-
           <div className="-mx-5 px-5 md:mx-0 md:px-0 flex gap-3 overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
             {sponsors.map((p) => (
-              <div key={p.name} className="shrink-0 w-[46vw] snap-start md:w-auto border border-foreground px-2 py-2 flex flex-col">
+              <div
+                key={p.name}
+                className="shrink-0 w-[46vw] snap-start md:w-auto border border-foreground px-2 py-2 flex flex-col"
+              >
                 <div className="grid place-items-center flex-1 h-[86px] md:h-[104px]">
                   <Image
                     src={p.logo}
@@ -556,14 +673,18 @@ export default function Home() {
                     className="max-h-[82px] md:max-h-[100px] max-w-full w-auto object-contain"
                   />
                 </div>
-                <p className="mt-1.5 headline text-[10px] leading-tight text-muted-foreground">{p.name}</p>
+                <p className="mt-1.5 headline text-[10px] leading-tight text-muted-foreground">
+                  {p.name}
+                </p>
               </div>
             ))}
           </div>
         )}
 
         <div className="mt-8 flex justify-end">
-          <Link href="/partners" className="label hover:text-accent transition-colors">All partners &nbsp;&rarr;</Link>
+          <Link href="/partners" className="label hover:text-accent transition-colors">
+            All partners &nbsp;&rarr;
+          </Link>
         </div>
       </section>
 
@@ -571,7 +692,5 @@ export default function Home() {
 
       <RecommendModal open={recOpen} onClose={() => setRecOpen(false)} />
     </div>
-
-
   );
 }

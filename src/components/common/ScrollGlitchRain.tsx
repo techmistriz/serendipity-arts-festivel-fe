@@ -3,7 +3,7 @@
 // They move with the scroll direction and vanish instantly on scroll stop.
 // Never overlaps text, boxes, logos or borders — gutters only.
 import { useEffect, useRef, useState } from "react";
-import { PALETTE } from "@/src/lib/glitch-palette";
+import { PALETTE } from "@/lib/glitch-palette";
 
 const MAX_CONTENT = 1600;
 const GUTTER_MIN = 34; // need real negative space before we draw anything
@@ -70,7 +70,7 @@ export function ScrollGlitchRain() {
       const t = `translate3d(0, ${offset.current % 400}px, 0)`;
       if (leftRef.current) leftRef.current.style.transform = t;
       if (rightRef.current)
-        rightRef.current.style.transform = `translate3d(0, ${(-offset.current) % 400}px, 0)`;
+        rightRef.current.style.transform = `translate3d(0, ${-offset.current % 400}px, 0)`;
       setVisible(true);
       if (stopTimer.current) clearTimeout(stopTimer.current);
       // instant disappear (no fade) shortly after scrolling stops
@@ -122,8 +122,7 @@ export function ScrollGlitchRain() {
     </div>
   );
 
-  const shell =
-    "fixed top-0 h-screen overflow-hidden pointer-events-none z-[5] opacity-0";
+  const shell = "fixed top-0 h-screen overflow-hidden pointer-events-none z-[5] opacity-0";
 
   return (
     <div aria-hidden>

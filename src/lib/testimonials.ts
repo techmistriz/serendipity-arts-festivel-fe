@@ -1,12 +1,12 @@
 import type { StaticImageData } from "next/image";
 
-import shaw from "@/public/images/home/testimonial/shaw.jpg";
-import khanwalkar from "@/public/images/home/testimonial/khanwalkar.jpg";
-import ghosh from "@/public/images/home/testimonial/ghosh.jpg";
-import ojha from "@/public/images/home/testimonial/t-ojha.jpg";
-import parrikar from "@/public/images/home/testimonial/parrikar.jpg";
-import pradhan from "@/public/images/home/testimonial/pradhan.jpg";
-import slagter from "@/public/images/home/testimonial/slagter.jpg";
+import shaw from "@public/images/home/testimonial/shaw.jpg";
+import khanwalkar from "@public/images/home/testimonial/khanwalkar.jpg";
+import ghosh from "@public/images/home/testimonial/ghosh.jpg";
+import ojha from "@public/images/home/testimonial/t-ojha.jpg";
+import parrikar from "@public/images/home/testimonial/parrikar.jpg";
+import pradhan from "@public/images/home/testimonial/pradhan.jpg";
+import slagter from "@public/images/home/testimonial/slagter.jpg";
 
 export type Testimonial = {
   name: string;
@@ -59,7 +59,7 @@ export const TESTIMONIALS: Testimonial[] = [
     initials: "MP",
     img: parrikar,
     quote:
-      "As Goans and as a state we have true appreciation of what they have created as a world-class festival celebrating arts and culture. This has added to Goa's growing reputation as major cultural center of the country and given a big boost to tourism for Goa. Many have benefited from Serendipity Arts Festival, beyond just the art lover, to the public and has become a platform for them to experience all forms of the arts.",
+      "As Goans and as a state we have true appreciation of what they have created as a world-class festival celebrating arts and culture. This has added to Goa’s growing reputation as major cultural center of the country and given a big boost to tourism for Goa. Many have benefited from Serendipity Arts Festival, beyond just the art lover, to the public and has become a platform for them to experience all forms of the arts.",
   },
 
   {

@@ -80,8 +80,8 @@ export default function VolunteerApply() {
         </h1>
 
         <p className="mt-8 max-w-xl text-muted-foreground headline text-lg">
-          Thank you, {firstName || "friend"}. Shortlisted candidates will be
-          contacted by 15 October - keep an eye on {email}.
+          Thank you, {firstName || "friend"}. Shortlisted candidates will be contacted by 15 October
+          - keep an eye on {email}.
         </p>
       </div>
     );
@@ -96,8 +96,8 @@ export default function VolunteerApply() {
       </h1>
 
       <p className="mt-6 max-w-2xl text-muted-foreground headline text-base md:text-lg">
-        Fill out the form below to apply. Shortlisted candidates will be
-        contacted by 15 October 2026.
+        Fill out the form below to apply. Shortlisted candidates will be contacted by 15 October
+        2026.
       </p>
 
       <form
@@ -158,10 +158,7 @@ export default function VolunteerApply() {
           <F label="Gender*">
             <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
               {["He/Him", "She/Her", "Other"].map((g) => (
-                <label
-                  key={g}
-                  className="flex items-center gap-2 text-sm headline"
-                >
+                <label key={g} className="flex items-center gap-2 text-sm headline">
                   <input
                     type="radio"
                     value={g}
@@ -175,11 +172,7 @@ export default function VolunteerApply() {
               ))}
             </div>
 
-            {errors.gender && (
-              <p className="mt-1 text-xs text-red-500">
-                {errors.gender.message}
-              </p>
-            )}
+            {errors.gender && <p className="mt-1 text-xs text-red-500">{errors.gender.message}</p>}
           </F>
         </div>
 
@@ -302,16 +295,12 @@ export default function VolunteerApply() {
                 required: "Resume / CV is required",
                 validate: {
                   size: (files) =>
-                    !files?.[0] ||
-                    files[0].size <= 2 * 1024 * 1024 ||
-                    "Max 2MB allowed.",
+                    !files?.[0] || files[0].size <= 2 * 1024 * 1024 || "Max 2MB allowed.",
                 },
               })}
             />
 
-            <p className="mt-1 text-xs text-muted-foreground">
-              Max 2MB allowed.
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Max 2MB allowed.</p>
           </F>
 
           <F label="Profile Image*">
@@ -324,16 +313,12 @@ export default function VolunteerApply() {
                 required: "Profile image is required",
                 validate: {
                   size: (files) =>
-                    !files?.[0] ||
-                    files[0].size <= 1 * 1024 * 1024 ||
-                    "Max 1MB allowed.",
+                    !files?.[0] || files[0].size <= 1 * 1024 * 1024 || "Max 1MB allowed.",
                 },
               })}
             />
 
-            <p className="mt-1 text-xs text-muted-foreground">
-              Max 1MB allowed.
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Max 1MB allowed.</p>
           </F>
 
           <F label="Aadhaar - front side*">
@@ -428,8 +413,7 @@ export default function VolunteerApply() {
         {/* Discipline Heading */}
         <div className="md:col-span-12">
           <p className="display uppercase text-lg md:text-xl leading-tight pt-4">
-            If given a chance, which discipline & department would you like to
-            volunteer for?
+            If given a chance, which discipline & department would you like to volunteer for?
           </p>
         </div>
 
@@ -500,8 +484,7 @@ export default function VolunteerApply() {
         {/* Motivation */}
         <div className="md:col-span-12">
           <p className="display uppercase text-lg md:text-xl leading-tight pt-4">
-            What do you hope to gain from volunteering at Serendipity Arts
-            Festival?
+            What do you hope to gain from volunteering at Serendipity Arts Festival?
           </p>
 
           <F label="Your answer*">
@@ -527,22 +510,14 @@ export default function VolunteerApply() {
               })}
               className="mt-1 accent-accent"
             />
-
             I accept the{" "}
-            <a
-              href="/terms"
-              className="underline underline-offset-4 hover:text-accent"
-            >
+            <a href="/terms" className="underline underline-offset-4 hover:text-accent">
               Terms & Conditions
             </a>
             .
           </label>
 
-          {errors.accept && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.accept.message}
-            </p>
-          )}
+          {errors.accept && <p className="mt-1 text-xs text-red-500">{errors.accept.message}</p>}
         </div>
 
         {/* Submit */}
@@ -559,13 +534,7 @@ export default function VolunteerApply() {
   );
 }
 
-function F({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function F({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
       <p className="label text-muted-foreground">{label}</p>

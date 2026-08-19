@@ -1,8 +1,6 @@
-"use client"
+"use client";
 
-import { APP_ICONS, iconSvg, type AppIcon } from "@/src/lib/app-icons";
-
-
+import { APP_ICONS, iconSvg, type AppIcon } from "@/lib/app-icons";
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -40,7 +38,7 @@ export default function IconsPage() {
     <div className="container-editorial pt-10 md:pt-20 pb-32">
       <h1 className="display uppercase text-[12vw] md:text-[9vw] leading-[0.9]">Icons</h1>
       <p className="mt-6 headline text-muted-foreground max-w-2xl">
-        The app icon set, drawn on a 24 grid with square caps to match the festival's notch
+        The app icon set, drawn on a 24 grid with square caps to match the festival’s notch
         lettering. Download any icon as SVG (vector) or PNG (512px).
       </p>
 

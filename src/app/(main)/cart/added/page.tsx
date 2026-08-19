@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useCart } from "@/src/lib/cart";
+import { useCart } from "@/context/cart-context";
 
 export default function Added() {
   return (
@@ -22,11 +22,10 @@ function AddedContent() {
 
   const { items } = useCart();
 
-  const item =
-    items.find((i) => i.id === id) ?? items[items.length - 1];
+  const item = items.find((i) => i.id === id) ?? items[items.length - 1];
 
   return (
-       <div className="container-editorial pt-16 md:pt-24 pb-32 min-h-[70vh]">
+    <div className="container-editorial pt-16 md:pt-24 pb-32 min-h-[70vh]">
       <p className="label text-accent">Added to cart</p>
       <h1 className="display uppercase text-[13vw] md:text-[8vw] leading-[0.9] mt-3">
         Added to your cart.

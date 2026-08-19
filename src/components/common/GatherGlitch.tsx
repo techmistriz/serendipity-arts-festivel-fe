@@ -5,7 +5,7 @@
 // group arrives together, holds visibly, then fades and repeats.
 // Travel distances use `cqw` (container query width) so the animation works
 // correctly inside narrow containers (e.g. mobile columns).
-import { PALETTE as _P } from "@/src/lib/glitch-palette";
+import { PALETTE as _P } from "@/lib/glitch-palette";
 import { useMemo } from "react";
 
 const PALETTE = _P;
@@ -38,7 +38,6 @@ export function GatherGlitch({
   barHeight = "100%",
   className = "",
 }: Props) {
-
   const bars = useMemo(() => {
     const rand = mulberry32(seed);
     const half = rectWidth / 2;
@@ -66,24 +65,27 @@ export function GatherGlitch({
         {bars.map((b) => {
           // Gather target inside a centered rectangle; expressed in cqw so
           // it scales with the container on mobile without clamping travel.
-          const tx = b.side === "l"
-            ? `calc(50cqw - ${b.widthPx / 2}px + ${b.offset}px)`
-            : `calc(-50cqw + ${b.widthPx / 2}px + ${b.offset}px)`;
+          const tx =
+            b.side === "l"
+              ? `calc(50cqw - ${b.widthPx / 2}px + ${b.offset}px)`
+              : `calc(-50cqw + ${b.widthPx / 2}px + ${b.offset}px)`;
 
           return (
             <div
               key={b.key}
-              style={{
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                width: `${b.widthPx}px`,
-                background: b.color,
-                left: b.side === "l" ? 0 : "auto",
-                right: b.side === "r" ? 0 : "auto",
-                ["--tx" as never]: tx,
-                animation: `${b.side === "l" ? "gather-left" : "gather-right"} ${b.dur}s cubic-bezier(0.22,0.61,0.36,1) ${b.delay}s infinite`,
-              } as React.CSSProperties}
+              style={
+                {
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  width: `${b.widthPx}px`,
+                  background: b.color,
+                  left: b.side === "l" ? 0 : "auto",
+                  right: b.side === "r" ? 0 : "auto",
+                  ["--tx" as never]: tx,
+                  animation: `${b.side === "l" ? "gather-left" : "gather-right"} ${b.dur}s cubic-bezier(0.22,0.61,0.36,1) ${b.delay}s infinite`,
+                } as React.CSSProperties
+              }
             />
           );
         })}

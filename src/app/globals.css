@@ -12,17 +12,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display:
-    "Stack Sans Notch", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Stack Sans Notch", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-sans:
-    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-serif:
-    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-hand:
-    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-hand: "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --radius-sm: 2px;
@@ -336,8 +332,7 @@
 }
 
 @utility headline {
-  font-family:
-    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: 0;
 }
@@ -493,8 +488,7 @@ html.a11y-hide-images svg:not(#saf-a11y-root svg) {
   visibility: hidden !important;
 }
 
-html.a11y-focus
-  :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+html.a11y-focus :is(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: 4px solid #ff00c8 !important;
   outline-offset: 3px !important;
 }

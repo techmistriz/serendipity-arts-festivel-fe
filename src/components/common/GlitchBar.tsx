@@ -63,21 +63,17 @@ export default function GlitchBar({
     variant === "vibrate"
       ? `${speed}s steps(5) infinite`
       : variant === "bulge"
-      ? `${speed}s ease-in-out infinite`
-      : `${speed}s linear infinite`;
+        ? `${speed}s ease-in-out infinite`
+        : `${speed}s linear infinite`;
 
   return (
-    <div
-      className={`relative overflow-hidden ${className}`}
-      aria-hidden="true"
-    >
+    <div className={`relative overflow-hidden ${className}`} aria-hidden="true">
       <div
         className="absolute inset-0 flex"
         style={{
           animation: `${animationName} ${animationTiming}`,
           flexDirection: isHorizontal ? "row" : "column",
-          transformOrigin:
-            variant === "bulge" ? "center center" : undefined,
+          transformOrigin: variant === "bulge" ? "center center" : undefined,
         }}
       >
         {[0, 1].map((copy) => (
