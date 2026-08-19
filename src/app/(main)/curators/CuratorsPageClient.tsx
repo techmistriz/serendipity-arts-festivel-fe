@@ -2,17 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { AsyncErrorAlert, EmptyState, LoadingState } from "@/components/common/AsyncState";
 import { getErrorMessage } from "@/utils/error";
 
 import { getCuratorDetail, getCurators } from "./api";
 import { CuratorCard } from "./_components/CuratorCard";
 import { CuratorFilters } from "./_components/CuratorFilters";
 import { CuratorDetailModal } from "./_components/CuratorDetailModal";
-import {
-  CuratorEmptyState,
-  CuratorErrorAlert,
-  CuratorLoadingState,
-} from "./_components/CuratorStatus";
 import { filterCuratorsByDiscipline, getCuratorDisciplines } from "./helpers";
 import type { CuratorDetailData, CuratorDisciplineFilter, CuratorListItem } from "./types";
 
@@ -100,7 +96,7 @@ export default function CuratorsPageClient() {
       </p>
 
       {listError && (
-        <CuratorErrorAlert
+        <AsyncErrorAlert
           title="Curators are unavailable"
           error={listError}
           onRetry={retryCurators}
@@ -108,7 +104,7 @@ export default function CuratorsPageClient() {
         />
       )}
       {detailError && (
-        <CuratorErrorAlert
+        <AsyncErrorAlert
           title="Curator details are unavailable"
           error={detailError}
           onRetry={retryCuratorDetail}
@@ -118,7 +114,7 @@ export default function CuratorsPageClient() {
       )}
 
       {loading ? (
-        <CuratorLoadingState label="Loading curators" variant="inline" />
+        <LoadingState label="Loading curators" variant="inline" />
       ) : (
         <>
           <CuratorFilters
@@ -139,12 +135,18 @@ export default function CuratorsPageClient() {
               ))}
             </div>
           ) : (
-            <CuratorEmptyState hasActiveFilter={selectedDiscipline !== "all"} />
+            <EmptyState
+              message={
+                selectedDiscipline === "all"
+                  ? "No curators are available yet"
+                  : "No curators match this discipline"
+              }
+            />
           )}
         </>
       )}
 
-      {detailLoading && <CuratorLoadingState label="Loading curator details" variant="overlay" />}
+      {detailLoading && <LoadingState label="Loading curator details" variant="overlay" />}
 
       <CuratorDetailModal activeCurator={activeCurator} onClose={() => setActiveCurator(null)} />
     </div>

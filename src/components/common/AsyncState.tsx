@@ -2,7 +2,7 @@ import Loader from "@/components/common/Loader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
-type CuratorErrorAlertProps = {
+type AsyncErrorAlertProps = {
   title: string;
   error: string;
   onRetry: () => void;
@@ -10,13 +10,13 @@ type CuratorErrorAlertProps = {
   className: string;
 };
 
-export function CuratorErrorAlert({
+export function AsyncErrorAlert({
   title,
   error,
   onRetry,
   retryDisabled = false,
   className,
-}: CuratorErrorAlertProps) {
+}: AsyncErrorAlertProps) {
   return (
     <Alert variant="destructive" className={className}>
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -32,22 +32,20 @@ export function CuratorErrorAlert({
   );
 }
 
-export function CuratorEmptyState({ hasActiveFilter }: { hasActiveFilter: boolean }) {
+export function EmptyState({ message }: { message: string }) {
   return (
     <div className="mt-16 text-center">
-      <p className="headline text-sm uppercase text-muted-foreground">
-        {hasActiveFilter ? "No curators match this discipline" : "No curators are available yet"}
-      </p>
+      <p className="headline text-sm uppercase text-muted-foreground">{message}</p>
     </div>
   );
 }
 
-type CuratorLoadingStateProps = {
+type LoadingStateProps = {
   label: string;
   variant: "inline" | "overlay";
 };
 
-export function CuratorLoadingState({ label, variant }: CuratorLoadingStateProps) {
+export function LoadingState({ label, variant }: LoadingStateProps) {
   return (
     <div
       className={

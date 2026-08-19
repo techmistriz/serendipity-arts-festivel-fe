@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { Suspense } from "react";
-import VenuesClient from "./VenuesClient";
+import VenuesPageClient from "./VenuesPageClient";
 
 export const metadata: Metadata = {
   title: "Venues — Serendipity Arts Festival 2026",
@@ -8,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <VenuesClient />
-    </Suspense>
-  );
+  return <VenuesPageClient />;
 }
