@@ -27,33 +27,14 @@ export default function CuratorsPageClient() {
   const [detailError, setDetailError] = useState<string | null>(null);
 
   const detailCache = useRef(new Map<string, CuratorDetailData>());
-  const detailRequest = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    const controller = new AbortController();
-
-    void getCurators(controller.signal)
-      .then((data) => {
-        if (!controller.signal.aborted) {
-          setCurators(data);
-        }
-      })
+    void getCurators()
+      .then(setCurators)
       .catch((error: unknown) => {
-        if (!controller.signal.aborted) {
-          setListError(getErrorMessage(error, "Unable to load curators. Please try again."));
-        }
+        setListError(getErrorMessage(error, "Unable to load curators. Please try again."));
       })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      });
-
-    return () => controller.abort();
-  }, []);
-
-  useEffect(() => {
-    return () => detailRequest.current?.abort();
+      .finally(() => setLoading(false));
   }, []);
 
   const openCurator = useCallback(async (curator: CuratorListItem) => {
@@ -66,26 +47,17 @@ export default function CuratorsPageClient() {
       return;
     }
 
-    detailRequest.current?.abort();
-    const controller = new AbortController();
-    detailRequest.current = controller;
     setDetailLoading(true);
 
     try {
-      const detail = await getCuratorDetail(curator.slug, controller.signal);
-
-      if (controller.signal.aborted) return;
+      const detail = await getCuratorDetail(curator.slug);
 
       detailCache.current.set(curator.slug, detail);
       setActiveCurator(detail);
     } catch (error) {
-      if (!controller.signal.aborted) {
-        setDetailError(getErrorMessage(error, "Unable to load curator details. Please try again."));
-      }
+      setDetailError(getErrorMessage(error, "Unable to load curator details. Please try again."));
     } finally {
-      if (!controller.signal.aborted) {
-        setDetailLoading(false);
-      }
+      setDetailLoading(false);
     }
   }, []);
 
