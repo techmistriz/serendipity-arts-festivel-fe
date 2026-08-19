@@ -25,7 +25,6 @@ import curatorsBox from "@/public/curators-box.jpg"
 import venuesBox from "@/public/venues-box.png"
 import testimonialsBox from "@/public/testimonials-box.png"
 import pressBox from "@/public/press-box.png"
-import { redirect } from "next/navigation";
 import { ApiCurator, getCurators } from "../services/curators";
 import { ApiVenue, getVenues } from "../services/venues";
 
@@ -56,6 +55,8 @@ export default function Home() {
   const [venues, setVenues] = useState<ApiVenue[]>([]);
   const [venuesLoading, setVenuesLoading] = useState(true);
   const [venuesError, setVenuesError] = useState<string | null>(null);
+
+  const [gameGate, setGameGate] = useState(false);
 
   const isAuthenticated = useAppSelector(
     (state) => state.auth.isAuthenticated
@@ -410,12 +411,15 @@ export default function Home() {
           </h2>
 
           {/* SERENDIPITY DASH — the festival game */}
-          <a
-            // href="#"
+          <button
+            type="button"
+            onClick={() => setGameGate(true)}
             className="md:col-span-5 block relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover cursor-pointer"
             style={{
               backgroundImage: `url(${venuesBox.src})`,
-              backgroundPosition: "22% 78%", backgroundSize: "150%", ...tornStyle
+              backgroundPosition: "22% 78%",
+              backgroundSize: "150%",
+              ...tornStyle,
             }}
           >
             <div className="absolute inset-0 bg-foreground/55" aria-hidden />
@@ -427,10 +431,76 @@ export default function Home() {
                 Run the festival streets that cross our festival venues over the years, dodge the vans and collect points. Our little game, playable in your browser.
               </p>
               <span className="mt-4 inline-block label notch border border-white text-white px-4 py-2.5 hover:bg-white hover:text-foreground transition-colors cursor-pointer">
-                Coming soon →
+                Play the game →
               </span>
             </div>
-          </a>
+          </button>
+
+          {gameGate && (
+            <div
+              className="fixed inset-0 z-[120] bg-foreground/70 flex items-center justify-center p-5"
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="relative w-full max-w-md bg-background border-[3px] border-foreground p-7 md:p-9">
+
+                <button
+                  type="button"
+                  onClick={() => setGameGate(false)}
+                  aria-label="Close"
+                  className="absolute top-3 right-3 h-9 w-9 rounded-full bg-foreground text-background notch text-lg leading-none"
+                >
+                  ✕
+                </button>
+
+                <p className="notch uppercase text-2xl leading-[1]">
+                  Play Serendipity Dash
+                </p>
+
+                <p className="headline text-sm mt-3 text-muted-foreground">
+                  {isAuthenticated
+                    ? "You are all set. Start the game."
+                    : "You need to log in or register before playing."}
+                </p>
+
+                <div className="mt-6 flex gap-3">
+
+                  {isAuthenticated ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGameGate(false);
+                        window.open("/serendipity-dash", "_blank");
+                      }}
+                      className="label notch bg-foreground text-background px-5 py-3"
+                    >
+                      Start playing →
+                    </button>
+                  ) : (
+                    <>
+                      <Link
+                        href="/register"
+                        onClick={() => setGameGate(false)}
+                        className="label notch bg-foreground text-background px-5 py-3"
+                      >
+                        Register
+                      </Link>
+
+                      <Link
+                        href="/login"
+                        onClick={() => setGameGate(false)}
+                        className="label notch border-[3px] border-foreground px-5 py-3"
+                      >
+                        Log in
+                      </Link>
+                    </>
+                  )}
+
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {venuesLoading ? (
