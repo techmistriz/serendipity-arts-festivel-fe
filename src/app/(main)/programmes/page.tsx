@@ -20,6 +20,7 @@ import {
 import { RecommendModal } from "@/components/common/RecommendModal";
 
 import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
 import GlitchBar from "@/components/common/GlitchBar";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 import Link from "next/link";
@@ -300,8 +301,9 @@ function ProgrammeCard({
   onAbout: () => void;
   onAdd: () => void;
 }) {
-  const { wishlist, toggleWish, isVip } = useCart();
-  const saved = wishlist.includes(p.id);
+  const { isVip } = useCart();
+  const { programmeIds, toggleProgramme } = useWishlist();
+  const saved = programmeIds.includes(p.id);
   const priceLabel = isVip ? "Guest" : p.price === 0 ? "Free" : `₹${p.price}`;
 
   return (
@@ -309,7 +311,7 @@ function ProgrammeCard({
       <button
         onClick={(e) => {
           e.stopPropagation();
-          toggleWish(p.id);
+          toggleProgramme(p.id);
         }}
         aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
         className="absolute top-2 right-2 z-20 bg-background/85 backdrop-blur-sm rounded-full p-2 hover:bg-background transition-colors"

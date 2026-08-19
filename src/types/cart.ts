@@ -16,6 +16,5 @@ export type CartItemInput = Omit<CartItem, "qty">;
 export type CartState = {
   items: CartItem[];
   bookings: CartItem[];
-  wishlist: string[];
   isVip: boolean;
 };

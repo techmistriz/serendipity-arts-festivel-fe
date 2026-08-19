@@ -10,7 +10,6 @@ type AddToCartPayload = {
 const initialState: CartState = {
   items: [],
   bookings: [],
-  wishlist: [],
   isVip: false,
 };
 
@@ -59,13 +58,6 @@ const cartSlice = createSlice({
 
       state.items = [];
     },
-    toggleWishlistItem: (state, action: PayloadAction<string>) => {
-      const itemId = action.payload;
-
-      state.wishlist = state.wishlist.includes(itemId)
-        ? state.wishlist.filter((id) => id !== itemId)
-        : [...state.wishlist, itemId];
-    },
     setVipAccess: (state, action: PayloadAction<boolean>) => {
       state.isVip = action.payload;
     },
@@ -79,7 +71,6 @@ export const {
   removeFromCart,
   setCartItemQuantity,
   setVipAccess,
-  toggleWishlistItem,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

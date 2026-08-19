@@ -9,13 +9,12 @@ import {
   confirmBooking,
   removeFromCart,
   setCartItemQuantity,
-  toggleWishlistItem,
 } from "@/redux/slices/cartSlice";
 import type { CartItemInput } from "@/types/cart";
 
 export function useCart() {
   const dispatch = useAppDispatch();
-  const { bookings, isVip, items, wishlist } = useAppSelector((state) => state.cart);
+  const { bookings, isVip, items } = useAppSelector((state) => state.cart);
 
   const add = useCallback(
     (item: CartItemInput, quantity = 1) => {
@@ -46,13 +45,6 @@ export function useCart() {
     dispatch(confirmBooking());
   }, [dispatch]);
 
-  const toggleWish = useCallback(
-    (id: string) => {
-      dispatch(toggleWishlistItem(id));
-    },
-    [dispatch],
-  );
-
   const hasBooked = useCallback(
     (id: string) => bookings.some((item) => item.id === id),
     [bookings],
@@ -76,7 +68,5 @@ export function useCart() {
     remove,
     setQty,
     subtotal,
-    toggleWish,
-    wishlist,
   };
 }
