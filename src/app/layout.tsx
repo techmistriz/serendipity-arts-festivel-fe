@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-
 import "./globals.css";
 import { Inter_Tight, Stack_Sans_Headline } from "next/font/google";
-
 import { AccessibilityWidget } from "@/components/common/AccessibilityWidget";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
@@ -41,11 +39,8 @@ export default function RootLayout({
         <ReduxProvider>
           <CartProvider>
             <Header />
-
             <main className="flex-1">{children}</main>
-
             <Footer />
-
             <AccessibilityWidget />
           </CartProvider>
         </ReduxProvider>

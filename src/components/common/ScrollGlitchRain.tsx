@@ -1,3 +1,5 @@
+"use client";
+
 // Scroll-driven "glitch rain": short coloured bars fall in the empty page
 // gutters (left/right of the max-width content column) while the user scrolls.
 // They move with the scroll direction and vanish instantly on scroll stop.
@@ -21,7 +23,7 @@ type Drop = { x: number; y: number; h: number; w: number; c: string; k: number }
 
 function makeDrops(seed: number, count: number): Drop[] {
   const rand = mulberry32(seed);
-  return Array.from({ length: count }, (_, i) => ({
+  return Array.from({ length: count }, () => ({
     x: rand() * 100,
     y: rand() * 100,
     h: 12 + rand() * 70,
