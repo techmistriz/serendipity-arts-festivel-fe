@@ -28,13 +28,17 @@ export default function CuratorsPageClient() {
 
   const detailCache = useRef(new Map<string, CuratorDetailData>());
 
-  useEffect(() => {
+  function initializeApp() {
     void getCurators()
       .then(setCurators)
       .catch((error: unknown) => {
         setListError(getErrorMessage(error, "Unable to load curators. Please try again."));
       })
       .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    initializeApp();
   }, []);
 
   const openCurator = useCallback(async (curator: CuratorListItem) => {
