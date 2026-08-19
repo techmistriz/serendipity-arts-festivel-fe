@@ -1,6 +1,5 @@
 "use client";
 
-import DOMPurify from "dompurify";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -18,34 +17,17 @@ import {
   ModalHeader,
   ModalTitle,
 } from "@/components/ui/Modal";
-import {
-  getCuratorDetail,
-  getCurators,
-  type CuratorDetailData,
-  type CuratorListItem,
-  type CuratorProgram,
-} from "@/services/curators";
 import { getErrorMessage } from "@/utils/error";
 import { formatDate } from "@/utils/format";
+import { sanitizeRichText } from "@/utils/html";
 import { resolveApiMediaUrl } from "@/utils/media";
+import { getSafeExternalUrl } from "@/utils/url";
+
+import { getCuratorDetail, getCurators } from "./api";
+import { getCuratorFilterClassName } from "./helper";
+import type { CuratorDetailData, CuratorListItem, CuratorProgram } from "./types";
 
 type DisciplineFilter = "all" | number;
-
-const BIO_ALLOWED_TAGS = [
-  "a",
-  "b",
-  "blockquote",
-  "br",
-  "em",
-  "h2",
-  "h3",
-  "i",
-  "li",
-  "ol",
-  "p",
-  "strong",
-  "ul",
-];
 
 export default function CuratorsClient() {
   const [selectedDiscipline, setSelectedDiscipline] = useState<DisciplineFilter>("all");
@@ -212,7 +194,7 @@ export default function CuratorsClient() {
               type="button"
               onClick={() => setSelectedDiscipline("all")}
               aria-pressed={selectedDiscipline === "all"}
-              className={filterClassName(
+              className={getCuratorFilterClassName(
                 selectedDiscipline === "all",
                 selectedDiscipline !== "all",
               )}
@@ -225,7 +207,7 @@ export default function CuratorsClient() {
                 type="button"
                 onClick={() => setSelectedDiscipline(discipline.id)}
                 aria-pressed={selectedDiscipline === discipline.id}
-                className={filterClassName(
+                className={getCuratorFilterClassName(
                   selectedDiscipline === discipline.id,
                   selectedDiscipline !== "all",
                 )}
@@ -336,15 +318,7 @@ function CuratorDetailModal({
 }) {
   const curator = activeCurator?.curator;
   const sanitizedBio = useMemo(
-    () =>
-      curator?.bio
-        ? String(
-            DOMPurify.sanitize(curator.bio, {
-              ALLOWED_TAGS: BIO_ALLOWED_TAGS,
-              ALLOWED_ATTR: ["href"],
-            }),
-          )
-        : null,
+    () => (curator?.bio ? sanitizeRichText(curator.bio) : null),
     [curator],
   );
   const instagramUrl = getSafeExternalUrl(curator?.instagram_link);
@@ -498,28 +472,4 @@ function CuratorProgrammes({
       </Link>
     </div>
   );
-}
-
-function filterClassName(isSelected: boolean, hasActiveFilter: boolean) {
-  if (isSelected) {
-    return "display text-sm leading-none text-foreground underline decoration-2 decoration-accent underline-offset-[6px] uppercase transition-colors md:text-lg";
-  }
-
-  return `display text-sm leading-none uppercase transition-colors md:text-lg ${
-    hasActiveFilter
-      ? "text-muted-foreground/60 hover:text-foreground"
-      : "text-foreground hover:text-accent"
-  }`;
-}
-
-function getSafeExternalUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
-
-  try {
-    const parsedUrl = new URL(url);
-
-    return parsedUrl.protocol === "https:" ? parsedUrl.toString() : null;
-  } catch {
-    return null;
-  }
 }
