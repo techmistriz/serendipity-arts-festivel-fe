@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import CuratorsClient from "./CuratorsClient";
+import CuratorsPageClient from "./CuratorsPageClient";
 
 export const metadata: Metadata = {
   title: "Curators — Serendipity Arts Festival 2026",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <CuratorsClient />;
+  return <CuratorsPageClient />;
 }
