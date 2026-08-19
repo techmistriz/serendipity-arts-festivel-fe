@@ -6,6 +6,9 @@ import { Heart } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/redux/hooks";
+import { clearSession } from "@/redux/slices/authSlice";
+import { authService } from "@/services/auth.service";
 import { fmtTime, PROGRAMMES } from "@/data/programmes-data";
 
 const DAY_NAME = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -21,6 +24,7 @@ function fmtAmPm(t: string) {
 }
 
 export default function DashboardPage() {
+  const dispatch = useAppDispatch();
   const [tab, setTab] = useState<"bookings" | "wishlist" | "schedule" | "profile">("bookings");
   const [deleteStep, setDeleteStep] = useState<null | "confirm" | "comms" | "done">(null);
   const [comms, setComms] = useState(true);
@@ -70,13 +74,17 @@ export default function DashboardPage() {
   const venuesCovered = new Set(bookings.map((b) => b.venue)).size;
 
   const router = useRouter();
-  const { isAuthenticated, signOut, user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const isLoggedIn = isAuthenticated;
 
   const handleLogout = async () => {
-    await signOut();
-    router.replace("/login");
+    try {
+      await authService.logout();
+    } finally {
+      dispatch(clearSession());
+      router.replace("/login");
+    }
   };
 
   // useEffect(() => {

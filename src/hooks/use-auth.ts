@@ -1,3 +1,12 @@
 "use client";
 
-export { useAuth } from "@/context/auth-context";
+import { useAppSelector } from "@/redux/hooks";
+
+export function useAuth() {
+  const auth = useAppSelector((state) => state.auth);
+
+  return {
+    ...auth,
+    isAuthenticated: Boolean(auth.accessToken),
+  };
+}

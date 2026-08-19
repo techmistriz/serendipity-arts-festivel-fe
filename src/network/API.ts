@@ -28,7 +28,7 @@ function getHeaders(payload: unknown, authToken: string | null) {
 function clearUserToken() {
   if (typeof window === "undefined" || !store.getState().auth.accessToken) return;
 
-  window.dispatchEvent(new Event("blaksand:session-expired"));
+  window.dispatchEvent(new Event("saf:session-expired"));
 }
 
 export default async function API<T>(

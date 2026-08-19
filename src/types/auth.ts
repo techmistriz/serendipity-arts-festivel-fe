@@ -67,11 +67,13 @@ export interface AuthUser {
 export interface AuthSession {
   user: AuthUser;
   token: string;
+  [key: string]: unknown;
 }
 
 export interface AuthState {
+  session: AuthSession | null;
   user: AuthUser | null;
-  token: string | null;
+  accessToken: string | null;
   loading: boolean;
   isAuthenticated: boolean;
 }

@@ -3,22 +3,23 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { useAuth } from "@/hooks/use-auth";
+import { useAppDispatch } from "@/redux/hooks";
+import { clearSession } from "@/redux/slices/authSlice";
 
 export default function SessionExpiryRedirect() {
-  const { clearSession } = useAuth();
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   useEffect(() => {
     const handleSessionExpiry = () => {
-      clearSession();
+      dispatch(clearSession());
       router.replace("/login");
     };
 
     window.addEventListener("saf:session-expired", handleSessionExpiry);
 
     return () => window.removeEventListener("saf:session-expired", handleSessionExpiry);
-  }, [clearSession, router]);
+  }, [dispatch, router]);
 
   return null;
 }

@@ -8,6 +8,8 @@ import { FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
+import { useAppDispatch } from "@/redux/hooks";
+import { setAuthLoading, setSession } from "@/redux/slices/authSlice";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -33,6 +35,7 @@ const getSafeRedirectPath = (value: string | null) => {
 };
 
 function LoginContent() {
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = getSafeRedirectPath(searchParams.get("next"));
@@ -43,7 +46,7 @@ function LoginContent() {
   const [forgotError, setForgotError] = useState<string | null>(null);
   const [isForgotLoading, setIsForgotLoading] = useState(false);
 
-  const { isLoading, signIn } = useAuth();
+  const { loading: isLoading } = useAuth();
 
   const {
     register,
@@ -59,12 +62,16 @@ function LoginContent() {
 
   const onSubmit = async (data: LoginForm) => {
     setLoginError(null);
+    dispatch(setAuthLoading(true));
 
     try {
-      await signIn(data);
+      const session = await authService.login(data);
+      dispatch(setSession(session));
       router.replace(next);
     } catch (error: unknown) {
       setLoginError(getAuthenticationErrorMessage(error));
+    } finally {
+      dispatch(setAuthLoading(false));
     }
   };
 

@@ -20,7 +20,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth.token;
+    const token = store.getState().auth.accessToken;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -39,7 +39,7 @@ apiClient.interceptors.response.use(
     if (
       axios.isAxiosError(error) &&
       error.response?.status === 401 &&
-      Boolean(store.getState().auth.token) &&
+      Boolean(store.getState().auth.accessToken) &&
       typeof window !== "undefined"
     ) {
       window.dispatchEvent(new Event("saf:session-expired"));
