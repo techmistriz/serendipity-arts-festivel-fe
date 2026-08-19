@@ -36,6 +36,57 @@ export interface CuratorDetail extends ApiCurator {
   ordering: number;
 }
 
+export interface ApiProgramCategory {
+  id: number;
+  name: string;
+  font_color: string;
+  background_color: string;
+}
+
+export interface ApiVenue {
+  id: number;
+  parent_id: number;
+  title: string;
+  description: string;
+  city_id: number;
+  featured_image: string | null;
+  accesebility_icon: string | null;
+  google_map_url: string | null;
+  accessibility_ids: number[] | null;
+  status: number;
+  is_hide_on_frontend: number;
+}
+
+export interface ApiProgramDetail {
+  id: number;
+  program_id: number;
+  venue_id: number | null;
+  event_date: string;
+  from_time: string;
+  to_time: string;
+  venue: ApiVenue | null;
+}
+
+export interface ApiProgram {
+  id: number;
+  name: string;
+  slug: string;
+  program_image: string | null;
+  category_id: number;
+  venue_id: number | null;
+  program_type: string;
+  booking_type: string | null;
+  is_booking_allowed: number;
+  curator_ids: string[];
+  category: ApiProgramCategory | null;
+  program_details: ApiProgramDetail[];
+}
+
+export interface CuratorDetailData {
+  curator: CuratorDetail;
+  programs: ApiProgram[];
+}
+
 interface CuratorsResponse {
   status: boolean;
   data: ApiCurator[];
@@ -43,10 +94,7 @@ interface CuratorsResponse {
 
 interface CuratorDetailResponse {
   status: boolean;
-  data: {
-    curator: CuratorDetail;
-    programs: unknown[];
-  };
+  data: CuratorDetailData;
 }
 
 export async function getCurators(): Promise<ApiCurator[]> {
@@ -55,8 +103,8 @@ export async function getCurators(): Promise<ApiCurator[]> {
   return response.data.data || [];
 }
 
-export async function getCuratorDetail(slug: string): Promise<CuratorDetail> {
+export async function getCuratorDetail(slug: string): Promise<CuratorDetailData> {
   const response = await api.get<CuratorDetailResponse>(`/curator/${slug}`);
 
-  return response.data.data.curator;
+  return response.data.data;
 }
