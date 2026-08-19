@@ -7,7 +7,8 @@ import { useState } from "react";
 import Link from "next/link";
 import GlitchBar from "./GlitchBar";
 import { dateLabel, timeLabel } from "@/data/programmes-data";
-import { RECOMMENDER_OPTIONS, recommendProgrammes } from "@/lib/recommender";
+import { RECOMMENDER_OPTIONS } from "@/data/recommender";
+import { recommendProgrammes } from "@/lib/recommender";
 
 export function RecommendModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [picks, setPicks] = useState<string[]>([]);

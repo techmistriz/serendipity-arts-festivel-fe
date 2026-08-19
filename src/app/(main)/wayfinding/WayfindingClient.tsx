@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { GOA_AREAS, GOA_NODES, GOA_ROADS, GOA_VENUE_POINTS, goaVenueSlug } from "@/lib/goa-map";
+import { GOA_NODES, GOA_VENUE_POINTS } from "@/data/goa-map";
 import { useCart } from "@/context/cart-context";
-import { WayfindingMap } from "@/components/maps/wayfinding-map";
+import { goaVenueSlug } from "@/lib/venue-slug";
 import { GoogleWayfindingMap } from "@/components/maps/google-wayfinding-map";
 
 export default function WayfindingClient() {

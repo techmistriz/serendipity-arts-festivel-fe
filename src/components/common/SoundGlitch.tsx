@@ -2,7 +2,7 @@
 
 // A "sound mountain" — equalizer-style vertical bars in the brand glitch
 // palette. Each bar breathes on its own delay so the strip reads as sound.
-import { PALETTE as _P } from "@/lib/glitch-palette";
+import { PALETTE as _P } from "@/data/glitch-palette";
 import { useMemo } from "react";
 
 const PALETTE = _P;

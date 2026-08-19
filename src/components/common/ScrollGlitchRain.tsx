@@ -3,7 +3,7 @@
 // They move with the scroll direction and vanish instantly on scroll stop.
 // Never overlaps text, boxes, logos or borders — gutters only.
 import { useEffect, useRef, useState } from "react";
-import { PALETTE } from "@/lib/glitch-palette";
+import { PALETTE } from "@/data/glitch-palette";
 
 const MAX_CONTENT = 1600;
 const GUTTER_MIN = 34; // need real negative space before we draw anything

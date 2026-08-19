@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { PALETTE } from "../../lib/glitch-palette";
+import { PALETTE } from "@/data/glitch-palette";
 
 function mulberry32(seed: number) {
   return function () {

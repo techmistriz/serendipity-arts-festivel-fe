@@ -1,6 +1,6 @@
 "use client";
 
-import { APP_ICONS, iconSvg, type AppIcon } from "@/lib/app-icons";
+import { APP_ICONS, iconSvg, type AppIcon } from "@/data/app-icons";
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);

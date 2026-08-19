@@ -5,7 +5,7 @@
 // group arrives together, holds visibly, then fades and repeats.
 // Travel distances use `cqw` (container query width) so the animation works
 // correctly inside narrow containers (e.g. mobile columns).
-import { PALETTE as _P } from "@/lib/glitch-palette";
+import { PALETTE as _P } from "@/data/glitch-palette";
 import { useMemo } from "react";
 
 const PALETTE = _P;

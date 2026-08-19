@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MapNode, MapPoint } from "./wayfinding-map";
+import type { MapNode, MapPoint } from "@/types/maps";
 
 declare global {
   interface Window {

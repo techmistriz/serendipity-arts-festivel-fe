@@ -2,6 +2,8 @@ export const siteConfig = {
   name: "Serendipity Arts Festival",
   description: "Official website of Serendipity Arts Festival",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  currency: process.env.NEXT_PUBLIC_CURRENCY ?? "INR",
+  locale: process.env.NEXT_PUBLIC_CURRENCY_LOCALE ?? "en-IN",
   navigation: [
     { label: "Home", href: "/", comingSoon: false },
     { label: "Programmes", href: "/programmes", comingSoon: true },

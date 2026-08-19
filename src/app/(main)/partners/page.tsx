@@ -3,7 +3,7 @@
 import GlitchBar from "@/components/common/GlitchBar";
 import Loader from "@/components/common/Loader";
 import { useSponsors } from "@/hooks/useSponsors";
-import { FESTIVAL_LOGO, FOUNDATION_LOGO } from "@/lib/partners";
+import { FESTIVAL_LOGO, FOUNDATION_LOGO } from "@/data/partners";
 import Image from "next/image";
 
 export default function Partners() {
