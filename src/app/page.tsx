@@ -367,7 +367,7 @@ export default function Home() {
                       width={800}
                       height={1000}
                       loading="lazy"
-                      className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                      className="w-full aspect-[4/5] object-cover transition-transform duration-700 "
                     />
                   ) : (
                     <div className="w-full aspect-[4/5] bg-muted grid place-items-center">
@@ -468,7 +468,7 @@ export default function Home() {
                       width={800}
                       height={1000}
                       loading="lazy"
-                      className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                      className="w-full aspect-[4/5] object-cover transition-transform duration-700 "
                     />
                   ) : (
                     <div className="w-full aspect-[4/5] bg-muted grid place-items-center">
