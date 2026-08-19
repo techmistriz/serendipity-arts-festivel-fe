@@ -1,4 +1,4 @@
-import api from "@/lib/api-client";
+import API, { METHODS } from "@/network/API";
 
 export interface LaunchFilm {
   id: number;
@@ -14,11 +14,11 @@ interface LaunchFilmsResponse {
 }
 
 export async function getLaunchFilms(): Promise<LaunchFilm[]> {
-  const response = await api.get<LaunchFilmsResponse>("/launch-films");
+  const response = await API<LaunchFilmsResponse>("/launch-films", METHODS.GET);
 
-  if (!response.data.status) {
-    throw new Error(response.data.message || "Failed to fetch launch films");
+  if (!response.status) {
+    throw new Error(response.message || "Failed to fetch launch films");
   }
 
-  return response.data.data;
+  return response.data;
 }

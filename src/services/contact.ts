@@ -1,4 +1,5 @@
-import api from "@/lib/api-client";
+import API, { METHODS } from "@/network/API";
+import type { ApiResponse } from "@/types/api";
 
 export const contactUsAPI = async (data: {
   name: string;
@@ -6,7 +7,5 @@ export const contactUsAPI = async (data: {
   subject: string;
   message: string;
 }) => {
-  const response = await api.post("/contact-us", data);
-
-  return response.data;
+  return API<ApiResponse>("/contact-us", METHODS.POST, data);
 };

@@ -20,12 +20,12 @@ export const useOTP = () => {
       const response = await sendOTP({ email, contact, std_code });
 
       // Check if response is successful
-      if (response && response.data) {
-        const isSuccess = response.data.success === true || response.data.status === true;
+      if (response) {
+        const isSuccess = response.success === true || response.status === true;
         if (isSuccess) {
           setOtpSent(true);
         } else {
-          setOtpError(response.data.message || "Failed to send OTP");
+          setOtpError(response.message || "Failed to send OTP");
         }
       } else {
         setOtpError("Failed to send OTP: Invalid response");

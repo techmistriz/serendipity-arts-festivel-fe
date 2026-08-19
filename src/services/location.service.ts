@@ -1,4 +1,4 @@
-import api from "@/lib/api-client";
+import API, { METHODS } from "@/network/API";
 import type { ApiResponse } from "@/types/api";
 
 export interface LocationOption {
@@ -11,16 +11,16 @@ export interface LocationOption {
 type LocationsResponse = ApiResponse<LocationOption[]>;
 
 export const getCountries = async (): Promise<LocationOption[]> => {
-  const { data } = await api.get<LocationsResponse>("/countries");
-  return data.data;
+  const response = await API<LocationsResponse>("/countries", METHODS.GET);
+  return response.data;
 };
 
 export const getStates = async (): Promise<LocationOption[]> => {
-  const { data } = await api.get<LocationsResponse>("/states");
-  return data.data;
+  const response = await API<LocationsResponse>("/states", METHODS.GET);
+  return response.data;
 };
 
 export const getCities = async (): Promise<LocationOption[]> => {
-  const { data } = await api.get<LocationsResponse>("/cities");
-  return data.data;
+  const response = await API<LocationsResponse>("/cities", METHODS.GET);
+  return response.data;
 };

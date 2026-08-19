@@ -35,7 +35,7 @@ export const useCheckArchiveUser = (email: string | undefined, roleId: number) =
             role_id: roleId,
           });
 
-          const result = response.data;
+          const result = response;
 
           if (result.status === true) {
             setUserExists(true);

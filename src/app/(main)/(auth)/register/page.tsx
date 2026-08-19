@@ -220,10 +220,10 @@ function RegisterContent() {
         response = await registerUser(generalData);
       }
 
-      console.log("Registration response:", response.data);
+      console.log("Registration response:", response);
 
-      if (response?.data) {
-        const isSuccess = response.data.status === true || response.data.success === true;
+      if (response) {
+        const isSuccess = response.status === true || response.success === true;
 
         if (isSuccess) {
           setRegisteredEmail(data.email);
@@ -249,9 +249,7 @@ function RegisterContent() {
           }
         } else {
           const errorMessage =
-            typeof response.data.message === "string"
-              ? response.data.message
-              : "Registration failed";
+            typeof response.message === "string" ? response.message : "Registration failed";
 
           setGlobalError(errorMessage);
         }

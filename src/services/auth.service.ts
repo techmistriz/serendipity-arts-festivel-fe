@@ -1,10 +1,10 @@
-import api from "@/lib/api-client";
+import API, { METHODS } from "@/network/API";
 import type { ApiResponse } from "@/types/api";
 import type { AuthSession, LoginCredentials } from "@/types/auth";
 import { getApiResponseData } from "@/utils/api";
 
 const post = async <T>(path: string, payload?: unknown) =>
-  (await api.post<ApiResponse<T>>(path, payload)).data;
+  API<ApiResponse<T>>(path, METHODS.POST, payload);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object";

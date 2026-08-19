@@ -4,24 +4,24 @@ import {
   GuestRegisterRequest,
   SEARequest,
 } from "@/types/auth";
-import api from "@/lib/api-client";
+import API, { METHODS } from "@/network/API";
 import type { ApiResponse } from "@/types/api";
 
 export const sendOTP = (data: SendOTPRequest) => {
-  return api.post<ApiResponse>("/auth/send-otp", data);
+  return API<ApiResponse>("/auth/send-otp", METHODS.POST, data);
 };
 
 export const registerUser = (data: GeneralRegisterRequest) => {
-  return api.post<ApiResponse>("/auth/register", data);
+  return API<ApiResponse>("/auth/register", METHODS.POST, data);
 };
 
 export const registerVIP = (data: GuestRegisterRequest) => {
-  return api.post<ApiResponse>("/auth/vip-register", data);
+  return API<ApiResponse>("/auth/vip-register", METHODS.POST, data);
 };
 
 export const registerSEA = (data: SEARequest) => {
   // Assuming SEA uses the same endpoint as general but with different fields
-  return api.post<ApiResponse>("/auth/sea-delegate-register", data);
+  return API<ApiResponse>("/auth/sea-delegate-register", METHODS.POST, data);
 };
 
 export interface ArchiveUserPayload {
@@ -30,7 +30,7 @@ export interface ArchiveUserPayload {
 }
 
 export const archiveUser = (data: ArchiveUserPayload) => {
-  return api.post<ApiResponse<ArchivedUser>>("/auth/archive-user", data);
+  return API<ApiResponse<ArchivedUser>>("/auth/archive-user", METHODS.POST, data);
 };
 
 export interface ArchivedUser {

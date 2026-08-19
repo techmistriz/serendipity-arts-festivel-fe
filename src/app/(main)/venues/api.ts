@@ -1,17 +1,17 @@
-import apiClient from "@/lib/api-client";
+import API, { METHODS } from "@/network/API";
 import type { ApiResponse } from "@/types/api";
 import { getApiResponseData } from "@/utils/api";
 
 import type { VenueDetail, VenueListItem } from "./types";
 
 export async function getVenues(): Promise<VenueListItem[]> {
-  const response = await apiClient.get<ApiResponse<VenueListItem[]>>("/venues");
+  const response = await API<ApiResponse<VenueListItem[]>>("/venues", METHODS.GET);
 
-  return getApiResponseData(response.data, "Unable to fetch venues.");
+  return getApiResponseData(response, "Unable to fetch venues.");
 }
 
 export async function getVenueDetail(id: number): Promise<VenueDetail> {
-  const response = await apiClient.get<ApiResponse<VenueDetail>>(`/venue-detail/${id}`);
+  const response = await API<ApiResponse<VenueDetail>>(`/venue-detail/${id}`, METHODS.GET);
 
-  return getApiResponseData(response.data, "Unable to fetch venue details.");
+  return getApiResponseData(response, "Unable to fetch venue details.");
 }

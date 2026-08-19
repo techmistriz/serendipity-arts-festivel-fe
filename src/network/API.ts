@@ -46,7 +46,7 @@ export default async function API<T>(
       method: method as Method,
       url: `${baseURL}${endpoint}`,
       headers: getHeaders(payload, authToken),
-      ...(method === METHODS.GET ? {} : { data: payload }),
+      ...(method === METHODS.GET ? { params: payload } : { data: payload }),
     });
 
     return response.data;

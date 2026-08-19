@@ -1,4 +1,4 @@
-import api from "@/lib/api-client";
+import API, { METHODS } from "@/network/API";
 
 export interface SearchCurator {
   id: number;
@@ -43,15 +43,11 @@ export interface SearchResponse {
 }
 
 export async function searchSiteApi(keyword: string): Promise<SearchResponse["data"]> {
-  const response = await api.get<SearchResponse>("/search", {
-    params: {
-      keyword,
-    },
-  });
+  const response = await API<SearchResponse>("/search", METHODS.GET, { keyword });
 
-  if (!response.data.status) {
-    throw new Error(response.data.message || "Search failed");
+  if (!response.status) {
+    throw new Error(response.message || "Search failed");
   }
 
-  return response.data.data;
+  return response.data;
 }
