@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import dashMotif from "@/public/images/home/dash-motif.png";
 import prog1 from "@/public/images/prog-1.jpg";
@@ -9,17 +9,8 @@ import prog3 from "@/public/images/prog-3.jpg";
 import venue1 from "@/public/images/venue-1.jpg";
 import venue2 from "@/public/images/venue-2.jpg";
 import whiteLogo from "@/public/images/home/saf-logo-white-2026.png";
-import artParkImg from "@/public/images/home/art-park-v2.jpg";
-import sambaImg from "@/public/images/home/samba-square-2026.jpg";
-import gmcImg from "@/public/images/home/old-gmc-v2.jpg";
-import promenadeImg from "@/public/images/home/promenade-v2.jpg";
 import { useAppSelector } from "@/src/store/hooks";
-// import { GlitchBorder } from "@/components/site/GlitchBorder";
-// import { GlitchLines } from "@/components/site/GlitchLines";
-// import { RecommendModal } from "@/components/site/RecommendModal";
-// import { TESTIMONIALS } from "@/lib/testimonials";
-// import { PARTNERS } from "@/lib/partners";
-import { CURATORS } from "../data/curators";
+
 import { GlitchBorder } from "../components/common/GlitchBorder";
 import { GlitchLines } from "../components/common/GlitchLines";
 import { RecommendModal } from "../components/common/RecommendModal";
@@ -35,6 +26,9 @@ import venuesBox from "@/public/venues-box.png"
 import testimonialsBox from "@/public/testimonials-box.png"
 import pressBox from "@/public/press-box.png"
 import { redirect } from "next/navigation";
+import { ApiCurator, getCurators } from "../services/curators";
+import { ApiVenue, getVenues } from "../services/venues";
+
 
 const PROGRAMMES = [
   { img: prog1, title: "Bodies in Translation", date: "14 Dec", venue: "Kala Academy", category: "Performance" },
@@ -55,10 +49,100 @@ const tornStyle = { clipPath: TORN_CLIP, WebkitClipPath: TORN_CLIP } as const;
 
 
 export default function Home() {
-  const featuredCurators = [...CURATORS].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 4);
+  const [curators, setCurators] = useState<ApiCurator[]>([]);
+  const [curatorsLoading, setCuratorsLoading] = useState(true);
+  const [curatorsError, setCuratorsError] = useState<string | null>(null);
+
+  const [venues, setVenues] = useState<ApiVenue[]>([]);
+  const [venuesLoading, setVenuesLoading] = useState(true);
+  const [venuesError, setVenuesError] = useState<string | null>(null);
+
   const isAuthenticated = useAppSelector(
     (state) => state.auth.isAuthenticated
   );
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchCurators = async () => {
+      try {
+        setCuratorsLoading(true);
+        setCuratorsError(null);
+
+        const data = await getCurators();
+
+        if (mounted) {
+          const featured = data
+            .filter((curator) => curator.curator_image)
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .slice(0, 4);
+
+          setCurators(featured);
+        }
+      } catch (error) {
+        console.error("Failed to fetch curators:", error);
+
+        if (mounted) {
+          setCuratorsError("Unable to load curators.");
+        }
+      } finally {
+        if (mounted) {
+          setCuratorsLoading(false);
+        }
+      }
+    };
+
+    fetchCurators();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchVenues = async () => {
+      try {
+        setVenuesLoading(true);
+        setVenuesError(null);
+
+        const data = await getVenues();
+
+        if (mounted) {
+          const featured = data
+            .filter(
+              (venue) =>
+                venue.featured_image &&
+                venue.is_hide_on_frontend !== 1
+            )
+            .sort((a, b) => a.title.localeCompare(b.title))
+            .slice(0, 4);
+
+          setVenues(featured);
+        }
+      } catch (error) {
+        console.error("Failed to fetch venues:", error);
+
+        if (mounted) {
+          setVenuesError("Unable to load venues.");
+        }
+      } finally {
+        if (mounted) {
+          setVenuesLoading(false);
+        }
+      }
+    };
+
+    fetchVenues();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+
   const [recOpen, setRecOpen] = useState(false);
   const [filmOpen, setFilmOpen] = useState(false);
   const [pressOpen, setPressOpen] = useState(false);
@@ -86,13 +170,18 @@ export default function Home() {
           seed={23}
           columns={28}
           density={0.22}
-          className="absolute inset-0 h-full w-full opacity-85 pointer-events-none md:hidden"
+          parallax
+          strength={4}
+          className="absolute -inset-[6%] h-[112%] w-[112%] opacity-85 pointer-events-none md:hidden"
         />
+
         <GlitchLines
           seed={23}
           columns={70}
           density={0.22}
-          className="absolute inset-0 h-full w-full opacity-85 pointer-events-none hidden md:block"
+          parallax
+          strength={3.5}
+          className="absolute -inset-[6%] h-[112%] w-[112%] opacity-85 pointer-events-none hidden md:block"
         />
         <div className="absolute inset-0 bg-black/20" aria-hidden />
 
@@ -242,18 +331,69 @@ export default function Home() {
           </a>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-          {featuredCurators.map((c, i) => (
-            <Link key={c.name} href="/curators" className="group block">
-              <GlitchBorder seed={i * 7 + 11} thickness={1} hoverBoost={14} delayMs={200} className="overflow-hidden">
-                <Image src={c.img} alt={c.name} loading="lazy"
-                  className="w-full aspect-[4/5] object-cover " />
-              </GlitchBorder>
-              <p className="headline font-semibold text-sm md:text-lg leading-tight mt-3 group-hover:text-accent transition-colors">{c.name}</p>
-              <p className="text-[11px] md:text-xs text-muted-foreground headline">{c.discipline}</p>
-            </Link>
-          ))}
-        </div>
+        {curatorsLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="w-full aspect-[4/5] bg-muted" />
+                <div className="mt-3 h-5 bg-muted w-3/4" />
+                <div className="mt-2 h-3 bg-muted w-1/2" />
+              </div>
+            ))}
+          </div>
+        ) : curatorsError ? (
+          <p className="headline text-sm text-muted-foreground">
+            {curatorsError}
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+            {curators.map((curator, i) => (
+              <Link
+                key={curator.id}
+                href={`/curators/${curator.slug}`}
+                className="group block"
+              >
+                <GlitchBorder
+                  seed={i * 7 + 11}
+                  thickness={1}
+                  hoverBoost={14}
+                  delayMs={200}
+                  className="overflow-hidden"
+                >
+                  {curator.curator_image ? (
+                    <Image
+                      src={curator.curator_image}
+                      alt={curator.name}
+                      width={800}
+                      height={1000}
+                      loading="lazy"
+                      className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    <div className="w-full aspect-[4/5] bg-muted grid place-items-center">
+                      <span className="display text-4xl">
+                        {curator.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                </GlitchBorder>
+
+                <p className="headline font-semibold text-sm md:text-lg leading-tight mt-3 group-hover:text-accent transition-colors">
+                  {curator.name}
+                </p>
+
+                <p
+                  className="text-[11px] md:text-xs headline text-[#504c4d]"
+                // style={{
+                //   color: curator.discipline?.font_color || undefined,
+                // }}
+                >
+                  {curator.discipline?.name || "Curator"}
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
 
         <div className="mt-10 flex justify-end">
           <Link href="/curators" className="label hover:text-accent transition-colors">
@@ -293,28 +433,64 @@ export default function Home() {
           </a>
         </div>
 
-        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-          {[
-            { img: gmcImg, name: "The Old GMC Complex" },
-            { img: artParkImg, name: "Art Park" },
-            { img: promenadeImg, name: "Promenade" },
-            { img: sambaImg, name: "Samba Square" },
-          ].sort((a, b) => a.name.localeCompare(b.name)).map((v) => (
-            <Link key={v.name} href="/venues" className="group block">
-              <GlitchBorder seed={v.name.length + 17} thickness={1} hoverBoost={14} delayMs={200} className="overflow-hidden">
-                <Image src={v.img} alt={v.name} loading="lazy"
-                  className="w-full aspect-[4/5] object-cover " />
-              </GlitchBorder>
-              <p className="headline font-semibold text-sm md:text-lg mt-3 group-hover:text-accent transition-colors">{v.name}</p>
-            </Link>
-          ))}
-        </div>
+        {venuesLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="w-full aspect-[4/5] bg-muted" />
+                <div className="mt-3 h-5 bg-muted w-3/4" />
+              </div>
+            ))}
+          </div>
+        ) : venuesError ? (
+          <p className="headline text-sm text-muted-foreground">
+            {venuesError}
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+            {venues.map((venue, i) => (
+              <Link
+                key={venue.id}
+                href={`/venues/${venue.id}`}
+                className="group block"
+              >
+                <GlitchBorder
+                  seed={i + 17}
+                  thickness={1}
+                  hoverBoost={14}
+                  delayMs={200}
+                  className="overflow-hidden"
+                >
+                  {venue.featured_image ? (
+                    <Image
+                      src={venue.featured_image}
+                      alt={venue.title}
+                      width={800}
+                      height={1000}
+                      loading="lazy"
+                      className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    <div className="w-full aspect-[4/5] bg-muted grid place-items-center">
+                      <span className="display text-4xl">
+                        {venue.title.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                </GlitchBorder>
 
+                <p className="headline font-semibold text-sm md:text-lg mt-3 group-hover:text-accent transition-colors">
+                  {venue.title}
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
         <div className="mt-10 flex justify-end">
           <Link href="/venues" className="label hover:text-accent transition-colors">
             All venues &nbsp;→
           </Link>
-        </div> */}
+        </div>
       </section>
 
       {/* SERENDIPITY DASH — the festival game */}
@@ -344,7 +520,7 @@ export default function Home() {
       </section> */}
 
       {/* TESTIMONIALS */}
-        <section className="container-editorial mt-20 md:mt-32">
+      <section className="container-editorial mt-20 md:mt-32">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
           <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
             Testimonials
@@ -448,7 +624,7 @@ export default function Home() {
       </section>
 
       {/* PRESS COVERAGE — above About Us */}
-       <section className="container-editorial mt-20 md:mt-32">
+      <section className="container-editorial mt-20 md:mt-32">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
           <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
             Press
@@ -532,7 +708,7 @@ export default function Home() {
         </ul>
       </section>
 
-      
+
       {/* SUPPORTED BY */}
       <section className="container-editorial mt-20 md:mt-32">
         <h2 className="display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] mb-8 md:mb-12">

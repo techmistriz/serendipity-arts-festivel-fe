@@ -96,14 +96,14 @@ export default function Venues() {
                 </div>
             )} */}
 
-                {loading && (
-                            <div className="mt-40">
-            
-                            <Loader/>
-                            </div>
-                        )}
+            {loading && (
+                <div className="mt-40">
 
-                        
+                    <Loader />
+                </div>
+            )}
+
+
             {!loading && (
                 <div className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                     {venues
