@@ -5,7 +5,7 @@
 // They move with the scroll direction and vanish instantly on scroll stop.
 // Never overlaps text, boxes, logos or borders — gutters only.
 import { useEffect, useRef, useState } from "react";
-import { PALETTE } from "@/data/glitch-palette";
+import { GLITCH_PALETTE } from "@/config/constants";
 
 const MAX_CONTENT = 1600;
 const GUTTER_MIN = 34; // need real negative space before we draw anything
@@ -28,7 +28,7 @@ function makeDrops(seed: number, count: number): Drop[] {
     y: rand() * 100,
     h: 12 + rand() * 70,
     w: 2 + Math.floor(rand() * 3),
-    c: PALETTE[Math.floor(rand() * PALETTE.length)],
+    c: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
     k: 0.45 + rand() * 1.4,
   }));
 }

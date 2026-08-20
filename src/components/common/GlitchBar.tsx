@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { PALETTE } from "@/data/glitch-palette";
+import { GLITCH_PALETTE } from "@/config/constants";
 
 function mulberry32(seed: number) {
   return function () {
@@ -39,7 +39,7 @@ export default function GlitchBar({
     return Array.from({ length: count }, () => ({
       pos: rand() * 100,
       len: 1 + rand() * 6,
-      color: PALETTE[Math.floor(rand() * PALETTE.length)],
+      color: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
     }));
   }, [seed, count]);
 

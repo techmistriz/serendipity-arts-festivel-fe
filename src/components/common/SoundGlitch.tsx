@@ -2,10 +2,8 @@
 
 // A "sound mountain" — equalizer-style vertical bars in the brand glitch
 // palette. Each bar breathes on its own delay so the strip reads as sound.
-import { PALETTE as _P } from "@/data/glitch-palette";
+import { GLITCH_PALETTE } from "@/config/constants";
 import { useMemo } from "react";
-
-const PALETTE = _P;
 
 function mulberry32(seed: number) {
   return function () {
@@ -26,7 +24,7 @@ export function SoundGlitch({ seed = 11, count = 48, className = "" }: Props) {
   const bars = useMemo(() => {
     const rand = mulberry32(seed);
     return Array.from({ length: count }, () => ({
-      color: PALETTE[Math.floor(rand() * PALETTE.length)],
+      color: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
       base: 12 + rand() * 60, // % of container height
       amp: 20 + rand() * 55, // % amplitude
       dur: 0.7 + rand() * 1.6, // seconds

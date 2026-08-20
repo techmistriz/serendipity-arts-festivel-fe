@@ -1,9 +1,7 @@
 // Serendipity "listen · gather · move" glitch-lines motif.
 // Vertical strips using the brand palette. Deterministic per seed so it
 // doesn’t jitter on re-render.
-// import { PALETTE } from "@/data/glitch-palette";
-
-import { PALETTE } from "@/data/glitch-palette";
+import { GLITCH_PALETTE } from "@/config/constants";
 
 function mulberry32(seed: number) {
   return function () {
@@ -29,7 +27,11 @@ export function GlitchLines({ seed = 7, columns = 60, className = "", density = 
     while (y < 100) {
       const h = 3 + rand() * 22;
       if (rand() < density) {
-        segs.push({ y, h, c: PALETTE[Math.floor(rand() * PALETTE.length)] });
+        segs.push({
+          y,
+          h,
+          c: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
+        });
       }
       y += h + rand() * 4;
     }

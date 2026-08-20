@@ -5,10 +5,8 @@
 // group arrives together, holds visibly, then fades and repeats.
 // Travel distances use `cqw` (container query width) so the animation works
 // correctly inside narrow containers (e.g. mobile columns).
-import { PALETTE as _P } from "@/data/glitch-palette";
+import { GLITCH_PALETTE } from "@/config/constants";
 import { useMemo } from "react";
-
-const PALETTE = _P;
 
 function mulberry32(seed: number) {
   return function () {
@@ -46,7 +44,7 @@ export function GatherGlitch({
       const offset = Math.round((rand() * 2 - 1) * half);
       return {
         side,
-        color: PALETTE[Math.floor(rand() * PALETTE.length)],
+        color: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
         widthPx: 4 + Math.floor(rand() * 6),
         offset,
         delay: -(rand() * duration * 0.25),

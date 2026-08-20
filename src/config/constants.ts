@@ -4,3 +4,13 @@ export const tornPaperStyle = {
   WebkitClipPath:
     "polygon(1.5% 3%, 22% 0.6%, 47% 2.4%, 71% 0%, 92% 2.8%, 100% 12%, 98.4% 38%, 100% 63%, 97.6% 88%, 88% 100%, 63% 97.4%, 39% 100%, 15% 97.8%, 2.4% 92%, 0% 66%, 1.8% 41%, 0.4% 18%)",
 } as const;
+
+// Strict CMYK palette used by every glitch effect.
+export const GLITCH_PALETTE = [
+  "#B39ECC", // 2099
+  "#2C499F", // 7687
+  "#62C6C2", // 325
+  "#CEDC29", // 381
+  "#F47521", // 6019
+  "#F26458", // 4057
+] as const;
