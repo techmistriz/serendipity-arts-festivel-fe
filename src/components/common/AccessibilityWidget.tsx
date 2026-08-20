@@ -24,7 +24,6 @@ type A11yState = {
   readingGuide: boolean;
 };
 
-
 const DEFAULTS: A11yState = {
   fontScale: 1,
   contrast: false,
@@ -47,6 +46,17 @@ const DEFAULTS: A11yState = {
 
 const KEY = "saf-a11y";
 
+function getInitialState(): A11yState {
+  if (typeof window === "undefined") return DEFAULTS;
+
+  try {
+    const saved = localStorage.getItem(KEY);
+    return saved ? { ...DEFAULTS, ...(JSON.parse(saved) as Partial<A11yState>) } : DEFAULTS;
+  } catch {
+    return DEFAULTS;
+  }
+}
+
 function apply(s: A11yState) {
   const el = document.documentElement;
   el.style.setProperty("--a11y-font-scale", String(s.fontScale));
@@ -66,35 +76,40 @@ function apply(s: A11yState) {
   el.classList.toggle("a11y-dyslexia", s.dyslexia);
 }
 
+function Toggle({ label, on, onClick }: { label: string; on: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={on}
+      className={`
+      headline text-xs uppercase tracking-[0.06em]
+      border border-foreground
+      px-3 py-3 text-left transition-colors
+      ${
+        on
+          ? "bg-foreground text-background"
+          : "bg-background text-foreground hover:bg-foreground hover:text-background"
+      }
+    `}
+    >
+      {label}
+    </button>
+  );
+}
+
 export function AccessibilityWidget() {
   const [open, setOpen] = useState(false);
-  const [state, setState] = useState<A11yState>(DEFAULTS);
-  const [host, setHost] = useState<HTMLElement | null>(null);
+  const [state, setState] = useState<A11yState>(getInitialState);
   const speakingRef = useRef<string>("");
 
   useEffect(() => {
-    let el = document.getElementById("saf-a11y-root");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "saf-a11y-root";
-      document.body.appendChild(el);
-    }
-    setHost(el);
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) {
-        const parsed = { ...DEFAULTS, ...JSON.parse(raw) } as A11yState;
-        setState(parsed);
-        apply(parsed);
-      }
-    } catch {
-      /* ignore */
-    }
-  }, []);
+    apply(state);
+  }, [state]);
 
   // Screen reader: speak the text of whatever the user hovers or focuses.
   useEffect(() => {
-    if (!state.screenReader || typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    if (!state.screenReader || typeof window === "undefined" || !("speechSynthesis" in window))
+      return;
 
     const speak = (text: string) => {
       const clean = text.replace(/\s+/g, " ").trim().slice(0, 300);
@@ -111,10 +126,11 @@ export function AccessibilityWidget() {
       if (!node || !node.closest) return;
       if (node.closest("#saf-a11y-root")) return;
       const el = node.closest(
-        "a, button, h1, h2, h3, h4, p, li, label, summary, [role='button'], [aria-label], img"
+        "a, button, h1, h2, h3, h4, p, li, label, summary, [role='button'], [aria-label], img",
       ) as HTMLElement | null;
       if (!el) return;
-      const text = el.getAttribute("aria-label") || (el as HTMLImageElement).alt || el.innerText || "";
+      const text =
+        el.getAttribute("aria-label") || (el as HTMLImageElement).alt || el.innerText || "";
       speak(text);
     };
 
@@ -137,7 +153,9 @@ export function AccessibilityWidget() {
     bar.id = "saf-a11y-reading-guide";
     bar.style.top = "50%";
     document.body.appendChild(bar);
-    const move = (e: MouseEvent) => { bar.style.top = `${e.clientY - 22}px`; };
+    const move = (e: MouseEvent) => {
+      bar.style.top = `${e.clientY - 22}px`;
+    };
     document.addEventListener("mousemove", move);
     return () => {
       document.removeEventListener("mousemove", move);
@@ -155,10 +173,10 @@ export function AccessibilityWidget() {
   };
 
   const stopReading = () => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+    if (typeof window !== "undefined" && "speechSynthesis" in window)
+      window.speechSynthesis.cancel();
     speakingRef.current = "";
   };
-
 
   const update = (patch: Partial<A11yState>) => {
     setState((prev) => {
@@ -184,37 +202,10 @@ export function AccessibilityWidget() {
     }
   };
 
- const Toggle = ({
-  label,
-  on,
-  onClick,
-}: {
-  label: string;
-  on: boolean;
-  onClick: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    aria-pressed={on}
-    className={`
-      headline text-xs uppercase tracking-[0.06em]
-      border border-foreground
-      px-3 py-3 text-left transition-colors
-      ${
-        on
-          ? "bg-foreground text-background"
-          : "bg-background text-foreground hover:bg-foreground hover:text-background"
-      }
-    `}
-  >
-    {label}
-  </button>
-);
-
-  if (!host) return null;
+  if (typeof document === "undefined") return null;
 
   return createPortal(
-    <>
+    <div id="saf-a11y-root">
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="Open accessibility options"
@@ -223,7 +214,6 @@ export function AccessibilityWidget() {
       >
         Accessibility
       </button>
-
 
       {open && (
         <div
@@ -247,17 +237,19 @@ export function AccessibilityWidget() {
               >
                 <X className="h-5 w-5" strokeWidth={2.5} />
               </button>
-
             </div>
           </div>
 
-
           <div className="mt-4">
-            <p className="label text-muted-foreground">Text size — {Math.round(state.fontScale * 100)}%</p>
+            <p className="label text-muted-foreground">
+              Text size — {Math.round(state.fontScale * 100)}%
+            </p>
             <div className="mt-2 grid grid-cols-3 border border-foreground divide-x divide-foreground">
               <button
                 className="headline text-xs uppercase py-2 hover:bg-foreground hover:text-background transition-colors"
-                onClick={() => update({ fontScale: Math.max(0.9, +(state.fontScale - 0.1).toFixed(2)) })}
+                onClick={() =>
+                  update({ fontScale: Math.max(0.9, +(state.fontScale - 0.1).toFixed(2)) })
+                }
                 aria-label="Decrease text size"
               >
                 A−
@@ -270,7 +262,9 @@ export function AccessibilityWidget() {
               </button>
               <button
                 className="headline text-xs uppercase py-2 hover:bg-foreground hover:text-background transition-colors"
-                onClick={() => update({ fontScale: Math.min(1.6, +(state.fontScale + 0.1).toFixed(2)) })}
+                onClick={() =>
+                  update({ fontScale: Math.min(1.6, +(state.fontScale + 0.1).toFixed(2)) })
+                }
                 aria-label="Increase text size"
               >
                 A+
@@ -279,21 +273,81 @@ export function AccessibilityWidget() {
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2">
-            <Toggle label="High contrast" on={state.contrast} onClick={() => update({ contrast: !state.contrast })} />
-            <Toggle label="Underline links" on={state.underlineLinks} onClick={() => update({ underlineLinks: !state.underlineLinks })} />
-            <Toggle label="Reduce motion" on={state.reduceMotion} onClick={() => update({ reduceMotion: !state.reduceMotion })} />
-            <Toggle label="Grayscale" on={state.grayscale} onClick={() => update({ grayscale: !state.grayscale })} />
-            <Toggle label="Readable font" on={state.readableFont} onClick={() => update({ readableFont: !state.readableFont })} />
-            <Toggle label="Big cursor" on={state.bigCursor} onClick={() => update({ bigCursor: !state.bigCursor })} />
-            <Toggle label="Invert colours" on={state.invert} onClick={() => update({ invert: !state.invert })} />
-            <Toggle label="Highlight links" on={state.highlightLinks} onClick={() => update({ highlightLinks: !state.highlightLinks })} />
-            <Toggle label="Letter spacing" on={state.letterSpacing} onClick={() => update({ letterSpacing: !state.letterSpacing })} />
-            <Toggle label="Line height" on={state.lineHeight} onClick={() => update({ lineHeight: !state.lineHeight })} />
-            <Toggle label="Hide images" on={state.hideImages} onClick={() => update({ hideImages: !state.hideImages })} />
-            <Toggle label="Focus outline" on={state.focusHighlight} onClick={() => update({ focusHighlight: !state.focusHighlight })} />
-            <Toggle label="Align left" on={state.leftAlign} onClick={() => update({ leftAlign: !state.leftAlign })} />
-            <Toggle label="Dyslexia font" on={state.dyslexia} onClick={() => update({ dyslexia: !state.dyslexia })} />
-            <Toggle label="Reading guide" on={state.readingGuide} onClick={() => update({ readingGuide: !state.readingGuide })} />
+            <Toggle
+              label="High contrast"
+              on={state.contrast}
+              onClick={() => update({ contrast: !state.contrast })}
+            />
+            <Toggle
+              label="Underline links"
+              on={state.underlineLinks}
+              onClick={() => update({ underlineLinks: !state.underlineLinks })}
+            />
+            <Toggle
+              label="Reduce motion"
+              on={state.reduceMotion}
+              onClick={() => update({ reduceMotion: !state.reduceMotion })}
+            />
+            <Toggle
+              label="Grayscale"
+              on={state.grayscale}
+              onClick={() => update({ grayscale: !state.grayscale })}
+            />
+            <Toggle
+              label="Readable font"
+              on={state.readableFont}
+              onClick={() => update({ readableFont: !state.readableFont })}
+            />
+            <Toggle
+              label="Big cursor"
+              on={state.bigCursor}
+              onClick={() => update({ bigCursor: !state.bigCursor })}
+            />
+            <Toggle
+              label="Invert colours"
+              on={state.invert}
+              onClick={() => update({ invert: !state.invert })}
+            />
+            <Toggle
+              label="Highlight links"
+              on={state.highlightLinks}
+              onClick={() => update({ highlightLinks: !state.highlightLinks })}
+            />
+            <Toggle
+              label="Letter spacing"
+              on={state.letterSpacing}
+              onClick={() => update({ letterSpacing: !state.letterSpacing })}
+            />
+            <Toggle
+              label="Line height"
+              on={state.lineHeight}
+              onClick={() => update({ lineHeight: !state.lineHeight })}
+            />
+            <Toggle
+              label="Hide images"
+              on={state.hideImages}
+              onClick={() => update({ hideImages: !state.hideImages })}
+            />
+            <Toggle
+              label="Focus outline"
+              on={state.focusHighlight}
+              onClick={() => update({ focusHighlight: !state.focusHighlight })}
+            />
+            <Toggle
+              label="Align left"
+              on={state.leftAlign}
+              onClick={() => update({ leftAlign: !state.leftAlign })}
+            />
+            <Toggle
+              label="Dyslexia font"
+              on={state.dyslexia}
+              onClick={() => update({ dyslexia: !state.dyslexia })}
+            />
+            <Toggle
+              label="Reading guide"
+              on={state.readingGuide}
+              onClick={() => update({ readingGuide: !state.readingGuide })}
+            />
             <Toggle
               label="Screen reader"
               on={state.screenReader}
@@ -327,8 +381,7 @@ export function AccessibilityWidget() {
           </button>
         </div>
       )}
-    </>,
-    host
+    </div>,
+    document.body,
   );
 }
-

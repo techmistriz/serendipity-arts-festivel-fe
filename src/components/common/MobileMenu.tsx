@@ -53,9 +53,11 @@ export function MobileMenu({ isOpen, onClose, menuItems }: MobileMenuProps) {
                     isActive ? "text-accent" : ""
                   }`}
                 >
-                  <span className={`display uppercase text-[11vw] md:text-[7vw] leading-[0.95] ${
-                    isActive ? "text-accent" : "group-hover:text-accent"
-                  } transition-colors`}>
+                  <span
+                    className={`display uppercase text-[11vw] md:text-[7vw] leading-[0.95] ${
+                      isActive ? "text-accent" : "group-hover:text-accent"
+                    } transition-colors`}
+                  >
                     {item.label}
                   </span>
                   <span className="label text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hidden md:inline">

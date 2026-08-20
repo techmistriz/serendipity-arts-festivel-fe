@@ -7,8 +7,7 @@ export const metadata: Metadata = {
     "Find your way around Panjim: festival venues, streets, ferry and bus nodes, walking routes and directions.",
   openGraph: {
     title: "Wayfinding — Serendipity Arts Festival 2026",
-    description:
-      "A map of festival venues across Panjim, with walking routes.",
+    description: "A map of festival venues across Panjim, with walking routes.",
     type: "website",
   },
   twitter: {

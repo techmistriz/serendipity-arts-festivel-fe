@@ -5,10 +5,8 @@
 // group arrives together, holds visibly, then fades and repeats.
 // Travel distances use `cqw` (container query width) so the animation works
 // correctly inside narrow containers (e.g. mobile columns).
-import { PALETTE as _P } from "@/src/lib/glitch-palette";
+import { GLITCH_PALETTE } from "@/config/constants";
 import { useMemo } from "react";
-
-const PALETTE = _P;
 
 function mulberry32(seed: number) {
   return function () {
@@ -38,7 +36,6 @@ export function GatherGlitch({
   barHeight = "100%",
   className = "",
 }: Props) {
-
   const bars = useMemo(() => {
     const rand = mulberry32(seed);
     const half = rectWidth / 2;
@@ -47,7 +44,7 @@ export function GatherGlitch({
       const offset = Math.round((rand() * 2 - 1) * half);
       return {
         side,
-        color: PALETTE[Math.floor(rand() * PALETTE.length)],
+        color: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
         widthPx: 4 + Math.floor(rand() * 6),
         offset,
         delay: -(rand() * duration * 0.25),
@@ -66,24 +63,27 @@ export function GatherGlitch({
         {bars.map((b) => {
           // Gather target inside a centered rectangle; expressed in cqw so
           // it scales with the container on mobile without clamping travel.
-          const tx = b.side === "l"
-            ? `calc(50cqw - ${b.widthPx / 2}px + ${b.offset}px)`
-            : `calc(-50cqw + ${b.widthPx / 2}px + ${b.offset}px)`;
+          const tx =
+            b.side === "l"
+              ? `calc(50cqw - ${b.widthPx / 2}px + ${b.offset}px)`
+              : `calc(-50cqw + ${b.widthPx / 2}px + ${b.offset}px)`;
 
           return (
             <div
               key={b.key}
-              style={{
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                width: `${b.widthPx}px`,
-                background: b.color,
-                left: b.side === "l" ? 0 : "auto",
-                right: b.side === "r" ? 0 : "auto",
-                ["--tx" as never]: tx,
-                animation: `${b.side === "l" ? "gather-left" : "gather-right"} ${b.dur}s cubic-bezier(0.22,0.61,0.36,1) ${b.delay}s infinite`,
-              } as React.CSSProperties}
+              style={
+                {
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  width: `${b.widthPx}px`,
+                  background: b.color,
+                  left: b.side === "l" ? 0 : "auto",
+                  right: b.side === "r" ? 0 : "auto",
+                  ["--tx" as never]: tx,
+                  animation: `${b.side === "l" ? "gather-left" : "gather-right"} ${b.dur}s cubic-bezier(0.22,0.61,0.36,1) ${b.delay}s infinite`,
+                } as React.CSSProperties
+              }
             />
           );
         })}

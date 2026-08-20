@@ -1,9 +1,11 @@
+"use client";
+
 // Scroll-driven "glitch rain": short coloured bars fall in the empty page
 // gutters (left/right of the max-width content column) while the user scrolls.
 // They move with the scroll direction and vanish instantly on scroll stop.
 // Never overlaps text, boxes, logos or borders — gutters only.
 import { useEffect, useRef, useState } from "react";
-import { PALETTE } from "@/src/lib/glitch-palette";
+import { GLITCH_PALETTE } from "@/config/constants";
 
 const MAX_CONTENT = 1600;
 const GUTTER_MIN = 34; // need real negative space before we draw anything
@@ -21,12 +23,12 @@ type Drop = { x: number; y: number; h: number; w: number; c: string; k: number }
 
 function makeDrops(seed: number, count: number): Drop[] {
   const rand = mulberry32(seed);
-  return Array.from({ length: count }, (_, i) => ({
+  return Array.from({ length: count }, () => ({
     x: rand() * 100,
     y: rand() * 100,
     h: 12 + rand() * 70,
     w: 2 + Math.floor(rand() * 3),
-    c: PALETTE[Math.floor(rand() * PALETTE.length)],
+    c: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
     k: 0.45 + rand() * 1.4,
   }));
 }
@@ -70,7 +72,7 @@ export function ScrollGlitchRain() {
       const t = `translate3d(0, ${offset.current % 400}px, 0)`;
       if (leftRef.current) leftRef.current.style.transform = t;
       if (rightRef.current)
-        rightRef.current.style.transform = `translate3d(0, ${(-offset.current) % 400}px, 0)`;
+        rightRef.current.style.transform = `translate3d(0, ${-offset.current % 400}px, 0)`;
       setVisible(true);
       if (stopTimer.current) clearTimeout(stopTimer.current);
       // instant disappear (no fade) shortly after scrolling stops
@@ -122,8 +124,7 @@ export function ScrollGlitchRain() {
     </div>
   );
 
-  const shell =
-    "fixed top-0 h-screen overflow-hidden pointer-events-none z-[5] opacity-0";
+  const shell = "fixed top-0 h-screen overflow-hidden pointer-events-none z-[5] opacity-0";
 
   return (
     <div aria-hidden>

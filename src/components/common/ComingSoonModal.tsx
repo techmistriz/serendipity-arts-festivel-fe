@@ -5,10 +5,7 @@ type ComingSoonPopupProps = {
   onClose: () => void;
 };
 
-export default function ComingSoonPopup({
-  open,
-  onClose,
-}: ComingSoonPopupProps) {
+export default function ComingSoonPopup({ open, onClose }: ComingSoonPopupProps) {
   if (!open) return null;
 
   return (
@@ -25,9 +22,7 @@ export default function ComingSoonPopup({
         </button>
 
         {/* Title */}
-        <h2 className="display text-5xl uppercase md:text-6xl">
-          Coming Soon
-        </h2>
+        <h2 className="display text-5xl uppercase md:text-6xl">Coming Soon</h2>
 
         {/* Description */}
         <p className="  mx-auto mt-6 max-w-md text-base leading-7 text-muted-foreground md:text-lg">

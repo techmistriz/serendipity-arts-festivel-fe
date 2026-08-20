@@ -58,14 +58,27 @@ export interface SEARequest {
   is_old_user: 0 | 1;
 }
 
-export interface ApiResponse<T = any> {
-  status: any;
-  success: boolean;
-  message: string;
-  data: T;
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
 }
 
-export interface ArchiveUserPayload {
+export interface AuthSession {
+  user: AuthUser;
+  token: string;
+  [key: string]: unknown;
+}
+
+export interface AuthState {
+  session: AuthSession | null;
+  user: AuthUser | null;
+  accessToken: string | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+}
+
+export interface LoginCredentials {
   email: string;
-  role_id: number;
+  password: string;
 }

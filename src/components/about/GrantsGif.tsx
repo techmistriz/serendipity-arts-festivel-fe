@@ -1,46 +1,76 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { GRANT_IMAGES } from "@/config/images";
 
-import g1 from "@/public/images/about/brij-cnap.jpg";
-import g2 from "@/public/images/about/eyes-shall-deceive.jpg";
-import g3 from "@/public/images/about/food-matters.jpg";
-import g4 from "@/public/images/about/futures-in-formation.jpg";
-import g5 from "@/public/images/about/london-puppet.jpg";
-import g6 from "@/public/images/about/music-grant.jpg";
-import g7 from "@/public/images/about/residency-2026.jpg";
-import g8 from "@/public/images/about/theatre-grant.jpg";
-import g9 from "@/public/images/about/wac-writing.jpg";
+const ROTATION_INTERVAL = 900;
 
-const GRANTS = [g1, g2, g3, g4, g5, g6, g7, g8, g9];
-
-
-
-export default function GrantsGif() {
-  const [index, setIndex] = useState(0);
+function useReducedMotionPreference() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % GRANTS.length);
-    }, 900);
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
 
-    return () => clearInterval(timer);
+    updatePreference();
+    mediaQuery.addEventListener("change", updatePreference);
+
+    return () => mediaQuery.removeEventListener("change", updatePreference);
   }, []);
 
+  return prefersReducedMotion;
+}
+
+export default function GrantsGif() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const prefersReducedMotion = useReducedMotionPreference();
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    if (!container || !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), {
+      rootMargin: "160px",
+    });
+
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion || !isVisible) return;
+
+    const timer = setInterval(() => {
+      setActiveIndex((index) => (index + 1) % GRANT_IMAGES.length);
+    }, ROTATION_INTERVAL);
+
+    return () => clearInterval(timer);
+  }, [isVisible, prefersReducedMotion]);
+
+  const activeImage = GRANT_IMAGES[activeIndex];
+
   return (
-    <div className="relative aspect-[4/5] w-full overflow-hidden border-2 border-black bg-black">
-      {GRANTS.map((image, i) => (
-        <Image
-          key={i}
-          src={image}
-          alt=""
-          fill
-          className={`absolute object-contain transition-opacity duration-200 ${
-            i === index ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      ))}
+    <div
+      ref={containerRef}
+      aria-hidden="true"
+      className="relative aspect-[4/5] w-full overflow-hidden border-2 border-black bg-black"
+    >
+      <Image
+        key={activeImage.src}
+        src={activeImage}
+        alt=""
+        fill
+        sizes="(min-width: 768px) 42vw, 100vw"
+        className="object-contain motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200"
+      />
     </div>
   );
 }
