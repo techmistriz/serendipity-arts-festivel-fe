@@ -9,6 +9,8 @@ import { useSponsors } from "@/hooks/useSponsors";
 export function SponsorsSection() {
   const { sponsors, loading, error } = useSponsors(8);
 
+  console.log(sponsors)
+
   return (
     <section className="container-editorial mt-20 md:mt-32">
       <h2 className="display mb-8 text-4xl leading-[0.9] uppercase sm:text-5xl md:mb-12 md:text-7xl lg:text-8xl">

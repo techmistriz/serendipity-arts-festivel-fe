@@ -8,7 +8,7 @@ export const siteConfig = {
   locale: process.env.NEXT_PUBLIC_CURRENCY_LOCALE ?? "en-IN",
   navigation: [
     { label: "Home", href: "/", comingSoon: false },
-    { label: "Programmes", href: "/programmes", comingSoon: true },
+    { label: "Programmes", href: "/programmes", comingSoon: false },
     { label: "Curators", href: "/curators", comingSoon: false },
     { label: "Venues", href: "/venues", comingSoon: false },
     { label: "About us", href: "/about", comingSoon: false },

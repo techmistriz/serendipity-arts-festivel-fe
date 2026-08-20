@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const DISABLED_ROUTES = [
-  "/programmes",
+  // "/programmes",
   "/cart",
   // "/login",
   "/dashboard",
@@ -29,7 +29,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/programmes/:path*",
+    // "/programmes/:path*",
     "/cart/:path*",
     // "/login/:path*",
     "/dashboard/:path*",
