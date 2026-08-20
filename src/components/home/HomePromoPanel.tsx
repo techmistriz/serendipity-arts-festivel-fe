@@ -14,7 +14,7 @@ export function HomePromoPanel({ image, imageClassName = "", children }: HomePro
   return (
     <div
       className="relative block overflow-hidden px-7 py-8 md:col-span-5 md:px-9 md:py-10"
-      style={tornPaperStyle}
+      // style={tornPaperStyle}
     >
       <Image
         src={image}
