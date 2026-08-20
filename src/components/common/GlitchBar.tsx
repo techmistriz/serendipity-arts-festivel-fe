@@ -1,6 +1,3 @@
-"use client";
-
-import { useMemo } from "react";
 import { GLITCH_PALETTE } from "@/config/constants";
 
 function mulberry32(seed: number) {
@@ -24,6 +21,22 @@ type GlitchBarProps = {
   speed?: number;
 };
 
+type GlitchSegment = {
+  pos: number;
+  len: number;
+  color: string;
+};
+
+function createSegments(seed: number, count: number): GlitchSegment[] {
+  const rand = mulberry32(seed);
+
+  return Array.from({ length: count }, () => ({
+    pos: rand() * 100,
+    len: 1 + rand() * 6,
+    color: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
+  }));
+}
+
 export default function GlitchBar({
   seed = 5,
   direction = "h",
@@ -33,15 +46,7 @@ export default function GlitchBar({
   count = 80,
   speed = 6,
 }: GlitchBarProps) {
-  const segments = useMemo(() => {
-    const rand = mulberry32(seed);
-
-    return Array.from({ length: count }, () => ({
-      pos: rand() * 100,
-      len: 1 + rand() * 6,
-      color: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
-    }));
-  }, [seed, count]);
+  const segments = createSegments(seed, count);
 
   const isHorizontal = direction === "h";
 

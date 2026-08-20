@@ -13,6 +13,8 @@ import g6 from "@public/images/about/music-grant.jpg";
 import g7 from "@public/images/about/residency-2026.jpg";
 import g8 from "@public/images/about/theatre-grant.jpg";
 import g9 from "@public/images/about/wac-writing.jpg";
+import festivalLogo from "@public/images/footer/Serendipity_Arts_Festival_Logos-01_1.webp";
+import foundationLogo from "@public/images/footer/Serendipity_Arts_Logo-2.png";
 
 export const homeImages = {
   collageHero,
@@ -24,3 +26,8 @@ export const homeImages = {
 } as const;
 
 export const GRANT_IMAGES = [g1, g2, g3, g4, g5, g6, g7, g8, g9] as const;
+
+export const footerImages = {
+  festivalLogo,
+  foundationLogo,
+} as const;

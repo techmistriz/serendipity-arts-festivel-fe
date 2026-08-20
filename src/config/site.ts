@@ -18,4 +18,45 @@ export const siteConfig = {
     { label: "Privacy", href: "/privacy", comingSoon: false },
     { label: "Terms & Conditions", href: "/terms", comingSoon: false },
   ],
+  footer: {
+    navigation: [
+      { label: "Programmes", href: "/programmes" },
+      { label: "Curators", href: "/curators" },
+      { label: "Venues", href: "/venues" },
+      { label: "About us", href: "/about" },
+      { label: "Partners", href: "/partners" },
+      { label: "FAQ", href: "/faq" },
+      { label: "Contact", href: "/contact" },
+      { label: "Terms & Conditions", href: "/terms" },
+    ],
+    socialLinks: [
+      { label: "Instagram", href: "https://www.instagram.com/serendipityartsfestival/" },
+      { label: "YouTube", href: "https://www.youtube.com/@SerendipityArtsFestival" },
+      { label: "X / Twitter", href: "https://x.com/serendipityartf" },
+    ],
+    legalLinks: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+    ],
+    archives: [
+      { year: "2025", href: "https://archive2025.serendipityartsfestival.com/" },
+      { year: "2024", href: "https://archive2024.serendipityartsfestival.com/" },
+      { year: "2023", href: "https://archive2023.serendipityartsfestival.com/" },
+      {
+        year: "2022",
+        href: "https://serendipityarts.org/wp-content/uploads/2025/06/SAF-2022.pdf",
+        note: "catalogue",
+      },
+      { year: "2021", href: "https://serendipityartsvirtual.com/#home/projects" },
+      { year: "2020", href: "https://www.serendipityartsfestival-safxyou.com/" },
+      {
+        year: "2019",
+        href: "https://archive.serendipityartsfestival.com/archives-2018/wp-content/uploads/2020/09/Catalogue-SAF-2019-3.pdf",
+        note: "catalogue",
+      },
+      { year: "2018", href: "https://archive2018.serendipityartsfestival.com/" },
+      { year: "2017", href: "https://archive2017.serendipityartsfestival.com/" },
+      { year: "2016", href: "https://archive2016.serendipityartsfestival.com/" },
+    ],
+  },
 } as const;

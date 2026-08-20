@@ -1,34 +1,9 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
+
 import GlitchBar from "@/components/common/GlitchBar";
-import FESTIVAL_LOGO from "@public/images/footer/Serendipity_Arts_Festival_Logos-01_1.webp";
-import FOUNDATION_LOGO from "@public/images/footer/Serendipity_Arts_Logo-2.png";
-
-const ARCHIVES: { year: string; url: string; note?: string }[] = [
-  { year: "2025", url: "https://archive2025.serendipityartsfestival.com/" },
-  { year: "2024", url: "https://archive2024.serendipityartsfestival.com/" },
-  { year: "2023", url: "https://archive2023.serendipityartsfestival.com/" },
-  {
-    year: "2022",
-    url: "https://serendipityarts.org/wp-content/uploads/2025/06/SAF-2022.pdf",
-    note: "catalogue",
-  },
-  { year: "2021", url: "https://serendipityartsvirtual.com/#home/projects" },
-  { year: "2020", url: "https://www.serendipityartsfestival-safxyou.com/" },
-  {
-    year: "2019",
-    url: "https://archive.serendipityartsfestival.com/archives-2018/wp-content/uploads/2020/09/Catalogue-SAF-2019-3.pdf",
-    note: "catalogue",
-  },
-  { year: "2018", url: "https://archive2018.serendipityartsfestival.com/" },
-  { year: "2017", url: "https://archive2017.serendipityartsfestival.com/" },
-  { year: "2016", url: "https://archive2016.serendipityartsfestival.com/" },
-];
-
-// const FOUNDATION_LOGO = "/logos/foundation-logo.png";
-// const FESTIVAL_LOGO = "/logos/festival-logo.png";
+import { footerImages } from "@/config/images";
+import { siteConfig } from "@/config/site";
 
 export default function Footer() {
   return (
@@ -60,18 +35,20 @@ export default function Footer() {
           <div className="md:col-span-5">
             <div className="flex flex-wrap items-center gap-6 md:gap-10 mb-8">
               <Image
-                src={FOUNDATION_LOGO}
+                src={footerImages.foundationLogo}
                 alt="Serendipity Arts Foundation"
                 width={220}
                 height={60}
+                sizes="(min-width: 768px) 220px, 180px"
                 className="h-9 md:h-12 w-auto object-contain"
               />
 
               <Image
-                src={FESTIVAL_LOGO}
+                src={footerImages.festivalLogo}
                 alt="Serendipity Arts Festival"
                 width={220}
                 height={90}
+                sizes="(min-width: 768px) 220px, 180px"
                 className="h-20 w-auto object-contain md:h-28"
               />
             </div>
@@ -99,30 +76,11 @@ export default function Footer() {
             <p className="label mb-4 text-muted-foreground">Navigate</p>
 
             <ul className="headline space-y-2 text-sm">
-              <li>
-                <Link href="/programmes">Programmes</Link>
-              </li>
-              <li>
-                <Link href="/curators">Curators</Link>
-              </li>
-              <li>
-                <Link href="/venues">Venues</Link>
-              </li>
-              <li>
-                <Link href="/about">About us</Link>
-              </li>
-              <li>
-                <Link href="/partners">Partners</Link>
-              </li>
-              <li>
-                <Link href="/faq">FAQ</Link>
-              </li>
-              <li>
-                <Link href="/contact">Contact</Link>
-              </li>
-              <li>
-                <Link href="/terms">Terms & Conditions</Link>
-              </li>
+              {siteConfig.footer.navigation.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}>{item.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -131,31 +89,13 @@ export default function Footer() {
             <p className="label mb-4 text-muted-foreground">Follow</p>
 
             <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href="https://www.instagram.com/serendipityartsfestival/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Instagram
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="https://www.youtube.com/@SerendipityArtsFestival"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  YouTube
-                </a>
-              </li>
-
-              <li>
-                <a href="https://x.com/serendipityartf" target="_blank" rel="noopener noreferrer">
-                  X / Twitter
-                </a>
-              </li>
+              {siteConfig.footer.socialLinks.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -164,13 +104,11 @@ export default function Footer() {
             <p className="label mb-4 text-muted-foreground">Legal</p>
 
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/privacy">Privacy</Link>
-              </li>
-
-              <li>
-                <Link href="/terms">Terms</Link>
-              </li>
+              {siteConfig.footer.legalLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href}>{link.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -178,11 +116,18 @@ export default function Footer() {
         <div className="mt-16 rule-t pt-6">
           <p className="label text-muted-foreground mb-4">Past editions</p>
           <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm headline">
-            {ARCHIVES.map((a) => (
-              <li key={a.year}>
-                <a href={a.url} target="_blank" rel="noreferrer" className="hover:text-accent">
-                  {a.year}
-                  {a.note ? <span className="text-muted-foreground"> ({a.note})</span> : null}
+            {siteConfig.footer.archives.map((archive) => (
+              <li key={archive.year}>
+                <a
+                  href={archive.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-accent"
+                >
+                  {archive.year}
+                  {"note" in archive && archive.note ? (
+                    <span className="text-muted-foreground"> ({archive.note})</span>
+                  ) : null}
                 </a>
               </li>
             ))}
