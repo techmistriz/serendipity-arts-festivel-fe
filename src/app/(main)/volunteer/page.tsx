@@ -1,51 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import vol14 from "@public/images/volunteer/vol-14.jpg";
-import vol15 from "@public/images/volunteer/vol-15.jpg";
-import vol16 from "@public/images/volunteer/vol-16.jpg";
-import vol17 from "@public/images/volunteer/vol-17.jpg";
-import { GlitchBorder } from "@/components/common/GlitchBorder";
-import Image, { type StaticImageData } from "next/image";
-
-const VOL_FRAMES = [vol17, vol14, vol16, vol15];
-
-function VolunteerGif({
-  frames,
-  interval = 900,
-  className = "",
-}: {
-  frames: StaticImageData[];
-  interval?: number;
-  className?: string;
-}) {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setI((n) => (n + 1) % frames.length), interval);
-    return () => clearInterval(t);
-  }, [frames.length, interval]);
-  return (
-    <GlitchBorder
-      seed={frames.length + 9}
-      thickness={1}
-      hoverBoost={14}
-      delayMs={200}
-      className={`overflow-hidden ${className}`}
-    >
-      <div className="relative w-full aspect-[4/3] bg-black">
-        {frames.map((src, n) => (
-          <Image
-            key={src.src}
-            src={src}
-            alt=""
-            aria-hidden={n !== i}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${n === i ? "opacity-100" : "opacity-0"}`}
-          />
-        ))}
-      </div>
-    </GlitchBorder>
-  );
-}
+import { VolunteerGallery } from "./_components/VolunteerGallery";
 
 export default function Volunteer() {
   return (
@@ -53,7 +6,7 @@ export default function Volunteer() {
       <h1 className="display uppercase text-[12vw] md:text-[9vw] leading-[0.9] mt-2">Volunteer</h1>
 
       <div className="mt-8 md:mt-12 max-w-3xl">
-        <VolunteerGif frames={VOL_FRAMES} interval={900} />
+        <VolunteerGallery />
       </div>
 
       <div className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">

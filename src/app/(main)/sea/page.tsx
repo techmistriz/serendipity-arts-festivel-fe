@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 export default function SeaPage() {
@@ -13,7 +11,8 @@ export default function SeaPage() {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
+          aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black/45" aria-hidden />
