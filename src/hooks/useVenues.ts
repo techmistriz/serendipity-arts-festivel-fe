@@ -30,9 +30,7 @@ export function useVenues({ limit, featuredOnly = false }: UseVenuesOptions = {}
         let filteredVenues = data;
 
         if (featuredOnly) {
-          filteredVenues = data.filter(
-            (venue) => Boolean(venue.featured_image) && venue.is_hide_on_frontend !== 1,
-          );
+          filteredVenues = data.filter((venue) => Boolean(venue.featured_image));
         }
 
         setVenues(filteredVenues);

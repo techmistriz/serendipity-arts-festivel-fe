@@ -22,7 +22,5 @@ export async function getProgrammes(page?: number, limit?: number): Promise<Prog
     throw new Error(response.message || "Failed to fetch programmes");
   }
 
-  console.log("programmes", response.data);
-
-  return response.data;
+  return Array.isArray(response.data) ? response.data : response.data.data;
 }

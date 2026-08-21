@@ -10,13 +10,13 @@ import { GlitchBorder } from "../common/GlitchBorder";
 import { useState } from "react";
 import { useAppSelector } from "@/redux/hooks";
 
-const TORN_CLIP =
-  "polygon(1.5% 3%, 22% 0.6%, 47% 2.4%, 71% 0%, 92% 2.8%, 100% 12%, 98.4% 38%, 100% 63%, 97.6% 88%, 88% 100%, 63% 97.4%, 39% 100%, 15% 97.8%, 2.4% 92%, 0% 66%, 1.8% 41%, 0.4% 18%)";
+// const TORN_CLIP =
+//   "polygon(1.5% 3%, 22% 0.6%, 47% 2.4%, 71% 0%, 92% 2.8%, 100% 12%, 98.4% 38%, 100% 63%, 97.6% 88%, 88% 100%, 63% 97.4%, 39% 100%, 15% 97.8%, 2.4% 92%, 0% 66%, 1.8% 41%, 0.4% 18%)";
 
-const tornStyle = {
-  clipPath: TORN_CLIP,
-  WebkitClipPath: TORN_CLIP,
-} as const;
+// const tornStyle = {
+//   clipPath: TORN_CLIP,
+//   WebkitClipPath: TORN_CLIP,
+// } as const;
 
 export function VenuesSection() {
   const { venues, loading, error } = useVenues({

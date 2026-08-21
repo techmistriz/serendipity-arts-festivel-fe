@@ -2,8 +2,6 @@ import type { ReactNode } from "react";
 import type { StaticImageData } from "next/image";
 import Image from "next/image";
 
-import { tornPaperStyle } from "@/config/constants";
-
 type HomePromoPanelProps = {
   image: StaticImageData;
   imageClassName?: string;

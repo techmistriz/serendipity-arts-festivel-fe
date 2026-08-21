@@ -106,5 +106,5 @@ export interface ProgrammePagination {
 export interface ProgrammesResponse {
   status: boolean;
   message?: string;
-  data: ProgrammePagination;
+  data: Programme[] | ProgrammePagination;
 }

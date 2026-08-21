@@ -1,6 +1,5 @@
 import Image from "next/image";
 
-import { tornPaperStyle } from "@/config/constants";
 import { homeImages } from "@/config/images";
 
 export function HomeIntroduction() {

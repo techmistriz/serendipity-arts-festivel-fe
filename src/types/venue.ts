@@ -1,6 +1,6 @@
 export interface Venue {
   title: string;
-  featured_image: any;
+  featured_image: string | null;
   id: number;
   name: string;
   slug?: string;
