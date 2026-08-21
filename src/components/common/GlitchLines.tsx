@@ -65,9 +65,20 @@ export function GlitchLines({
       const el = svgRef.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
+
+      // An SVG may briefly have no layout while its parent is animating or
+      // hidden. Avoid dividing by zero, which would otherwise make every
+      // subsequent SVG group receive `translate(NaN NaN)`.
+      if (!Number.isFinite(r.width) || !Number.isFinite(r.height) || r.width <= 0 || r.height <= 0)
+        return;
+
+      const x = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      const y = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
       target = {
-        x: ((e.clientX - r.left) / r.width - 0.5) * 2,
-        y: ((e.clientY - r.top) / r.height - 0.5) * 2,
+        x,
+        y,
       };
     };
 
@@ -78,10 +89,19 @@ export function GlitchLines({
       // -1 (banner below viewport) .. 1 (scrolled past)
       const p =
         (window.innerHeight / 2 - (r.top + r.height / 2)) / (window.innerHeight / 2 + r.height / 2);
-      scrollTarget = Math.max(-1, Math.min(1, p));
+      scrollTarget = Number.isFinite(p) ? Math.max(-1, Math.min(1, p)) : 0;
     };
 
     const tick = () => {
+      // Keep an invalid value from a transient browser layout measurement from
+      // persisting through the animation loop.
+      if (!Number.isFinite(cur.x)) cur.x = 0;
+      if (!Number.isFinite(cur.y)) cur.y = 0;
+      if (!Number.isFinite(target.x)) target.x = 0;
+      if (!Number.isFinite(target.y)) target.y = 0;
+      if (!Number.isFinite(scrollCur)) scrollCur = 0;
+      if (!Number.isFinite(scrollTarget)) scrollTarget = 0;
+
       cur.x += (target.x - cur.x) * 0.07;
       cur.y += (target.y - cur.y) * 0.07;
       scrollCur += (scrollTarget - scrollCur) * 0.09;
@@ -92,7 +112,12 @@ export function GlitchLines({
         const tx = -cur.x * strength * c.depth;
         const ty =
           -cur.y * strength * c.depth * c.dir * 1.6 + scrollCur * strength * 3.5 * c.depth * c.dir;
-        g.setAttribute("transform", `translate(${tx.toFixed(3)} ${ty.toFixed(3)})`);
+        g.setAttribute(
+          "transform",
+          Number.isFinite(tx) && Number.isFinite(ty)
+            ? `translate(${tx.toFixed(3)} ${ty.toFixed(3)})`
+            : "translate(0 0)",
+        );
       });
       raf = requestAnimationFrame(tick);
     };
