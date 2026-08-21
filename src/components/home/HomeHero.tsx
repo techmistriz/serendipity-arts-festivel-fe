@@ -19,21 +19,21 @@ export function HomeHero() {
         className="absolute inset-0 h-full w-full object-cover"
       />
       <GlitchLines
-          seed={23}
-          columns={28}
-          density={0.22}
-          parallax
-          strength={4}
-          className="absolute -inset-[6%] h-[112%] w-[112%] opacity-85 pointer-events-none md:hidden"
-        />
-     <GlitchLines
-          seed={23}
-          columns={70}
-          density={0.22}
-          parallax
-          strength={3.5}
-          className="absolute -inset-[6%] h-[112%] w-[112%] opacity-85 pointer-events-none hidden md:block"
-        />
+        seed={23}
+        columns={28}
+        density={0.22}
+        parallax
+        strength={4}
+        className="absolute -inset-[6%] h-[112%] w-[112%] opacity-85 pointer-events-none md:hidden"
+      />
+      <GlitchLines
+        seed={23}
+        columns={70}
+        density={0.22}
+        parallax
+        strength={3.5}
+        className="absolute -inset-[6%] h-[112%] w-[112%] opacity-85 pointer-events-none hidden md:block"
+      />
       <div className="absolute inset-0 bg-black/20" aria-hidden />
 
       <div className="container-editorial absolute inset-0 flex flex-col justify-between py-6 md:py-10">

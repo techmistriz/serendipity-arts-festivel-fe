@@ -19,11 +19,11 @@ function getHeaders(payload: unknown, authToken: string | null) {
   const isFormData = typeof FormData !== "undefined" && payload instanceof FormData;
 
   return {
-  Accept: "application/json",
-  "X-API-TOKEN": "bb15a7d7d24c13088ae34fb19db7b0f5d064d315be568b4ce0c01106a061deea",
-  ...(isFormData ? {} : { "Content-Type": "application/json" }),
-  ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-};
+    Accept: "application/json",
+    "X-API-TOKEN": "bb15a7d7d24c13088ae34fb19db7b0f5d064d315be568b4ce0c01106a061deea",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+  };
 }
 
 function clearUserToken() {

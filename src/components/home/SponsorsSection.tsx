@@ -9,7 +9,7 @@ import { useSponsors } from "@/hooks/useSponsors";
 export function SponsorsSection() {
   const { sponsors, loading, error } = useSponsors(8);
 
-  console.log(sponsors)
+  console.log(sponsors);
 
   return (
     <section className="container-editorial mt-20 md:mt-32">

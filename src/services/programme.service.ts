@@ -1,13 +1,7 @@
-import type {
-  Programme,
-  ProgrammesResponse,
-} from "@/types/programme";
+import type { Programme, ProgrammesResponse } from "@/types/programme";
 import API, { METHODS } from "@/network/API";
 
-export async function getProgrammes(
-  page?: number,
-  limit?: number,
-): Promise<Programme[]> {
+export async function getProgrammes(page?: number, limit?: number): Promise<Programme[]> {
   const params: Record<string, number> = {};
 
   if (page) {
@@ -25,9 +19,7 @@ export async function getProgrammes(
   );
 
   if (!response.status) {
-    throw new Error(
-      response.message || "Failed to fetch programmes",
-    );
+    throw new Error(response.message || "Failed to fetch programmes");
   }
 
   console.log("programmes", response.data);

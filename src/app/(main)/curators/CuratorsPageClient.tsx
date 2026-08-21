@@ -85,8 +85,7 @@ export default function CuratorsPageClient() {
       .finally(() => setLoading(false));
   };
 
-
-  console.log(visibleCurators)
+  console.log(visibleCurators);
   return (
     <div className="container-editorial pt-10 pb-32 md:pt-20">
       <h1 className="display text-[13vw] leading-[0.9] uppercase md:text-[9vw]">Curators</h1>

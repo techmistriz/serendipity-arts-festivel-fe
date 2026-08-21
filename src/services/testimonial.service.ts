@@ -1,12 +1,7 @@
 import API, { METHODS } from "@/network/API";
-import type {
-  Testimonial,
-  TestimonialsResponse,
-} from "@/types/testimonial";
+import type { Testimonial, TestimonialsResponse } from "@/types/testimonial";
 
-export async function getTestimonials(
-  limit?: number,
-): Promise<Testimonial[]> {
+export async function getTestimonials(limit?: number): Promise<Testimonial[]> {
   const response = await API<TestimonialsResponse>(
     "/testimonials",
     METHODS.GET,
@@ -14,9 +9,7 @@ export async function getTestimonials(
   );
 
   if (!response.status) {
-    throw new Error(
-      response.message || "Failed to fetch testimonials",
-    );
+    throw new Error(response.message || "Failed to fetch testimonials");
   }
 
   return response.data || [];

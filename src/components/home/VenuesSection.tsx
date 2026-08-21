@@ -19,20 +19,14 @@ const tornStyle = {
 } as const;
 
 export function VenuesSection() {
-  const {
-    venues,
-    loading,
-    error,
-  } = useVenues({
+  const { venues, loading, error } = useVenues({
     limit: 4,
     featuredOnly: true,
   });
 
   const [gameGate, setGameGate] = useState(false);
 
-  const isAuthenticated = useAppSelector(
-    (state) => state.auth.isAuthenticated,
-  );
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   return (
     <section className="container-editorial mt-20 md:mt-32">
@@ -61,7 +55,8 @@ export function VenuesSection() {
             </p>
 
             <p className="headline text-xs md:text-sm mt-2 max-w-lg text-white/85">
-              Run the festival streets that cross our festival venues over the years, dodge the vans and collect points. Our little game, playable in your browser.
+              Run the festival streets that cross our festival venues over the years, dodge the vans
+              and collect points. Our little game, playable in your browser.
             </p>
             <span className="mt-4 inline-block label notch border border-white text-white px-4 py-2.5 hover:bg-white hover:text-foreground transition-colors">
               Play the game →
@@ -85,9 +80,7 @@ export function VenuesSection() {
                 ✕
               </button>
 
-              <p className="notch uppercase text-2xl leading-[1]">
-                Play Serendipity Dash
-              </p>
+              <p className="notch uppercase text-2xl leading-[1]">Play Serendipity Dash</p>
 
               <p className="headline text-sm mt-3 text-muted-foreground">
                 {isAuthenticated
@@ -132,7 +125,6 @@ export function VenuesSection() {
             </div>
           </div>
         )}
-
       </div>
 
       {/* LOADING */}
@@ -147,23 +139,15 @@ export function VenuesSection() {
         </div>
       ) : error ? (
         /* ERROR */
-        <p className="headline text-sm text-muted-foreground">
-          {error}
-        </p>
+        <p className="headline text-sm text-muted-foreground">{error}</p>
       ) : venues.length === 0 ? (
         /* EMPTY */
-        <p className="headline text-sm text-muted-foreground">
-          No venues available.
-        </p>
+        <p className="headline text-sm text-muted-foreground">No venues available.</p>
       ) : (
         /* VENUES GRID */
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
           {venues.map((venue, i) => (
-            <Link
-              key={venue.id}
-              href={`/venues`}
-              className="group block"
-            >
+            <Link key={venue.id} href={`/venues`} className="group block">
               <GlitchBorder
                 seed={i + 17}
                 thickness={1}
@@ -182,9 +166,7 @@ export function VenuesSection() {
                   />
                 ) : (
                   <div className="w-full aspect-[4/5] bg-muted grid place-items-center">
-                    <span className="display text-4xl">
-                      {venue.title.charAt(0)}
-                    </span>
+                    <span className="display text-4xl">{venue.title.charAt(0)}</span>
                   </div>
                 )}
               </GlitchBorder>
@@ -199,10 +181,7 @@ export function VenuesSection() {
 
       {/* ALL VENUES */}
       <div className="mt-10 flex justify-end">
-        <Link
-          href="/venues"
-          className="label hover:text-accent transition-colors"
-        >
+        <Link href="/venues" className="label hover:text-accent transition-colors">
           All venues &nbsp;→
         </Link>
       </div>

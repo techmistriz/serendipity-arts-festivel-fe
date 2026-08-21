@@ -1,4 +1,3 @@
-
 export interface ProgrammeCategory {
   id: number;
   name: string;
@@ -109,4 +108,3 @@ export interface ProgrammesResponse {
   message?: string;
   data: ProgrammePagination;
 }
-

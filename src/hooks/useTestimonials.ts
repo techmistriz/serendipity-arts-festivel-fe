@@ -27,11 +27,7 @@ export function useTestimonials(limit?: number) {
         console.error("Failed to fetch testimonials:", err);
 
         if (mounted) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Failed to fetch testimonials",
-          );
+          setError(err instanceof Error ? err.message : "Failed to fetch testimonials");
         }
       } finally {
         if (mounted) {

@@ -39,21 +39,13 @@ export function CuratorsSection({ limit = 4 }: CuratorsSectionProps) {
       </HomeSectionHeader>
 
       {loading ? (
-        <div className="py-10 text-sm uppercase">
-          Loading curators...
-        </div>
+        <div className="py-10 text-sm uppercase">Loading curators...</div>
       ) : error ? (
-        <div className="py-10 text-sm text-red-500">
-          {error}
-        </div>
+        <div className="py-10 text-sm text-red-500">{error}</div>
       ) : (
         <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4">
           {curators.slice(0, limit).map((curator, index) => (
-            <Link
-              key={curator.id}
-              href="/curators"
-              className="group block"
-            >
+            <Link key={curator.id} href="/curators" className="group block">
               <GlitchBorder
                 seed={index * 7 + 11}
                 thickness={1}
@@ -86,10 +78,7 @@ export function CuratorsSection({ limit = 4 }: CuratorsSectionProps) {
       )}
 
       <div className="mt-10 flex justify-end">
-        <Link
-          href="/curators"
-          className="label transition-colors hover:text-accent"
-        >
+        <Link href="/curators" className="label transition-colors hover:text-accent">
           All curators &nbsp;→
         </Link>
       </div>

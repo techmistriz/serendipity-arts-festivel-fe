@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 
 import { homeImages } from "@/config/images";
+import { resolveCdnMediaUrl } from "@/utils/media";
 
 import { HomePromoPanel } from "./HomePromoPanel";
 import { HomeSectionHeader } from "./HomeSectionHeader";
@@ -13,27 +14,19 @@ export function TestimonialsSection() {
   const [isFilmOpen, setIsFilmOpen] = useState(false);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
-  const {
-    testimonials,
-    loading,
-    error,
-  } = useTestimonials(8);
+  const { testimonials, loading, error } = useTestimonials(8);
 
   const testimonial = testimonials[testimonialIndex];
+  const testimonialImage = resolveCdnMediaUrl(testimonial?.image, "testimonials");
 
   const previousTestimonial = () => {
     setTestimonialIndex(
-      (currentIndex) =>
-        (currentIndex - 1 + testimonials.length) %
-        testimonials.length,
+      (currentIndex) => (currentIndex - 1 + testimonials.length) % testimonials.length,
     );
   };
 
   const nextTestimonial = () => {
-    setTestimonialIndex(
-      (currentIndex) =>
-        (currentIndex + 1) % testimonials.length,
-    );
+    setTestimonialIndex((currentIndex) => (currentIndex + 1) % testimonials.length);
   };
 
   return (
@@ -97,18 +90,14 @@ export function TestimonialsSection() {
       {/* Error */}
       {!loading && error && (
         <div className="border border-foreground p-5 md:p-10">
-          <p className="headline text-sm text-muted-foreground">
-            {error}
-          </p>
+          <p className="headline text-sm text-muted-foreground">{error}</p>
         </div>
       )}
 
       {/* Empty */}
       {!loading && !error && testimonials.length === 0 && (
         <div className="border border-foreground p-5 md:p-10">
-          <p className="headline text-sm text-muted-foreground">
-            No testimonials available.
-          </p>
+          <p className="headline text-sm text-muted-foreground">No testimonials available.</p>
         </div>
       )}
 
@@ -118,9 +107,9 @@ export function TestimonialsSection() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
             {/* Person */}
             <div className="md:col-span-3">
-              {testimonial.image ? (
+              {testimonialImage ? (
                 <Image
-                  src={testimonial.image}
+                  src={testimonialImage}
                   alt={testimonial.name}
                   width={220}
                   height={220}
@@ -184,9 +173,7 @@ export function TestimonialsSection() {
                     aria-pressed={index === testimonialIndex}
                     onClick={() => setTestimonialIndex(index)}
                     className={`h-2.5 w-2.5 rounded-full border border-foreground ${
-                      index === testimonialIndex
-                        ? "bg-foreground"
-                        : "bg-transparent"
+                      index === testimonialIndex ? "bg-foreground" : "bg-transparent"
                     }`}
                   />
                 ))}

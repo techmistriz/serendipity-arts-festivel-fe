@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -21,11 +20,7 @@ export function useProgrammes(page = 1, limit?: number) {
 
         setProgrammes(data);
       } catch (error) {
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch programmes",
-        );
+        setError(error instanceof Error ? error.message : "Failed to fetch programmes");
       } finally {
         setLoading(false);
       }

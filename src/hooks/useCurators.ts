@@ -25,9 +25,7 @@ export function useCurators(limit?: number) {
         }
       } catch (err) {
         if (mounted) {
-          setError(
-            err instanceof Error ? err.message : "Failed to fetch curators",
-          );
+          setError(err instanceof Error ? err.message : "Failed to fetch curators");
         }
       } finally {
         if (mounted) {

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { GLITCH_PALETTE } from "@/config/constants";
 import { useEffect, useRef } from "react";
@@ -76,7 +76,8 @@ export function GlitchLines({
       if (!el) return;
       const r = el.getBoundingClientRect();
       // -1 (banner below viewport) .. 1 (scrolled past)
-      const p = (window.innerHeight / 2 - (r.top + r.height / 2)) / (window.innerHeight / 2 + r.height / 2);
+      const p =
+        (window.innerHeight / 2 - (r.top + r.height / 2)) / (window.innerHeight / 2 + r.height / 2);
       scrollTarget = Math.max(-1, Math.min(1, p));
     };
 
@@ -90,8 +91,7 @@ export function GlitchLines({
         if (!c) return;
         const tx = -cur.x * strength * c.depth;
         const ty =
-          -cur.y * strength * c.depth * c.dir * 1.6 +
-          scrollCur * strength * 3.5 * c.depth * c.dir;
+          -cur.y * strength * c.depth * c.dir * 1.6 + scrollCur * strength * 3.5 * c.depth * c.dir;
         g.setAttribute("transform", `translate(${tx.toFixed(3)} ${ty.toFixed(3)})`);
       });
       raf = requestAnimationFrame(tick);
@@ -110,7 +110,6 @@ export function GlitchLines({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parallax, strength, columns, seed, density]);
-
 
   return (
     <svg

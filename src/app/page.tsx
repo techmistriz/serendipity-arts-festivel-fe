@@ -17,10 +17,10 @@ export default function Home() {
       <ScrollGlitchRain />
       <HomeHero />
       <HomeIntroduction />
-      <HomeProgrammes/>
+      <HomeProgrammes />
       <CuratorsSection />
-       <VenuesSection />
-      <TestimonialsSection/>
+      <VenuesSection />
+      <TestimonialsSection />
       <PressSection />
       <SponsorsSection />
       <HomeStructuredData />

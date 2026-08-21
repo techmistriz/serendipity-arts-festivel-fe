@@ -10,10 +10,7 @@ interface UseVenuesOptions {
   featuredOnly?: boolean;
 }
 
-export function useVenues({
-  limit,
-  featuredOnly = false,
-}: UseVenuesOptions = {}) {
+export function useVenues({ limit, featuredOnly = false }: UseVenuesOptions = {}) {
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,9 +31,7 @@ export function useVenues({
 
         if (featuredOnly) {
           filteredVenues = data.filter(
-            (venue) =>
-              Boolean(venue.featured_image) &&
-              venue.is_hide_on_frontend !== 1,
+            (venue) => Boolean(venue.featured_image) && venue.is_hide_on_frontend !== 1,
           );
         }
 
@@ -45,11 +40,7 @@ export function useVenues({
         console.error("Failed to fetch venues:", err);
 
         if (mounted) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Failed to fetch venues",
-          );
+          setError(err instanceof Error ? err.message : "Failed to fetch venues");
         }
       } finally {
         if (mounted) {

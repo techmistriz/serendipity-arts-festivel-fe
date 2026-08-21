@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -17,9 +16,7 @@ export default function Programmes() {
 
   const { programmes, loading, error } = useProgrammes(1, 8);
 
-  const sortedProgrammes = [...programmes].sort((a, b) =>
-    a.name.localeCompare(b.name),
-  );
+  const sortedProgrammes = [...programmes].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <>
@@ -41,10 +38,7 @@ export default function Programmes() {
               aria-hidden="true"
             />
 
-            <div
-              className="absolute inset-0 bg-foreground/55"
-              aria-hidden="true"
-            />
+            <div className="absolute inset-0 bg-foreground/55" aria-hidden="true" />
 
             <div className="relative z-10 px-7 py-8 md:px-9 md:py-10">
               <p className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em] text-white">
@@ -82,13 +76,9 @@ export default function Programmes() {
         {/* Error */}
         {!loading && error && (
           <div className="border border-foreground p-6">
-            <p className="headline text-sm">
-              Unable to load programmes.
-            </p>
+            <p className="headline text-sm">Unable to load programmes.</p>
 
-            <p className="mt-2 text-sm text-muted-foreground">
-              {error}
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">{error}</p>
           </div>
         )}
 
@@ -97,11 +87,7 @@ export default function Programmes() {
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-14">
               {sortedProgrammes.slice(0, 8).map((programme, index) => (
-                <Link
-                  key={programme.id}
-                  href={`/programmes`}
-                  className="group block"
-                >
+                <Link key={programme.id} href={`/programmes`} className="group block">
                   <GlitchBorder
                     seed={index + 5}
                     thickness={1}
@@ -122,9 +108,7 @@ export default function Programmes() {
 
                   <div className="mt-3">
                     <p className="label text-muted-foreground">
-                      {programme.category?.name ??
-                        programme.discipline?.name ??
-                        "Programme"}
+                      {programme.category?.name ?? programme.discipline?.name ?? "Programme"}
                     </p>
 
                     <h3 className="mt-1.5 headline font-semibold text-sm md:text-lg leading-tight tracking-[-0.01em] group-hover:text-accent transition-colors">
@@ -140,10 +124,7 @@ export default function Programmes() {
             </div>
 
             <div className="mt-10 flex justify-end">
-              <Link
-                href="/programmes"
-                className="label hover:text-accent transition-colors"
-              >
+              <Link href="/programmes" className="label hover:text-accent transition-colors">
                 All programmes &nbsp;→
               </Link>
             </div>
@@ -151,10 +132,7 @@ export default function Programmes() {
         )}
       </section>
 
-      <RecommendModal
-        open={recOpen}
-        onClose={() => setRecOpen(false)}
-      />
+      <RecommendModal open={recOpen} onClose={() => setRecOpen(false)} />
     </>
   );
 }
