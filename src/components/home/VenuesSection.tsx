@@ -38,7 +38,7 @@ export function VenuesSection() {
       gameUrl.hash = new URLSearchParams({ token: accessToken }).toString();
     }
 
-    window.open(gameUrl.toString(), '_blank', 'noopener,noreferrer');
+    window.open(gameUrl.toString(), "_blank", "noopener,noreferrer");
   };
 
   return (
