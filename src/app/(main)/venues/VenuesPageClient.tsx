@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { AsyncErrorAlert, EmptyState, LoadingState } from "@/components/common/AsyncState";
 import { getErrorMessage } from "@/utils/error";
@@ -9,6 +9,10 @@ import { getVenueDetail, getVenues } from "./api";
 import { VenueCard } from "./_components/VenueCard";
 import { VenueDetailModal } from "./_components/VenueDetailModal";
 import type { VenueDetail, VenueListItem } from "./types";
+import { GoogleWayfindingMap } from "@/components/maps/google-wayfinding-map";
+import { GOA_NODES, GOA_VENUE_POINTS } from "@/data/goa-map";
+import { useCart } from "@/hooks/use-cart";
+import { goaVenueSlug } from "@/lib/venue-slug";
 
 export default function VenuesPageClient() {
   const [venues, setVenues] = useState<VenueListItem[]>([]);
@@ -70,6 +74,15 @@ export default function VenuesPageClient() {
     }
   };
 
+  const { bookings } = useCart();
+
+  const bookedVenueSlugs = useMemo(
+    () =>
+      Array.from(new Set(bookings.map((b) => goaVenueSlug(b.venue)).filter(Boolean) as string[])),
+    [bookings],
+  );
+
+  console.log("Venues data", venues);
   return (
     <div className="container-editorial pt-10 pb-32 md:pt-20">
       <h1 className="display text-[13vw] leading-[0.9] uppercase md:text-[9vw]">Venues</h1>
@@ -119,6 +132,22 @@ export default function VenuesPageClient() {
       {detailLoading && <LoadingState label="Loading venue details" variant="overlay" />}
 
       <VenueDetailModal activeVenue={activeVenue} onClose={() => setActiveVenue(null)} />
+
+      <section className="mt-20 md:mt-28">
+        <h2 className="display uppercase text-[9vw] md:text-[5vw] leading-[0.9]">Wayfinding</h2>
+        <p className="mt-4 max-w-2xl text-muted-foreground headline text-sm">
+          Pick a start and an end venue to get the route — on foot, by car or by transit.
+        </p>
+        <div className="mt-8">
+          <GoogleWayfindingMap
+            ariaLabel="Google map of Serendipity Arts Festival venues across Panjim"
+            points={GOA_VENUE_POINTS}
+            nodes={GOA_NODES}
+            highlight={bookedVenueSlugs}
+            caption="Panjim riverfront · all venues sit within a twenty minute walk. Highlighted pins are venues on your booking list."
+          />
+        </div>
+      </section>
     </div>
   );
 }
