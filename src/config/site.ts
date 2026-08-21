@@ -4,6 +4,7 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   api_base_url: process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1/web",
   cdn_base_url: process.env.NEXT_PUBLIC_CDN_URL ?? "http://127.0.0.1:8000/uploads",
+  game_url: process.env.NEXT_PUBLIC_GAME_URL ?? "http://localhost:8080",
   currency: process.env.NEXT_PUBLIC_CURRENCY ?? "INR",
   locale: process.env.NEXT_PUBLIC_CURRENCY_LOCALE ?? "en-IN",
   navigation: [

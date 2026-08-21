@@ -6,6 +6,7 @@ import Image from "next/image";
 import venuesBox from "@public/venues-box.png";
 
 import { useVenues } from "@/hooks/useVenues";
+import { siteConfig } from "@/config/site";
 import { GlitchBorder } from "../common/GlitchBorder";
 import { useState } from "react";
 import { useAppSelector } from "@/redux/hooks";
@@ -26,7 +27,19 @@ export function VenuesSection() {
 
   const [gameGate, setGameGate] = useState(false);
 
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+
+  const startGame = () => {
+    const gameUrl = new URL(siteConfig.game_url);
+
+    // Fragments are not sent to the game server, avoiding bearer-token logs.
+    // The game can read this value from window.location.hash when it saves a score.
+    if (accessToken) {
+      gameUrl.hash = new URLSearchParams({ token: accessToken }).toString();
+    }
+
+    window.open(gameUrl.toString(), '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <section className="container-editorial mt-20 md:mt-32">
@@ -83,18 +96,18 @@ export function VenuesSection() {
               <p className="notch uppercase text-2xl leading-[1]">Play Serendipity Dash</p>
 
               <p className="headline text-sm mt-3 text-muted-foreground">
-                {isAuthenticated
+                {accessToken
                   ? "You are all set. Start the game."
                   : "You need to log in to play Serendipity Dash."}
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                {isAuthenticated ? (
+                {accessToken ? (
                   <button
                     type="button"
                     onClick={() => {
                       setGameGate(false);
-
+                      startGame();
                       // Open game here
                       // window.open("/serendipity-dash", "_blank");
                     }}
