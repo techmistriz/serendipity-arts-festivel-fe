@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { authService } from "@/services/auth.service";
 import { getAuthenticationErrorMessage } from "@/utils/error";
+import { siteConfig } from "@/config/site";
 
 type LoginForm = {
   email: string;
@@ -34,11 +35,19 @@ const getSafeRedirectPath = (value: string | null) => {
   return value;
 };
 
+const getGameUrl = (accessToken: string) => {
+  const gameUrl = new URL(siteConfig.game_url);
+  // Keep the bearer token out of server requests and logs.
+  gameUrl.hash = new URLSearchParams({ token: accessToken }).toString();
+  return gameUrl.toString();
+};
+
 function LoginContent() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = getSafeRedirectPath(searchParams.get("next"));
+  const returnToGame = searchParams.get("game") === "serendipity-dash";
 
   const [forgot, setForgot] = useState(false);
   const [sent, setSent] = useState(false);
@@ -67,7 +76,11 @@ function LoginContent() {
     try {
       const session = await authService.login(data);
       dispatch(setSession(session));
-      router.replace(next);
+      if (returnToGame) {
+        window.location.assign(getGameUrl(session.token));
+      } else {
+        router.replace(next);
+      }
     } catch (error: unknown) {
       setLoginError(getAuthenticationErrorMessage(error));
     } finally {
