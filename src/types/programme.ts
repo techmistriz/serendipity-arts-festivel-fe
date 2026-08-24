@@ -21,10 +21,24 @@ export interface Programme {
   id: number;
   booking_type: string | null;
   program_type: string;
-  parent_id: number;
   name: string;
   slug: string;
-  amount: number;
+  amount: number | null;
+  parent_id: number | string;
+  category_id: number | string;
+  program_city_id: number | string;
+  venue_id: number | string | null;
+  discipline_id: number | string;
+  hide_mix_blend: number | string;
+  ordering: number | string;
+  status: number | string;
+  has_featured: number | string;
+  has_vip: number | string;
+  created_by: number | string;
+  updated_by: number | string;
+  webhook_status: number | string;
+  is_booking_allowed: number | string;
+  deleted_by: number | string | null;
 
   event_date: string | null;
   from_time: string | null;
@@ -36,11 +50,6 @@ export interface Programme {
   short_description: string;
   description: string;
 
-  category_id: number;
-  program_city_id: number;
-  venue_id: number | null;
-  discipline_id: number;
-
   curator_ids: string[];
   artist_title: string | null;
   artist_ids: string[];
@@ -49,38 +58,24 @@ export interface Programme {
   program_tag_ids: string[];
   sponsor_ids: string[];
 
-  hide_mix_blend: number;
   external_link: string | null;
 
   program_image: string;
 
   artists: unknown | null;
 
-  ordering: number;
-  status: number;
-
   meta_title: string | null;
   meta_keywords: string | null;
   meta_description: string | null;
-
-  has_featured: number;
-  has_vip: number;
-
-  created_by: number;
-  updated_by: number;
 
   created_at: string;
   updated_at: string;
 
   sponsor_title: string | null;
 
-  webhook_status: number;
   webhook_response: string | null;
 
-  is_booking_allowed: number;
-
   deleted_at: string | null;
-  deleted_by: number | null;
 
   category: ProgrammeCategory | null;
   discipline: ProgrammeDiscipline | null;

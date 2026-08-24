@@ -22,9 +22,10 @@ function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "";
-  // const initialMode = (searchParams.get("mode") as "general" | "guest" | "sea") || "general";
+  const initialMode = (searchParams.get("mode") as "general" | "guest" | "sea") || "general";
 
-  const initialMode = "general" as const;
+  //for general show only
+  // const initialMode = "general" as const;
 
   const [mode, setMode] = useState<"general" | "guest" | "sea">(initialMode);
   const [submitted, setSubmitted] = useState(false);
@@ -343,8 +344,10 @@ function RegisterContent() {
 
       {/* Mode tabs */}
       <div className="mt-8 flex flex-wrap gap-2">
-        {/* {(["general", "guest", "sea"] as const).map((m) => ( */}
-        {(["general"] as const).map((m) => (
+        {/* for general show only */}
+        {/* {(["general"] as const).map((m) => ( */}
+
+        {(["general", "guest", "sea"] as const).map((m) => (
           <button
             key={m}
             onClick={() => handleModeChange(m)}

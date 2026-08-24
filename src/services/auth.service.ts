@@ -1,6 +1,7 @@
 import API, { METHODS } from "@/network/API";
 import type { ApiResponse } from "@/types/api";
-import type { AuthSession, LoginCredentials } from "@/types/auth";
+import type { AuthSession, AuthUser, LoginCredentials } from "@/types/auth";
+import { UpdateProfilePayload } from "@/types/updateProfile";
 import { getApiResponseData } from "@/utils/api";
 
 const post = async <T>(path: string, payload?: unknown) =>
@@ -26,6 +27,7 @@ const isAuthSession = (value: unknown): value is AuthSession => {
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthSession> {
     const response = await post<unknown>("/auth/login", credentials);
+
     const session = getApiResponseData(response, "Unable to sign in.");
 
     if (!isAuthSession(session)) {
@@ -34,15 +36,30 @@ export const authService = {
 
     return session;
   },
+
+  async profile(): Promise<AuthUser> {
+    const response = await API<ApiResponse<AuthUser>>("/profile", METHODS.GET);
+
+    return getApiResponseData(response, "Unable to load your profile.");
+  },
+
+  async updateProfile(payload: UpdateProfilePayload): Promise<AuthUser> {
+    const response = await post<AuthUser>("/profile/update", payload);
+
+    return getApiResponseData(response, "Unable to update your profile.");
+  },
+
   async logout(): Promise<void> {
     getApiResponseData(await post<null>("/auth/logout"), "Unable to sign out.");
   },
+
   async forgotPassword(email: string): Promise<void> {
     getApiResponseData(
       await post<null>("/auth/forgot-password", { email }),
       "Unable to send a reset link.",
     );
   },
+
   async resetPassword(payload: {
     token: string;
     email: string;

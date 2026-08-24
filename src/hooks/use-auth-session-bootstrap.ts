@@ -15,24 +15,29 @@ export function useAuthSessionBootstrap() {
   useEffect(() => {
     const loadSession = async () => {
       if (!accessToken) {
-        dispatch(clearSession());
+        dispatch(setAuthLoading(false));
         return;
       }
 
       dispatch(setAuthLoading(true));
 
       try {
-        const response = await API<ApiResponse<Pick<AuthSession, "user">>>(
-          "/auth/user",
-          METHODS.GET,
-        );
+        const response = await API<ApiResponse<AuthSession["user"]>>("/profile", METHODS.GET);
 
-        if (!response.status || !response.data?.user) {
+        console.log("PROFILE RESPONSE:", response);
+
+        if (!response.status || !response.data) {
           throw new Error(response.message || "Unable to restore your session.");
         }
 
-        dispatch(setSession({ ...response.data, token: accessToken }));
-      } catch {
+        dispatch(
+          setSession({
+            user: response.data,
+            token: accessToken,
+          }),
+        );
+      } catch (error) {
+        console.error("PROFILE AUTH ERROR:", error);
         dispatch(clearSession());
       }
     };
