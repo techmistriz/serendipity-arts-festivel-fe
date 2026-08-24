@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Heart } from "lucide-react";
 
 import type { Programme } from "@/data/programmes-data";
-import { dateLabel, timeLabel } from "@/data/programmes-data";
+// import { dateLabel, timeLabel } from "@/data/programmes-data";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
@@ -39,20 +39,22 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
       </button>
       <button onClick={onAbout} className="w-full text-left">
         <GlitchBorder
-          seed={programme.id.length + 2}
+          seed={Number(programme.id) + 2}
           thickness={1}
           hoverBoost={14}
           delayMs={200}
           className="overflow-hidden"
         >
-          <div className="relative">
+          <div className="relative aspect-square w-full">
             <Image
               src={programme.img}
               alt={programme.title}
+              fill
               loading="lazy"
               sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-              className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
+
             {programme.newlyAdded && (
               <span
                 className="label absolute top-2 left-2 px-2 py-1"
@@ -67,9 +69,9 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
           <h3 className="headline break-words text-sm leading-tight font-semibold tracking-[-0.01em] hyphens-auto transition-colors group-hover:text-accent md:text-lg">
             {programme.title}
           </h3>
-          <p className="headline mt-1 text-[11px] text-muted-foreground md:text-xs">
+          {/* <p className="headline mt-1 text-[11px] text-muted-foreground md:text-xs">
             {dateLabel(programme)} · {timeLabel(programme)} · {programme.venue}
-          </p>
+          </p> */}
           <div className="mt-2 flex flex-wrap gap-1.5">
             <span
               className="label max-w-full break-words px-1.5 py-0.5 text-[9px] leading-tight md:text-[10px]"

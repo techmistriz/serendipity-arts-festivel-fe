@@ -250,20 +250,40 @@ export function DashboardPageClient() {
 
         {tab === "profile" && (
           <div className="max-w-2xl">
-            <dl className="grid grid-cols-1 gap-x-12 gap-y-6 md:grid-cols-2">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <p className="label text-muted-foreground">Account information</p>
+
+                <h2 className="mt-2 display uppercase text-3xl md:text-4xl leading-none">
+                  My Profile
+                </h2>
+              </div>
+
+              <Link
+                href="/profile"
+                className="label shrink-0 border border-foreground px-5 py-3 hover:bg-foreground hover:text-background transition-colors"
+              >
+                Edit Profile →
+              </Link>
+            </div>
+
+            <dl className="mt-10 grid grid-cols-1 gap-x-12 gap-y-6 md:grid-cols-2">
               <Row label="Name" value={user?.name ?? "—"} />
               <Row label="Email" value={user?.email ?? "—"} />
             </dl>
 
             <div className="mt-12 border border-foreground p-5 md:p-8">
               <p className="label text-muted-foreground">Data &amp; privacy</p>
+
               <h3 className="mt-2 display uppercase text-2xl md:text-3xl leading-[1]">
                 Your privacy matters.
               </h3>
+
               <p className="mt-3 headline text-sm md:text-base text-muted-foreground max-w-prose">
                 Review how Serendipity Arts Festival handles your personal information and your
                 available choices.
               </p>
+
               <Link
                 href="/privacy"
                 className="label mt-6 inline-block border border-foreground px-5 py-3 transition-colors hover:bg-foreground hover:text-background"

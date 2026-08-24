@@ -30,6 +30,8 @@ export type AddOn = {
   blurb?: string;
 };
 export type Programme = {
+  name: string;
+  program_image: string | StaticImport;
   id: string;
   /** Stable id override so bundles/add-ons can reference this programme. */
   slug?: string;
