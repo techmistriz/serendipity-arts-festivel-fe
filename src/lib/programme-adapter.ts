@@ -1,84 +1,105 @@
-import type { Programme as ApiProgramme } from "@/types/programme";
-import type { Programme as UiProgramme } from "@/data/programmes-data";
+import type { Programme as ApiProgramme, UIProgramme } from "@/types/programme";
 
-function stripHtml(value: string | null | undefined): string {
-  if (!value) return "";
+// Map API programme to UI programme format
 
-  return value
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/p>/gi, "\n")
-    .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .trim();
-}
+export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
+  // Get the first program detail
+  const firstDetail = apiProgramme.program_details?.[0];
 
-function parsePrice(value: number | string | null | undefined): number {
-  if (value === null || value === undefined || value === "") {
-    return 0;
+  // Generate slots from program_details
+  const slots =
+    apiProgramme.program_details?.map((detail) => ({
+      day: extractDayFromDate(detail.event_date),
+      time: formatTime(detail.from_time),
+    })) || [];
+
+  // If no slots, create a default one
+  if (slots.length === 0) {
+    slots.push({
+      day: 15,
+      time: "10:00",
+    });
   }
 
-  const price = Number(value);
+  // Get category name
+  const category = apiProgramme.category?.name || "Uncategorized";
 
-  return Number.isFinite(price) ? price : 0;
-}
+  // Get venue name (from program_details or fallback)
+  const venue = firstDetail?.venue?.name || "Venue TBA";
 
-function buildSlots(programme: ApiProgramme): UiProgramme["slots"] {
-  // API does not always provide date/time.
-  if (!programme.event_date || !programme.from_time) {
-    return [];
-  }
+  // Get curator (from curator_ids or fallback)
+  const curator =
+    apiProgramme.curator_ids && apiProgramme.curator_ids.length > 0
+      ? `Curator ${apiProgramme.curator_ids.join(", ")}`
+      : "TBA";
 
-  const date = new Date(programme.event_date);
+  // Parse price from amount
+  const price = apiProgramme.amount ? parseFloat(apiProgramme.amount) : 0;
 
-  if (Number.isNaN(date.getTime())) {
-    return [];
-  }
+  // Get tags (you'll need to map tag IDs to names if you have a lookup)
+  const tags = apiProgramme.program_tag_ids?.map((id) => `Tag ${id}`) || [];
 
-  return [
-    {
-      day: date.getDate(),
-      time: programme.from_time.slice(0, 5),
-    },
-  ];
-}
+  // Extract short description (blurb)
+  const blurb = stripHtml(apiProgramme.short_description || "");
 
-export function mapApiProgrammeToUi(programme: ApiProgramme): UiProgramme {
-  const price = parsePrice(programme.amount);
-
-  const category = programme.category?.name ?? programme.discipline?.name ?? "Programme";
-
-  const venue = programme.program_city?.name ?? "";
-
-  const blurb = stripHtml(programme.short_description);
-  const longBlurb = stripHtml(programme.description);
+  // Extract long description (longBlurb)
+  const longBlurb = stripHtml(apiProgramme.description || "") || blurb;
 
   return {
-    id: String(programme.id),
-    title: programme.name,
-    img: programme.program_image,
-
-    price,
-
-    category,
-    venue,
-
-    curator: "",
-
-    tags: [],
-
-    slots: buildSlots(programme),
-
-    blurb,
-    longBlurb: longBlurb || undefined,
-
+    id: apiProgramme.id,
+    title: apiProgramme.name || "Untitled",
+    slug: apiProgramme.slug || "",
+    category: category,
+    curator: curator,
+    slots: slots,
+    venue: venue,
+    price: price,
+    img: apiProgramme.program_image || "/placeholder-image.jpg",
+    blurb: blurb,
+    longBlurb: longBlurb,
+    tags: tags,
     newlyAdded: false,
-
-    addOns: [],
-    includes: [],
   };
 }
 
-export function mapApiProgrammesToUi(programmes: ApiProgramme[]): UiProgramme[] {
-  return programmes.map(mapApiProgrammeToUi);
+// Map multiple API programmes to UI format
+
+export function mapApiProgrammesToUi(apiProgrammes: ApiProgramme[]): UIProgramme[] {
+  if (!apiProgrammes || !Array.isArray(apiProgrammes)) {
+    console.warn("[Adapter] No programmes to map");
+    return [];
+  }
+
+  return apiProgrammes.map(mapApiProgrammeToUi);
+}
+
+// Extract day from date string (DD-MM-YYYY)
+
+function extractDayFromDate(dateStr: string): number {
+  if (!dateStr) return 15;
+  const parts = dateStr.split("-");
+  return parseInt(parts[0], 10);
+}
+
+// Format time from HH:MM:SS to HH:MM
+
+function formatTime(timeStr: string): string {
+  if (!timeStr) return "10:00";
+  return timeStr.substring(0, 5);
+}
+
+// Strip HTML tags from string
+
+function stripHtml(html: string): string {
+  if (!html) return "";
+  if (typeof window === "undefined") {
+    // Server-side: use a simple regex
+    return html
+      .replace(/<[^>]*>/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
 }

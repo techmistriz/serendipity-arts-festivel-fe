@@ -11,6 +11,5 @@ export async function getSponsors(limit?: number): Promise<Sponsors[]> {
   if (!response.status) {
     throw new Error(response.message || "Failed to fetch sponsors");
   }
-  console.log("sponsors", response.data);
   return response.data;
 }

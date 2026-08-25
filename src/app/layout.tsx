@@ -34,7 +34,10 @@ export default function RootLayout({
       lang="en"
       className={`${interTight.variable} ${stackSansHeadline.variable} h-full antialiased`}
     >
-      <body className="min-h-screen flex flex-col">
+      <body
+        className="min-h-screen flex flex-col"
+        suppressHydrationWarning //Fix: Suppress hydration warnings for body attributes
+      >
         <ReduxProvider>
           <Header />
           <main className="flex-1">{children}</main>

@@ -82,7 +82,6 @@ export default function VenuesPageClient() {
     [bookings],
   );
 
-  console.log("Venues data", venues);
   return (
     <div className="container-editorial pt-10 pb-32 md:pt-20">
       <h1 className="display text-[13vw] leading-[0.9] uppercase md:text-[9vw]">Venues</h1>

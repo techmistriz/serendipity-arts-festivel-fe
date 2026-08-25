@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/redux/hooks";
 import { clearSession } from "@/redux/slices/authSlice";
 import { authService } from "@/services/auth.service";
-import { fmtTime, PROGRAMMES } from "@/data/programmes-data";
+import { fmtTime } from "@/data/programmes-data";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 
@@ -22,23 +22,34 @@ export function DashboardPageClient() {
   const dispatch = useAppDispatch();
   const [tab, setTab] = useState<"bookings" | "wishlist" | "schedule" | "profile">("bookings");
   const { bookings } = useCart();
-  const { programmeIds, toggleProgramme } = useWishlist();
-  const wishlistItems = programmeIds.flatMap((programmeId) => {
-    const programme = PROGRAMMES.find(({ id }) => id === programmeId);
+  const { wishlistItems, toggleProgramme, loading } = useWishlist();
 
-    return programme
-      ? [
-          {
-            id: programme.id,
-            title: programme.title,
-            category: programme.category,
-            img: programme.img,
-            venue: programme.venue,
-            date: `${programme.slots[0].day} Dec`,
-            time: fmtTime(programme.slots[0].time),
-          },
-        ]
-      : [];
+  // Transform wishlist items to display format
+  const displayWishlistItems = wishlistItems.map((item) => {
+    const program = item.program;
+    const firstSlot = program?.program_details?.[0];
+
+    return {
+      id: item.program_id,
+      wishlistId: item.id,
+      title: program?.name || "Untitled",
+      category: program?.category?.name || "Uncategorized",
+      img: "/placeholder-image.jpg", // Default image, you can add image field if available
+      venue: firstSlot?.venue?.title || "Venue TBA",
+      date: firstSlot?.event_date
+        ? new Date(firstSlot.event_date).toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+          })
+        : "Date TBA",
+      time: firstSlot?.from_time ? fmtTime(firstSlot.from_time) : "Time TBA",
+      categoryColors: program?.category
+        ? {
+            fontColor: program.category.font_color,
+            backgroundColor: program.category.background_color,
+          }
+        : undefined,
+    };
   });
 
   const totalTickets = bookings.reduce((s, b) => s + b.qty, 0);
@@ -46,7 +57,6 @@ export function DashboardPageClient() {
 
   const router = useRouter();
   const { isAuthenticated, user } = useAuth();
-
   const isLoggedIn = isAuthenticated;
 
   const handleLogout = async () => {
@@ -57,12 +67,6 @@ export function DashboardPageClient() {
       router.replace("/login");
     }
   };
-
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     router.replace("/login?next=/dashboard");
-  //   }
-  // }, [isAuthenticated, router]);
 
   if (!isLoggedIn) {
     return (
@@ -89,6 +93,7 @@ export function DashboardPageClient() {
       </div>
     );
   }
+
   return (
     <div className="container-editorial pt-16 md:pt-24 pb-32">
       <div className="flex items-end justify-between flex-wrap gap-6">
@@ -127,6 +132,9 @@ export function DashboardPageClient() {
             }`}
           >
             {t}
+            {t === "wishlist" && wishlistItems.length > 0 && (
+              <span className="ml-2 text-sm text-accent">({wishlistItems.length})</span>
+            )}
           </button>
         ))}
       </div>
@@ -166,7 +174,12 @@ export function DashboardPageClient() {
           ))}
 
         {tab === "wishlist" &&
-          (wishlistItems.length === 0 ? (
+          (loading ? (
+            <div className="py-16 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent"></div>
+              <p className="mt-4 label text-muted-foreground">Loading wishlist...</p>
+            </div>
+          ) : displayWishlistItems.length === 0 ? (
             <p className="label text-muted-foreground py-16 text-center">
               Nothing saved yet. Browse{" "}
               <Link href="/programmes" className="text-foreground underline underline-offset-4">
@@ -176,35 +189,51 @@ export function DashboardPageClient() {
             </p>
           ) : (
             <ul className="rule-t">
-              {wishlistItems.map((p) => (
-                <li key={p.id} className="rule-b py-6 grid grid-cols-12 gap-4 items-center">
-                  <Image
-                    src={p.img}
-                    alt={p.title}
-                    width={200}
-                    height={200}
-                    className="col-span-2 md:col-span-1 w-full aspect-square object-cover"
-                  />
+              {displayWishlistItems.map((item) => (
+                <li key={item.id} className="rule-b py-6 grid grid-cols-12 gap-4 items-center">
+                  <div className="col-span-2 md:col-span-1 relative aspect-square w-full bg-muted rounded overflow-hidden">
+                    <Image
+                      src={item.img}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      loading="lazy"
+                      sizes="(max-width: 768px) 20vw, 10vw"
+                    />
+                  </div>
                   <div className="col-span-7 md:col-span-8">
-                    <p className="label text-muted-foreground">{p.category}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span
+                        className="label text-[10px] px-1.5 py-0.5 rounded"
+                        style={{
+                          color: item.categoryColors?.fontColor || "#000",
+                          backgroundColor: item.categoryColors?.backgroundColor || "#e5e5e5",
+                        }}
+                      >
+                        {item.category}
+                      </span>
+                    </div>
                     <p className="headline font-semibold text-lg md:text-xl leading-tight mt-1">
-                      {p.title}
+                      {item.title}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground headline">
-                      {p.date} · {p.time} · {p.venue}
+                      {item.date} · {item.time} · {item.venue}
                     </p>
                   </div>
                   <div className="col-span-3 flex flex-wrap items-center justify-end gap-2">
                     <Link
-                      href={`/programmes?p=${p.id}`}
-                      className="label border border-foreground px-3 py-2 hover:bg-foreground hover:text-background transition-colors"
+                      href={`/programmes?p=${item.id}`}
+                      className="label border border-foreground px-3 py-2 hover:bg-foreground hover:text-background transition-colors text-xs"
                     >
                       Book →
                     </Link>
                     <button
-                      onClick={() => toggleProgramme(p.id)}
+                      onClick={() => toggleProgramme(item.id)}
+                      disabled={loading}
                       aria-label="Remove from wishlist"
-                      className="p-2 hover:text-accent"
+                      className={`p-2 hover:text-accent transition-colors ${
+                        loading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                     >
                       <Heart className="h-4 w-4 fill-accent text-accent" strokeWidth={1.75} />
                     </button>
