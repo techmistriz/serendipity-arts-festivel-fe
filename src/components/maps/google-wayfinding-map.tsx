@@ -32,9 +32,6 @@ function loadMaps(): Promise<typeof google> {
   return new Promise((resolve, reject) => {
     const key = process.env.NEXT_PUBLIC_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
 
-    // console.log("Google Maps key exists:", !!key);
-    // console.log("Google Maps key:", key);
-
     const channel = process.env.NEXT_PUBLIC_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
 
     if (!key) {
