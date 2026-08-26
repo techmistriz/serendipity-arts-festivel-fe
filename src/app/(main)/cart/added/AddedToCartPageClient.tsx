@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
+import { PageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { useCart } from "@/hooks/use-cart";
 
 export function AddedToCartPageClient() {
@@ -47,12 +48,5 @@ export function AddedToCartPageClient() {
 }
 
 export function AddedLoading() {
-  return (
-    <div className="container-editorial min-h-[70vh] pt-16 pb-32 md:pt-24" aria-busy="true">
-      <p className="label text-accent">Added to cart</p>
-      <h1 className="display mt-3 uppercase text-[13vw] leading-[0.9] md:text-[8vw]">
-        Loading your cart.
-      </h1>
-    </div>
-  );
+  return <PageLoadingSkeleton className="min-h-[70vh]" label="Loading cart" />;
 }

@@ -5,6 +5,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 
+import { PageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { authService } from "@/services/auth.service";
 import { getErrorMessage } from "@/utils/error";
 
@@ -202,7 +203,7 @@ function ResetPasswordContent() {
 
 export function ResetPasswordPageClient() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<PageLoadingSkeleton label="Loading password reset" />}>
       <ResetPasswordContent />
     </Suspense>
   );

@@ -7,10 +7,11 @@ import { useState } from "react";
 
 import { fmtTime } from "@/data/programmes-data";
 import { imagePaths } from "@/config/images";
+import { ListRowsLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { useWishlist } from "@/hooks/use-wishlist";
 
 import { DashboardShell } from "./DashboardShell";
-import { ErrorMessage, LoadingMessage } from "./DashboardPageClient";
+import { ErrorMessage } from "./DashboardPageClient";
 
 const FALLBACK_IMAGE = imagePaths.programmeFallback;
 
@@ -47,7 +48,7 @@ function WishlistContent() {
   });
 
   if (loading && programmes.length === 0) {
-    return <LoadingMessage message="Loading wishlist..." />;
+    return <ListRowsLoadingSkeleton label="Loading wishlist" />;
   }
 
   if (error && programmes.length === 0) {

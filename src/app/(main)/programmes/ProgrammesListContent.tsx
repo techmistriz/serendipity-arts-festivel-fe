@@ -226,7 +226,9 @@ export function ProgrammesListContent({
   // Render loading state
   const renderLoading = () => (
     <>
-      <p className="mt-8 label text-muted-foreground">Loading programmes…</p>
+      <p className="sr-only" role="status">
+        Loading programmes
+      </p>
       <div className="mt-6 md:mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-16">
         {Array.from({ length: PROGRAMMES_PER_PAGE }).map((_, index) => (
           <div key={index}>

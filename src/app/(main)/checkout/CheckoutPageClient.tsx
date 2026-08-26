@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 
 import { BookingSuccess } from "@/components/common/BookingSuccess";
+import { PageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/hooks/use-cart";
@@ -121,12 +122,7 @@ export function CheckoutPageClient() {
   };
 
   if (authLoading || (loading && items.length === 0 && !showSuccess)) {
-    return (
-      <div className="container-editorial pt-10 pb-32 md:pt-24">
-        <h1 className="display text-[14vw] leading-[0.9] uppercase md:text-[10vw]">Checkout</h1>
-        <p className="mt-8 text-muted-foreground">Loading checkout…</p>
-      </div>
-    );
+    return <PageLoadingSkeleton label="Loading checkout" />;
   }
 
   if (!isAuthenticated) {

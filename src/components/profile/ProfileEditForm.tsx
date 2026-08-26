@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
+import { FormLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { authService } from "@/services/auth.service";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setSession } from "@/redux/slices/authSlice";
@@ -168,7 +169,7 @@ export default function ProfileEditForm() {
   };
 
   if (loading) {
-    return <div>Loading profile...</div>;
+    return <FormLoadingSkeleton label="Loading profile" />;
   }
 
   return (

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { GlitchBorder } from "@/components/common/GlitchBorder";
+import { ContentGridSkeleton } from "@/components/common/LoadingSkeletons";
 import { homeImages } from "@/config/images";
 import { useCurators } from "@/hooks/useCurators";
 
@@ -39,7 +40,7 @@ export function CuratorsSection({ limit = 4 }: CuratorsSectionProps) {
       </HomeSectionHeader>
 
       {loading ? (
-        <div className="py-10 text-sm uppercase">Loading curators...</div>
+        <ContentGridSkeleton count={limit} className="mt-10" label="Loading curators" />
       ) : error ? (
         <div className="py-10 text-sm text-red-500">{error}</div>
       ) : (

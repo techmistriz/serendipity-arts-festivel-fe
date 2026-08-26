@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 
+import { PageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
@@ -280,7 +281,7 @@ function LoginContent() {
 
 export function LoginPageClient() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<PageLoadingSkeleton label="Loading sign in" />}>
       <LoginContent />
     </Suspense>
   );

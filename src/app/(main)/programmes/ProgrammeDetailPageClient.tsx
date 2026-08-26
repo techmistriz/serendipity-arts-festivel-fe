@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
 import { BookingSheet } from "./BookingSheet";
+import { DetailPageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { mapApiProgrammeToUi, mapApiProgrammesToUi } from "@/lib/programme-adapter";
 import { useProgramme } from "@/hooks/useProgrammeDetail";
 import { useProgrammes } from "@/hooks/useProgrammes";
@@ -56,11 +57,7 @@ export function ProgrammeDetailPageClient({
   );
 
   if (isProgrammeLoading) {
-    return (
-      <div className="container-editorial py-16 md:py-24">
-        <p className="label text-muted-foreground">Loading programme…</p>
-      </div>
-    );
+    return <DetailPageLoadingSkeleton label="Loading programme" />;
   }
 
   if (!programme) {

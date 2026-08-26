@@ -1,3 +1,4 @@
+import { ContentGridSkeleton } from "@/components/common/LoadingSkeletons";
 import Loader from "@/components/common/Loader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -46,18 +47,13 @@ type LoadingStateProps = {
 };
 
 export function LoadingState({ label, variant }: LoadingStateProps) {
+  if (variant === "inline") {
+    return <ContentGridSkeleton label={label} />;
+  }
+
   return (
-    <div
-      className={
-        variant === "overlay"
-          ? "fixed inset-0 z-40 flex items-center justify-center bg-background/80 backdrop-blur-sm"
-          : "mt-40"
-      }
-      role="status"
-      aria-live="polite"
-    >
-      <Loader />
-      <span className="sr-only">{label}</span>
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+      <Loader label={label} />
     </div>
   );
 }

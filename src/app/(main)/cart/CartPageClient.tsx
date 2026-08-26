@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/hooks/use-cart";
+import { PageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { getErrorMessage } from "@/utils/error";
 
 export function CartPageClient() {
@@ -15,12 +16,7 @@ export function CartPageClient() {
   const payableSubtotal = isComplimentary ? 0 : subtotal;
 
   if (loading && items.length === 0) {
-    return (
-      <div className="container-editorial pt-10 pb-32 md:pt-24">
-        <h1 className="display text-[14vw] leading-[0.9] uppercase md:text-[10vw]">Cart</h1>
-        <p className="mt-8 text-muted-foreground">Loading your cart…</p>
-      </div>
-    );
+    return <PageLoadingSkeleton label="Loading cart" />;
   }
 
   if (items.length === 0) {

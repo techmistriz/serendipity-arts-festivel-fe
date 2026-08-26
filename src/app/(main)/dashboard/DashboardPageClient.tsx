@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { ListRowsLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { useCart } from "@/hooks/use-cart";
 
 import { DashboardShell } from "./DashboardShell";
@@ -19,7 +20,7 @@ function BookingsContent() {
   const { bookings, error, loading } = useCart();
 
   if (loading && bookings.length === 0) {
-    return <LoadingMessage message="Loading bookings..." />;
+    return <ListRowsLoadingSkeleton label="Loading bookings" />;
   }
 
   if (error && bookings.length === 0) {
@@ -60,15 +61,6 @@ function BookingsContent() {
         </li>
       ))}
     </ul>
-  );
-}
-
-export function LoadingMessage({ message }: { message: string }) {
-  return (
-    <div className="py-16 text-center">
-      <div className="inline-block h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-      <p className="mt-4 label text-muted-foreground">{message}</p>
-    </div>
   );
 }
 
