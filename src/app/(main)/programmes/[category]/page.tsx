@@ -3,16 +3,12 @@ import type { Metadata } from "next";
 import { ProgrammeDetailPageClient } from "../ProgrammeDetailPageClient";
 import { ProgrammesPageClient } from "../ProgrammesPageClient";
 import { CATEGORY_SLUGS } from "../constants";
-import { siteConfig } from "@/config/site";
 import { createPageMetadata, textFromHtml } from "@/lib/metadata";
-import { getPublicApiHeaders } from "@/network/api-headers";
+import { getServerApiData } from "@/network/server-api";
 import type { Programme } from "@/types/programme";
 
-type ProgrammeMetaResponse = {
-  status?: boolean;
-  data?: {
-    program?: Programme;
-  };
+type ProgrammeMetadataData = {
+  program?: Programme;
 };
 
 export function generateStaticParams() {
@@ -20,25 +16,11 @@ export function generateStaticParams() {
 }
 
 async function getProgrammeMetadata(slug: string): Promise<Programme | null> {
-  try {
-    const response = await fetch(
-      `${siteConfig.api_base_url.replace(/\/$/, "")}/programme/${encodeURIComponent(slug)}`,
-      {
-        headers: getPublicApiHeaders(),
-        next: { revalidate: 3600 },
-      },
-    );
+  const data = await getServerApiData<ProgrammeMetadataData>(
+    `/programme/${encodeURIComponent(slug)}`,
+  );
 
-    if (!response.ok) {
-      return null;
-    }
-
-    const payload = (await response.json()) as ProgrammeMetaResponse;
-
-    return payload.status && payload.data?.program ? payload.data.program : null;
-  } catch {
-    return null;
-  }
+  return data?.program ?? null;
 }
 
 export async function generateMetadata({

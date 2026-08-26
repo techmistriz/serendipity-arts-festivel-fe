@@ -1,38 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { siteConfig } from "@/config/site";
 import { createPageMetadata, textFromHtml } from "@/lib/metadata";
-import { getPublicApiHeaders } from "@/network/api-headers";
+import { getServerApiData } from "@/network/server-api";
 
 import { CuratorDetailPageContent } from "../CuratorDetailPageContent";
 import type { CuratorDetail, CuratorDetailData } from "../types";
 
-type CuratorMetadataResponse = {
-  status?: boolean;
-  data?: CuratorDetailData;
-};
-
 async function getCuratorDetail(slug: string): Promise<CuratorDetailData | null> {
-  try {
-    const response = await fetch(
-      `${siteConfig.api_base_url.replace(/\/$/, "")}/curator/${encodeURIComponent(slug)}`,
-      {
-        headers: getPublicApiHeaders(),
-        next: { revalidate: 3600 },
-      },
-    );
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const payload = (await response.json()) as CuratorMetadataResponse;
-
-    return payload.status && payload.data?.curator ? payload.data : null;
-  } catch {
-    return null;
-  }
+  return getServerApiData<CuratorDetailData>(`/curator/${encodeURIComponent(slug)}`);
 }
 
 export async function generateMetadata({
