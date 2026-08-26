@@ -1,3 +1,13 @@
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata = createPageMetadata({
+  title: "Privacy Notice",
+  description:
+    "Read the Serendipity Arts Festival privacy notice and Digital Personal Data Protection statement.",
+  pathname: "/privacy",
+  keywords: ["privacy notice", "data protection", "Serendipity Arts Festival"],
+});
+
 function Section({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
   return (
     <section className="rule-t pt-8 md:pt-10">

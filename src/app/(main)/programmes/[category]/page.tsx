@@ -1,9 +1,93 @@
+import type { Metadata } from "next";
+
 import { ProgrammeDetailPageClient } from "../ProgrammeDetailPageClient";
 import { ProgrammesPageClient } from "../ProgrammesPageClient";
 import { CATEGORY_SLUGS } from "../constants";
+import { siteConfig } from "@/config/site";
+import { createPageMetadata, textFromHtml } from "@/lib/metadata";
+import type { Programme } from "@/types/programme";
+
+type ProgrammeMetaResponse = {
+  status?: boolean;
+  data?: {
+    program?: Programme;
+  };
+};
 
 export function generateStaticParams() {
   return Object.keys(CATEGORY_SLUGS).map((category) => ({ category }));
+}
+
+async function getProgrammeMetadata(slug: string): Promise<Programme | null> {
+  try {
+    const response = await fetch(
+      `${siteConfig.api_base_url.replace(/\/$/, "")}/programme/${encodeURIComponent(slug)}`,
+      {
+        headers: {
+          Accept: "application/json",
+          "X-API-TOKEN": "bb15a7d7d24c13088ae34fb19db7b0f5d064d315be568b4ce0c01106a061deea",
+        },
+        next: { revalidate: 3600 },
+      },
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = (await response.json()) as ProgrammeMetaResponse;
+
+    return payload.status && payload.data?.program ? payload.data.program : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}): Promise<Metadata> {
+  const { category: segment } = await params;
+  const category = CATEGORY_SLUGS[segment];
+
+  if (category) {
+    return createPageMetadata({
+      title: `${category} Programmes`,
+      description: `Discover ${category.toLowerCase()} programmes at Serendipity Arts Festival 2026 in Panjim, Goa.`,
+      pathname: `/programmes/${segment}`,
+      keywords: [category, "festival programmes", "Goa"],
+    });
+  }
+
+  const programme = await getProgrammeMetadata(segment);
+
+  if (!programme) {
+    return createPageMetadata({
+      title: "Programme",
+      description: "Discover programmes at Serendipity Arts Festival 2026 in Panjim, Goa.",
+      pathname: `/programmes/${segment}`,
+      noIndex: true,
+    });
+  }
+
+  const description =
+    programme.meta_description ||
+    textFromHtml(programme.short_description) ||
+    textFromHtml(programme.description) ||
+    `Discover ${programme.name} at Serendipity Arts Festival 2026.`;
+  const keywords = (programme.meta_keywords ?? "")
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter(Boolean);
+
+  return createPageMetadata({
+    title: programme.meta_title || programme.name,
+    description,
+    pathname: `/programmes/${segment}`,
+    keywords,
+    image: programme.program_image,
+  });
 }
 
 export default async function ProgrammeCategoryPage({

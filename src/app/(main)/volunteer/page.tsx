@@ -1,4 +1,13 @@
 import { VolunteerGallery } from "./_components/VolunteerGallery";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata = createPageMetadata({
+  title: "Volunteer",
+  description:
+    "Learn about volunteering with Serendipity Arts Festival 2026 and help bring the festival to life in Panjim, Goa.",
+  pathname: "/volunteer",
+  keywords: ["festival volunteer", "volunteer in Goa", "Serendipity Arts Festival volunteer"],
+});
 
 export default function Volunteer() {
   return (

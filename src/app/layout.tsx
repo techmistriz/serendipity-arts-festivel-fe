@@ -20,8 +20,33 @@ const stackSansHeadline = Stack_Sans_Headline({
 });
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
   description: siteConfig.description,
+  applicationName: siteConfig.name,
+  keywords: [
+    "Serendipity Arts Festival",
+    "SAF 2026",
+    "Goa arts festival",
+    "Panjim",
+    "India arts festival",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: siteConfig.url,
+  },
+  twitter: {
+    card: "summary",
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
 };
 
 export default function RootLayout({

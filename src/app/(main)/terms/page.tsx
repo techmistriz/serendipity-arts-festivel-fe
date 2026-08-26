@@ -1,4 +1,13 @@
 import Link from "next/link";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata = createPageMetadata({
+  title: "Terms and Conditions",
+  description:
+    "Read the terms and conditions for registration, Art Passes and programme bookings at Serendipity Arts Festival.",
+  pathname: "/terms",
+  keywords: ["terms and conditions", "festival registration", "programme booking terms"],
+});
 
 type Item = { title: string; body: React.ReactNode };
 type Section = { n: string; title: string; items: Item[] };

@@ -1,6 +1,15 @@
 import Link from "next/link";
 
 import { mediaPaths } from "@/config/images";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata = createPageMetadata({
+  title: "Serendipity Exchange for the Arts",
+  description:
+    "Serendipity Exchange for the Arts is a delegate programme running alongside Serendipity Arts Festival 2026.",
+  pathname: "/sea",
+  keywords: ["Serendipity Exchange for the Arts", "SEA", "arts delegates", "Goa"],
+});
 
 export default function SeaPage() {
   return (

@@ -1,4 +1,12 @@
 import ProfileEditForm from "@/components/profile/ProfileEditForm";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata = createPageMetadata({
+  title: "Edit Profile",
+  description: "Update your Serendipity Arts Festival profile.",
+  pathname: "/profile",
+  noIndex: true,
+});
 
 export default function ProfilePage() {
   return (
