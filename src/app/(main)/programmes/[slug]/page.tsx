@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import { ProgrammeDetailPageClient } from "../ProgrammeDetailPageClient";
-import { ProgrammesPageClient } from "../ProgrammesPageClient";
-import { CATEGORY_SLUGS } from "../constants";
 import { createPageMetadata, textFromHtml } from "@/lib/metadata";
 import { getServerApiData } from "@/network/server-api";
 import type { Programme } from "@/types/programme";
 
+import { ProgrammeDetailPageClient } from "../ProgrammeDetailPageClient";
+import { CATEGORY_SLUGS } from "../constants";
+
 type ProgrammeMetadataData = {
   program?: Programme;
 };
-
-export function generateStaticParams() {
-  return Object.keys(CATEGORY_SLUGS).map((category) => ({ category }));
-}
 
 async function getProgrammeMetadata(slug: string): Promise<Programme | null> {
   const data = await getServerApiData<ProgrammeMetadataData>(
@@ -26,27 +23,16 @@ async function getProgrammeMetadata(slug: string): Promise<Programme | null> {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ category: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { category: segment } = await params;
-  const category = CATEGORY_SLUGS[segment];
-
-  if (category) {
-    return createPageMetadata({
-      title: `${category} Programmes`,
-      description: `Discover ${category.toLowerCase()} programmes at Serendipity Arts Festival 2026 in Panjim, Goa.`,
-      pathname: `/programmes/${segment}`,
-      keywords: [category, "festival programmes", "Goa"],
-    });
-  }
-
-  const programme = await getProgrammeMetadata(segment);
+  const { slug } = await params;
+  const programme = await getProgrammeMetadata(slug);
 
   if (!programme) {
     return createPageMetadata({
       title: "Programme",
       description: "Discover programmes at Serendipity Arts Festival 2026 in Panjim, Goa.",
-      pathname: `/programmes/${segment}`,
+      pathname: `/programmes/${slug}`,
       noIndex: true,
     });
   }
@@ -64,28 +50,27 @@ export async function generateMetadata({
   return createPageMetadata({
     title: programme.meta_title || programme.name,
     description,
-    pathname: `/programmes/${segment}`,
+    pathname: `/programmes/${slug}`,
     keywords,
     image: programme.program_image,
   });
 }
 
-export default async function ProgrammeCategoryPage({
+export default async function ProgrammeDetailPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ category: string }>;
+  params: Promise<{ slug: string }>;
   searchParams: Promise<{ intent?: string | string[] }>;
 }) {
-  const { category: categorySlug } = await params;
-  const category = CATEGORY_SLUGS[categorySlug];
+  const { slug } = await params;
 
-  if (category) {
-    return <ProgrammesPageClient initialCategory={category} />;
+  if (CATEGORY_SLUGS[slug]) {
+    redirect(`/programmes/category/${encodeURIComponent(slug)}`);
   }
 
   const { intent } = await searchParams;
   const initialIntent = intent === "cart" ? "cart" : "about";
 
-  return <ProgrammeDetailPageClient slug={categorySlug} initialIntent={initialIntent} />;
+  return <ProgrammeDetailPageClient slug={slug} initialIntent={initialIntent} />;
 }

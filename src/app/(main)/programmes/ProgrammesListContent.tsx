@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import type { UIProgramme } from "@/types/programme";
 import { useCart } from "@/hooks/use-cart";
@@ -25,16 +25,12 @@ type Intent = "about" | "cart";
 
 interface ProgrammesListContentProps {
   initialCategory?: string;
-  initialProgrammeId?: string | null;
 }
 
-export function ProgrammesListContent({
-  initialCategory = "All",
-  initialProgrammeId = null,
-}: ProgrammesListContentProps) {
+export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesListContentProps) {
   const router = useRouter();
-  // const pathname = usePathname();
-  // const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
+  const initialProgrammeId = searchParams.get("p");
   const { isVip } = useCart();
   const { programmes: apiProgrammes, loading, error } = useProgrammes({ limit: 1000 });
 
@@ -51,6 +47,7 @@ export function ProgrammesListContent({
   const [activeIntent, setActiveIntent] = useState<Intent>("about");
   const [isOpening, setIsOpening] = useState(false);
   const hasInitializedRef = useRef(false);
+  const routeStateRef = useRef({ category: initialCategory, programmeId: initialProgrammeId });
 
   // Convert API programmes to UI format
   const programmes = useMemo<UIProgramme[]>(() => {
@@ -58,7 +55,30 @@ export function ProgrammesListContent({
     return mapApiProgrammesToUi(apiProgrammes);
   }, [apiProgrammes]);
 
-  // Initialize from URL only on first load if programme ID is provided
+  // Keep state in sync when browser navigation changes the category or ?p= value.
+  useEffect(() => {
+    const previousRouteState = routeStateRef.current;
+
+    if (
+      previousRouteState.category === initialCategory &&
+      previousRouteState.programmeId === initialProgrammeId
+    ) {
+      return;
+    }
+
+    routeStateRef.current = { category: initialCategory, programmeId: initialProgrammeId };
+    hasInitializedRef.current = false;
+    setCategory(initialCategory);
+    setDay(null);
+    setVenue("All");
+    setTags([]);
+    setQuery("");
+    setPageState({ filterKey: "", page: 1 });
+    setActiveProgramme(null);
+    setActiveIntent("about");
+  }, [initialCategory, initialProgrammeId]);
+
+  // Initialize from the URL if a programme ID is provided.
   useEffect(() => {
     if (hasInitializedRef.current || !initialProgrammeId || programmes.length === 0) {
       return;
@@ -125,7 +145,7 @@ export function ProgrammesListContent({
       }
 
       const slug = CATEGORY_TO_SLUG[next];
-      if (slug) router.push(`/programmes/${slug}`);
+      if (slug) router.push(`/programmes/category/${slug}`);
     },
     [router],
   );

@@ -1,4 +1,8 @@
-import { ProgrammesPageClient } from "./ProgrammesPageClient";
+import { Suspense } from "react";
+
+import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
+
+import { ProgrammesListContent } from "./ProgrammesListContent";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata = createPageMetadata({
@@ -10,5 +14,9 @@ export const metadata = createPageMetadata({
 });
 
 export default function ProgrammesPage() {
-  return <ProgrammesPageClient />;
+  return (
+    <Suspense fallback={<RouteLoadingOverlay label="Loading programmes" />}>
+      <ProgrammesListContent />
+    </Suspense>
+  );
 }
