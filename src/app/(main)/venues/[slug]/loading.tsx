@@ -1,5 +1,5 @@
-import { DetailPageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
+import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
 
 export default function Loading() {
-  return <DetailPageLoadingSkeleton label="Loading venue" />;
+  return <RouteLoadingOverlay label="Loading venue" />;
 }

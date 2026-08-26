@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-import { PageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
+import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
 import { useCart } from "@/hooks/use-cart";
 
 export function AddedToCartPageClient() {
@@ -48,5 +48,5 @@ export function AddedToCartPageClient() {
 }
 
 export function AddedLoading() {
-  return <PageLoadingSkeleton className="min-h-[70vh]" label="Loading cart" />;
+  return <RouteLoadingOverlay label="Loading cart" />;
 }

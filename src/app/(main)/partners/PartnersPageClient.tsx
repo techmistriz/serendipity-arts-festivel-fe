@@ -1,7 +1,7 @@
 "use client";
 
 import GlitchBar from "@/components/common/GlitchBar";
-import Loader from "@/components/common/Loader";
+import { LogoGridLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { FESTIVAL_LOGO, FOUNDATION_LOGO } from "@/data/partners";
 import { useSponsors } from "@/hooks/useSponsors";
 import Image from "next/image";
@@ -27,7 +27,7 @@ export function PartnersPageClient() {
         Supported by
       </h2>
       {loading ? (
-        <Loader />
+        <LogoGridLoadingSkeleton label="Loading partners" />
       ) : error ? (
         <p role="alert" className="headline mt-8 text-sm text-muted-foreground">
           Partners are currently unavailable. Please try again later.

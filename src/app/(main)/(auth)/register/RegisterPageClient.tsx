@@ -17,7 +17,7 @@ import { generalSchema, seaSchema, guestSchema, ROLE_IDS } from "@/components/au
 // Import form components
 import { GeneralForm, SeaForm, GuestForm } from "@/components/auth/FormFields";
 import { useCheckArchiveUser } from "@/components/auth/hooks/useCheckArchiveUser";
-import Loader from "@/components/common/Loader";
+import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
 
 function RegisterContent() {
   const router = useRouter();
@@ -510,7 +510,7 @@ function RegisterContent() {
 
 export function RegisterPageClient() {
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<RouteLoadingOverlay label="Loading registration" />}>
       <RegisterContent />
     </Suspense>
   );

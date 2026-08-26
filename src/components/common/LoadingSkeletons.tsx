@@ -14,6 +14,25 @@ function LoadingAnnouncement({ label }: { label: string }) {
   return <span className="sr-only">{label}</span>;
 }
 
+export function RouteLoadingOverlay({ label = "Loading page" }: { label?: string }) {
+  return (
+    <div
+      className="fixed inset-0 z-[60] grid place-items-center bg-background/90 backdrop-blur-sm"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="flex flex-col items-center gap-4">
+        <span
+          className="h-11 w-11 animate-spin rounded-full border-[3px] border-foreground/20 border-t-accent"
+          aria-hidden="true"
+        />
+        <span className="label text-muted-foreground">Loading</span>
+      </div>
+      <LoadingAnnouncement label={label} />
+    </div>
+  );
+}
+
 export function PageLoadingSkeleton({ className, label = "Loading page" }: LoadingSkeletonProps) {
   return (
     <div className={cn("container-editorial py-10 pb-32 md:py-20", className)} aria-busy="true">
@@ -45,6 +64,48 @@ export function ContentGridSkeleton({
               <Skeleton className="h-5 w-4/5" />
               <Skeleton className="h-3 w-3/5" />
             </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function LogoGridLoadingSkeleton({
+  className,
+  count = 4,
+  label = "Loading partners",
+}: ContentGridSkeletonProps) {
+  return (
+    <div className={cn("mt-8", className)} role="status" aria-live="polite">
+      <LoadingAnnouncement label={label} />
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+        {Array.from({ length: count }).map((_, index) => (
+          <div key={index} className="border border-foreground px-2 py-2" aria-hidden="true">
+            <div className="grid h-[86px] place-items-center md:h-[104px]">
+              <Skeleton className="h-12 w-3/5" />
+            </div>
+            <Skeleton className="mt-2 h-3 w-2/3" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function MediaGridLoadingSkeleton({
+  className,
+  count = 4,
+  label = "Loading media",
+}: ContentGridSkeletonProps) {
+  return (
+    <div className={cn("mt-10", className)} role="status" aria-live="polite">
+      <LoadingAnnouncement label={label} />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        {Array.from({ length: count }).map((_, index) => (
+          <div key={index} aria-hidden="true">
+            <Skeleton className="aspect-video w-full" />
+            <Skeleton className="mt-2 h-3 w-2/5" />
           </div>
         ))}
       </div>

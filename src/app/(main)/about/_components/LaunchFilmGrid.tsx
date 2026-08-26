@@ -1,4 +1,4 @@
-import Loader from "@/components/common/Loader";
+import { MediaGridLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 
 import type { LaunchFilm } from "../types";
 
@@ -11,11 +11,7 @@ type LaunchFilmGridProps = {
 
 export function LaunchFilmGrid({ films, isLoading, error, onRetry }: LaunchFilmGridProps) {
   if (isLoading) {
-    return (
-      <div className="mt-10">
-        <Loader />
-      </div>
-    );
+    return <MediaGridLoadingSkeleton label="Loading launch films" />;
   }
 
   if (error) {

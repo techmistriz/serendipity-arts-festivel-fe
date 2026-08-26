@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import Loader from "@/components/common/Loader";
+import { LogoGridLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { useSponsors } from "@/hooks/useSponsors";
 
 export function SponsorsSection() {
@@ -16,7 +16,7 @@ export function SponsorsSection() {
       </h2>
 
       {loading ? (
-        <Loader />
+        <LogoGridLoadingSkeleton label="Loading partners" />
       ) : error ? (
         <p role="alert" className="headline py-10 text-sm text-muted-foreground">
           Partners are currently unavailable. Please try again later.

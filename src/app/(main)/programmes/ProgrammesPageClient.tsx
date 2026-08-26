@@ -2,11 +2,12 @@
 
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
 import { ProgrammesListContent } from "./ProgrammesListContent";
 
 export function ProgrammesPageClient({ initialCategory = "All" }: { initialCategory?: string }) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<RouteLoadingOverlay label="Loading programmes" />}>
       <ProgrammesListRoute initialCategory={initialCategory} />
     </Suspense>
   );
