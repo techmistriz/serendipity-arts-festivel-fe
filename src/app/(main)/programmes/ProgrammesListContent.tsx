@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useProgrammes } from "@/hooks/useProgrammes";
 import { mapApiProgrammesToUi } from "@/lib/programme-adapter";
 import {
+  CATEGORY_SLUGS,
   CATEGORY_TO_SLUG,
   PROGRAMME_CATEGORIES,
   PROGRAMME_DAYS,
@@ -23,31 +24,60 @@ import { BookingSheet } from "./BookingSheet";
 
 type Intent = "about" | "cart";
 
-interface ProgrammesListContentProps {
-  initialCategory?: string;
+type ProgrammeQueryUpdate = Record<string, string | null>;
+
+function getCategoryFromParam(value: string | null) {
+  return value ? (CATEGORY_SLUGS[value] ?? "All") : "All";
 }
 
-export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesListContentProps) {
+function getDayFromParam(value: string | null) {
+  const day = Number(value);
+
+  return PROGRAMME_DAYS.includes(day) ? day : null;
+}
+
+function getPageFromParam(value: string | null) {
+  const page = Number(value);
+
+  return Number.isInteger(page) && page > 0 ? page : 1;
+}
+
+export function ProgrammesListContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialProgrammeId = searchParams.get("p");
+  const categoryFromUrl = getCategoryFromParam(searchParams.get("category"));
+  const dayFromUrl = getDayFromParam(searchParams.get("day"));
+  const venueFromUrl = searchParams.get("venue") || "All";
+  const tagFromUrl = searchParams.get("tag");
+  const tagsFromUrl = tagFromUrl ? [tagFromUrl] : [];
+  const queryFromUrl = searchParams.get("q") || "";
+  const requestedPage = getPageFromParam(searchParams.get("page"));
   const { isVip } = useCart();
   const { programmes: apiProgrammes, loading, error } = useProgrammes({ limit: 1000 });
 
   // Filter state
-  const [category, setCategory] = useState(initialCategory);
-  const [day, setDay] = useState<number | null>(null);
-  const [venue, setVenue] = useState("All");
-  const [tags, setTags] = useState<string[]>([]);
-  const [query, setQuery] = useState("");
-  const [pageState, setPageState] = useState({ filterKey: "", page: 1 });
+  const [category, setCategory] = useState(categoryFromUrl);
+  const [day, setDay] = useState<number | null>(dayFromUrl);
+  const [venue, setVenue] = useState(venueFromUrl);
+  const [tags, setTags] = useState<string[]>(tagsFromUrl);
+  const [query, setQuery] = useState(queryFromUrl);
 
   // Legacy modal state remains available for existing ?p=<id> links.
   const [activeProgramme, setActiveProgramme] = useState<UIProgramme | null>(null);
   const [activeIntent, setActiveIntent] = useState<Intent>("about");
   const [isOpening, setIsOpening] = useState(false);
   const hasInitializedRef = useRef(false);
-  const routeStateRef = useRef({ category: initialCategory, programmeId: initialProgrammeId });
+  const programmeParamRef = useRef(initialProgrammeId);
+  const filterStateRef = useRef(
+    JSON.stringify({
+      category: categoryFromUrl,
+      day: dayFromUrl,
+      venue: venueFromUrl,
+      tags: tagFromUrl ? [tagFromUrl] : [],
+      query: queryFromUrl,
+    }),
+  );
 
   // Convert API programmes to UI format
   const programmes = useMemo<UIProgramme[]>(() => {
@@ -55,28 +85,38 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
     return mapApiProgrammesToUi(apiProgrammes);
   }, [apiProgrammes]);
 
-  // Keep state in sync when browser navigation changes the category or ?p= value.
+  // Keep state in sync with browser navigation and shareable filter links.
   useEffect(() => {
-    const previousRouteState = routeStateRef.current;
+    const nextFilterState = JSON.stringify({
+      category: categoryFromUrl,
+      day: dayFromUrl,
+      venue: venueFromUrl,
+      tags: tagFromUrl ? [tagFromUrl] : [],
+      query: queryFromUrl,
+    });
 
-    if (
-      previousRouteState.category === initialCategory &&
-      previousRouteState.programmeId === initialProgrammeId
-    ) {
+    if (filterStateRef.current === nextFilterState) {
       return;
     }
 
-    routeStateRef.current = { category: initialCategory, programmeId: initialProgrammeId };
+    filterStateRef.current = nextFilterState;
+    setCategory(categoryFromUrl);
+    setDay(dayFromUrl);
+    setVenue(venueFromUrl);
+    setTags(tagFromUrl ? [tagFromUrl] : []);
+    setQuery(queryFromUrl);
+  }, [categoryFromUrl, dayFromUrl, venueFromUrl, tagFromUrl, queryFromUrl]);
+
+  useEffect(() => {
+    if (programmeParamRef.current === initialProgrammeId) {
+      return;
+    }
+
+    programmeParamRef.current = initialProgrammeId;
     hasInitializedRef.current = false;
-    setCategory(initialCategory);
-    setDay(null);
-    setVenue("All");
-    setTags([]);
-    setQuery("");
-    setPageState({ filterKey: "", page: 1 });
     setActiveProgramme(null);
     setActiveIntent("about");
-  }, [initialCategory, initialProgrammeId]);
+  }, [initialProgrammeId]);
 
   // Initialize from the URL if a programme ID is provided.
   useEffect(() => {
@@ -107,8 +147,6 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filtered.length / PROGRAMMES_PER_PAGE));
-  const filterKey = JSON.stringify({ category, day, venue, tags, query });
-  const requestedPage = pageState.filterKey === filterKey ? pageState.page : 1;
   const currentPage = Math.min(requestedPage, totalPages);
   const paged = getPageItems(filtered, currentPage, PROGRAMMES_PER_PAGE);
 
@@ -124,30 +162,47 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
   const isEmpty = !loading && !error && !programmes.length;
   const hasNoResults = !loading && !error && programmes.length > 0 && !filtered.length;
 
+  const updateSearchParams = useCallback(
+    (updates: ProgrammeQueryUpdate, history: "push" | "replace" = "replace") => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === null || value === "") {
+          params.delete(key);
+          return;
+        }
+
+        params.set(key, value);
+      });
+
+      const href = params.size > 0 ? `/programmes?${params.toString()}` : "/programmes";
+
+      if (history === "push") {
+        router.push(href, { scroll: false });
+      } else {
+        router.replace(href, { scroll: false });
+      }
+    },
+    [router, searchParams],
+  );
+
   // Handlers
   const goToPage = useCallback(
     (page: number) => {
       const nextPage = Math.min(totalPages, Math.max(1, page));
-      setPageState({ filterKey, page: nextPage });
+      updateSearchParams({ page: nextPage === 1 ? null : String(nextPage) }, "push");
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [totalPages, filterKey],
+    [totalPages, updateSearchParams],
   );
 
   const onCategoryChange = useCallback(
     (next: string) => {
       setCategory(next);
-      setPageState({ filterKey: "", page: 1 });
-
-      if (next === "All") {
-        router.push("/programmes");
-        return;
-      }
-
       const slug = CATEGORY_TO_SLUG[next];
-      if (slug) router.push(`/programmes/category/${slug}`);
+      updateSearchParams({ category: slug ?? null, page: null, p: null });
     },
-    [router],
+    [setCategory, updateSearchParams],
   );
 
   const clearFilters = useCallback(() => {
@@ -156,9 +211,16 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
     setVenue("All");
     setTags([]);
     setQuery("");
-    setPageState({ filterKey: "", page: 1 });
-    router.push("/programmes");
-  }, [router]);
+    updateSearchParams({
+      category: null,
+      day: null,
+      venue: null,
+      tag: null,
+      q: null,
+      page: null,
+      p: null,
+    });
+  }, [setCategory, setDay, setVenue, setTags, setQuery, updateSearchParams]);
 
   // Open a legacy programme modal without changing the URL.
   const openProgramme = useCallback(
@@ -190,7 +252,7 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
         }, 200);
       }
     },
-    [activeProgramme, activeIntent, isOpening],
+    [activeProgramme, activeIntent, isOpening, setActiveIntent, setActiveProgramme, setIsOpening],
   );
 
   const openProgrammePage = useCallback(
@@ -216,7 +278,7 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
     } catch (error) {
       console.error("[ProgrammesList] Error closing programme:", error);
     }
-  }, [activeProgramme]);
+  }, [activeProgramme, setActiveIntent, setActiveProgramme]);
 
   // Keyboard escape handler
   useEffect(() => {
@@ -346,7 +408,11 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
         <div className="border border-foreground px-4 md:px-5 py-3 md:py-4">
           <input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              const nextQuery = e.target.value;
+              setQuery(nextQuery);
+              updateSearchParams({ q: nextQuery, page: null, p: null });
+            }}
             placeholder="Search events, descriptions…"
             className="w-full bg-transparent outline-none text-base md:text-lg headline"
           />
@@ -361,7 +427,15 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
             label="Select Date"
             value={day === null ? "All" : `${day} Dec`}
             options={["All", ...PROGRAMME_DAYS.map((d) => `${d} Dec`)]}
-            onChange={(value) => setDay(value === "All" ? null : parseInt(value, 10))}
+            onChange={(value) => {
+              const nextDay = value === "All" ? null : parseInt(value, 10);
+              setDay(nextDay);
+              updateSearchParams({
+                day: nextDay === null ? null : String(nextDay),
+                page: null,
+                p: null,
+              });
+            }}
           />
           <FilterSelect
             label="Select Category"
@@ -373,13 +447,20 @@ export function ProgrammesListContent({ initialCategory = "All" }: ProgrammesLis
             label="Select Venue"
             value={venue}
             options={["All", ...PROGRAMME_VENUES]}
-            onChange={setVenue}
+            onChange={(value) => {
+              setVenue(value);
+              updateSearchParams({ venue: value === "All" ? null : value, page: null, p: null });
+            }}
           />
           <FilterSelect
             label="Select Tag"
             value={tags[0] ?? "All"}
             options={["All", ...PROGRAMME_TAGS]}
-            onChange={(value) => setTags(value === "All" ? [] : [value])}
+            onChange={(value) => {
+              const nextTags = value === "All" ? [] : [value];
+              setTags(nextTags);
+              updateSearchParams({ tag: nextTags[0] ?? null, page: null, p: null });
+            }}
           />
         </div>
 
