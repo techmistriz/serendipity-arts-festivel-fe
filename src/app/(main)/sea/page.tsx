@@ -1,12 +1,14 @@
 import Link from "next/link";
 
+import { mediaPaths } from "@/config/images";
+
 export default function SeaPage() {
   return (
     <div className="container-editorial pt-10 md:pt-16 pb-32">
       {/* Film banner */}
       <div className="relative overflow-hidden bg-black text-white aspect-[16/7] md:aspect-[16/5] w-full">
         <video
-          src="/saf-aftermovie.mp4"
+          src={mediaPaths.aftermovie}
           autoPlay
           muted
           loop

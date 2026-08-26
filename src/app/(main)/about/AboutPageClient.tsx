@@ -1,10 +1,10 @@
 "use client";
 
 import GrantsGif from "@/components/about/GrantsGif";
+import { images } from "@/config/images";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-import collageAbout from "@public/images/about/collage-about.png";
 import { LaunchFilmGrid } from "./_components/LaunchFilmGrid";
 import { getLaunchFilms } from "./api";
 import type { LaunchFilm } from "./types";
@@ -109,7 +109,7 @@ export function AboutPageClient() {
             reach.
           </p>
           <Image
-            src={collageAbout}
+            src={images.about.collage}
             alt="Collage of festival graphics, print and colour"
             loading="lazy"
             className="w-full aspect-[16/9] object-cover border border-foreground"

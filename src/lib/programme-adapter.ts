@@ -1,3 +1,4 @@
+import { imagePaths } from "@/config/images";
 import type { Programme as ApiProgramme, UIProgramme } from "@/types/programme";
 
 // Map API programme to UI programme format
@@ -46,7 +47,7 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
     slots: slots,
     venue: venue,
     price: price,
-    img: apiProgramme.program_image || "/placeholder-image.jpg",
+    img: apiProgramme.program_image || imagePaths.programmeFallback,
     blurb: blurb,
     longBlurb: longBlurb,
     tags: tags,

@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 
 import type { UIProgramme } from "@/types/programme";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
+import { imagePaths } from "@/config/images";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { categoryStyle, priceStyle, tagStyle } from "@/lib/tag-colors";
@@ -16,7 +17,7 @@ type ProgrammeCardProps = {
   onAdd: () => void;
 };
 
-const PLACEHOLDER_IMAGE = "/placeholder-image.jpg";
+const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
 const BLUR_DATA_URL =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAA8A/9k=";
 

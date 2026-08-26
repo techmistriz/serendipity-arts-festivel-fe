@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import type { UIProgramme } from "@/types/programme";
+import { imagePaths } from "@/config/images";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { tagStyle } from "@/lib/tag-colors";
@@ -16,7 +17,7 @@ import { ProgrammeCard } from "./_components/ProgrammeCard";
 import { Modal } from "./Modal";
 
 // ===== Constants =====
-const PLACEHOLDER_IMAGE = "/placeholder-image.jpg";
+const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
 const DEFAULT_DURATION_MIN = 90;
 const MAX_TICKETS = 5;
 const VIP_MAX_TICKETS = 5;

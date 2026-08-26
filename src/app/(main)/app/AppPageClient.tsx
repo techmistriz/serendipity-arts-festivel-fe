@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import whiteLogo from "@public/images/home/saf-logo-white-2026.png";
-import blackLogo from "@public/images/home/saf-logo-2026.png";
 import { categoryStyle } from "@/lib/tag-colors";
 import GlitchBar from "@/components/common/GlitchBar";
 import { GlitchLines } from "@/components/common/GlitchLines";
+import { images, mediaPaths } from "@/config/images";
 import { dateLabel, Programme, PROGRAMMES, timeLabel } from "@/data/programmes-data";
 import Image from "next/image";
 
@@ -169,7 +168,7 @@ function Splash() {
   return (
     <div className="relative h-full bg-foreground overflow-hidden">
       <video
-        src="/saf-aftermovie.mp4"
+        src={mediaPaths.aftermovie}
         autoPlay
         muted
         loop
@@ -185,7 +184,7 @@ function Splash() {
       <div className="absolute inset-0 bg-black/20" aria-hidden />
       <div className="absolute inset-0 flex flex-col justify-between p-6">
         <Image
-          src={whiteLogo}
+          src={images.branding.safLogoWhite}
           alt="Serendipity Arts Festival 2026"
           className="w-[62%] brightness-0 invert"
         />
@@ -203,7 +202,11 @@ function Login({ onNext }: { onNext: () => void }) {
   return (
     <div className="relative h-full bg-background">
       <div className="relative h-full flex flex-col justify-between p-6">
-        <Image src={blackLogo} alt="Serendipity Arts Festival 2026" className="w-[60%]" />
+        <Image
+          src={images.branding.safLogo}
+          alt="Serendipity Arts Festival 2026"
+          className="w-[60%]"
+        />
         <div className="border border-foreground bg-background p-5">
           <p className="display uppercase text-2xl leading-none">Enter your detail</p>
           <input
@@ -280,7 +283,11 @@ function Home({
       <Scroll>
         <div className="px-4 pt-4">
           <div className="flex items-start justify-between gap-3">
-            <Image src={blackLogo} alt="Serendipity Arts Festival 2026" className="w-[52%]" />
+            <Image
+              src={images.branding.safLogo}
+              alt="Serendipity Arts Festival 2026"
+              className="w-[52%]"
+            />
             <div className="flex gap-2">
               {["Bag", "Bell", "Find"].map((x) => (
                 <span key={x} className="label border border-foreground px-2 py-1">

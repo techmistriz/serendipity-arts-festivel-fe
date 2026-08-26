@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useForm, useWatch, type FieldValues, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { mediaPaths } from "@/config/images";
 import { registerUser, registerVIP, registerSEA } from "@/services/register.service";
 
 // Import schemas
@@ -322,7 +323,7 @@ function RegisterContent() {
       {/* Film banner */}
       <div className="relative overflow-hidden bg-black text-white aspect-[16/7] md:aspect-[16/5] w-full">
         <video
-          src="/saf-aftermovie.mp4"
+          src={mediaPaths.aftermovie}
           autoPlay
           muted
           loop

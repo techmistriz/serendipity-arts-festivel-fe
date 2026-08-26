@@ -3,8 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import venuesBox from "@public/venues-box.png";
-
+import { images } from "@/config/images";
 import { useVenues } from "@/hooks/useVenues";
 import { siteConfig } from "@/config/site";
 import { GlitchBorder } from "../common/GlitchBorder";
@@ -55,7 +54,7 @@ export function VenuesSection() {
           onClick={() => setGameGate(true)}
           className="paper-grain md:col-span-5 block w-full text-left relative px-7 py-8 md:px-9 md:py-10 overflow-hidden bg-cover"
           style={{
-            backgroundImage: `url(${venuesBox.src})`,
+            backgroundImage: `url(${images.home.venuesBox.src})`,
             backgroundPosition: "22% 78%",
             backgroundSize: "150%",
             // ...tornStyle,

@@ -1,13 +1,6 @@
 // Shared programme data used by /programmes, /venues and /curators
 // so the site can show "what’s on at this venue" and "what X is curating".
-import prog1 from "@public/images/prog-1.jpg";
-import prog2 from "@public/images/prog-2.jpg";
-import prog3 from "@public/images/prog-3.jpg";
-import curator1 from "@public/images/curator-1.jpg";
-import curator2 from "@public/images/curator-2.jpg";
-import curator3 from "@public/images/curator-3.jpg";
-import venue1 from "@public/images/venue-1.jpg";
-import venue2 from "@public/images/venue-2.jpg";
+import { images } from "@/config/images";
 import type { StaticImageData } from "next/image";
 
 export type Slot = { day: number; time: string };
@@ -48,7 +41,7 @@ export type Programme = {
   addOns?: AddOn[];
 };
 
-const IMAGES = [prog1, prog2, prog3, curator1, curator2, curator3, venue1, venue2];
+const IMAGES = [...images.programmes.samples, ...images.curators.samples, ...images.venues.samples];
 
 export const KAVAN_LONG = `In a rapidly changing India, young Bejul and those around him navigate their dreams, desires, and dilemmas while also negotiating the complex terrains of caste and class. Kavan is an operatic satire, written and performed entirely in poetry and song, capturing the young Ambedkarite experience.
 

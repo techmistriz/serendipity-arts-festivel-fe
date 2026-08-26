@@ -5,8 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { useProgrammes } from "@/hooks/useProgrammes";
-
-import recommendBg from "@public/recommend-bg-v2.png";
+import { images } from "@/config/images";
 
 import { GlitchBorder } from "../common/GlitchBorder";
 import { RecommendModal } from "../common/RecommendModal";
@@ -30,7 +29,7 @@ export default function Programmes() {
           {/* Recommendation Box */}
           <div className="paper-grain md:col-span-5 relative overflow-hidden">
             <Image
-              src={recommendBg}
+              src={images.home.recommendationBackground}
               alt=""
               fill
               sizes="(max-width: 768px) 100vw, 42vw"

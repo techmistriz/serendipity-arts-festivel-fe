@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { GlitchLines } from "@/components/common/GlitchLines";
-import { homeImages } from "@/config/images";
+import { homeImages, mediaPaths } from "@/config/images";
 
 import { HomeRegisterLink } from "./HomeRegisterLink";
 
@@ -9,7 +9,7 @@ export function HomeHero() {
   return (
     <section className="relative h-[72vh] min-h-[480px] w-full overflow-hidden bg-black text-white">
       <video
-        src="/saf-aftermovie.mp4"
+        src={mediaPaths.aftermovie}
         autoPlay
         muted
         loop

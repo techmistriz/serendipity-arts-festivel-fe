@@ -1,9 +1,10 @@
+import { imagePaths } from "@/config/images";
 import API, { METHODS } from "@/network/API";
 import type { ApiResponse } from "@/types/api";
 import type { CartItem, CartItemInput } from "@/types/cart";
 import { getApiResponseData } from "@/utils/api";
 
-const PLACEHOLDER_IMAGE = "/placeholder-image.jpg";
+const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
 const MONTH_NAMES = [
   "Jan",
   "Feb",

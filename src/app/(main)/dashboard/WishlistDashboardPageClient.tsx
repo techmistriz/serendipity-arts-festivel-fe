@@ -6,12 +6,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { fmtTime } from "@/data/programmes-data";
+import { imagePaths } from "@/config/images";
 import { useWishlist } from "@/hooks/use-wishlist";
 
 import { DashboardShell } from "./DashboardShell";
 import { ErrorMessage, LoadingMessage } from "./DashboardPageClient";
 
-const FALLBACK_IMAGE = "/images/prog-1.jpg";
+const FALLBACK_IMAGE = imagePaths.programmeFallback;
 
 export function WishlistDashboardPageClient() {
   return (

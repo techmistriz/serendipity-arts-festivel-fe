@@ -4,12 +4,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { GlitchBorder } from "@/components/common/GlitchBorder";
-import vol14 from "@public/images/volunteer/vol-14.jpg";
-import vol15 from "@public/images/volunteer/vol-15.jpg";
-import vol16 from "@public/images/volunteer/vol-16.jpg";
-import vol17 from "@public/images/volunteer/vol-17.jpg";
+import { images } from "@/config/images";
 
-const frames = [vol17, vol14, vol16, vol15];
+const frames = [images.volunteer[3], images.volunteer[0], images.volunteer[2], images.volunteer[1]];
 
 export function VolunteerGallery() {
   const [activeFrame, setActiveFrame] = useState(0);
