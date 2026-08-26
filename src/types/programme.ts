@@ -21,6 +21,7 @@ export interface ProgrammeCity {
 export interface Venue {
   id: number;
   name: string;
+  title?: string;
   // Add other venue fields as needed
 }
 
@@ -194,13 +195,14 @@ export interface UIProgramme {
   slug: string;
   category: string;
   curator: string;
-  slots: { day: number; time: string }[];
+  slots: { detailId?: number; day: number; time: string }[];
   venue: string;
   price: number;
   img: string;
   blurb: string;
   longBlurb: string;
   tags: string[];
+  isBookingAllowed: boolean;
   newlyAdded?: boolean;
   includes?: {
     title: string;

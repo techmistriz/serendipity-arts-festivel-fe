@@ -1,76 +1,83 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { CartItemInput, CartState } from "@/types/cart";
-
-type AddToCartPayload = {
-  item: CartItemInput;
-  quantity?: number;
-};
+import type { CartItem, CartState } from "@/types/cart";
 
 const initialState: CartState = {
   items: [],
   bookings: [],
-  isVip: false,
+  loading: false,
+  error: null,
+  synced: false,
 };
-
-function normalizeQuantity(quantity: number | undefined): number {
-  if (!Number.isFinite(quantity)) return 1;
-
-  return Math.max(1, Math.floor(quantity ?? 1));
-}
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<AddToCartPayload>) => {
-      const quantity = normalizeQuantity(action.payload.quantity);
-      const existingItem = state.items.find((item) => item.id === action.payload.item.id);
+    clearCartState: (state) => {
+      state.items = [];
+      state.bookings = [];
+      state.loading = false;
+      state.error = null;
+      state.synced = false;
+    },
 
-      if (existingItem) {
-        existingItem.qty += quantity;
-        return;
+    requestCart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+
+    setCart: (state, action: PayloadAction<{ items: CartItem[]; bookings: CartItem[] }>) => {
+      state.items = action.payload.items;
+      state.bookings = action.payload.bookings;
+      state.loading = false;
+      state.error = null;
+      state.synced = true;
+    },
+
+    upsertCartItem: (state, action: PayloadAction<CartItem>) => {
+      const itemIndex = state.items.findIndex((item) => item.id === action.payload.id);
+
+      if (itemIndex === -1) {
+        state.items.push(action.payload);
+      } else {
+        state.items[itemIndex] = action.payload;
       }
 
-      state.items.push({ ...action.payload.item, qty: quantity });
+      state.loading = false;
+      state.error = null;
+      state.synced = true;
     },
+
     removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
+      state.loading = false;
+      state.error = null;
+      state.synced = true;
     },
-    setCartItemQuantity: (state, action: PayloadAction<{ id: string; quantity: number }>) => {
-      const item = state.items.find((cartItem) => cartItem.id === action.payload.id);
 
-      if (item) item.qty = normalizeQuantity(action.payload.quantity);
-    },
     clearCart: (state) => {
       state.items = [];
+      state.loading = false;
+      state.error = null;
+      state.synced = true;
     },
-    confirmBooking: (state) => {
-      for (const cartItem of state.items) {
-        const booking = state.bookings.find((item) => item.id === cartItem.id);
 
-        if (booking) {
-          booking.qty += cartItem.qty;
-        } else {
-          state.bookings.push({ ...cartItem });
-        }
-      }
-
-      state.items = [];
-    },
-    setVipAccess: (state, action: PayloadAction<boolean>) => {
-      state.isVip = action.payload;
+    cartRequestFailed: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
     },
   },
 });
 
 export const {
-  addToCart,
+  cartRequestFailed,
   clearCart,
-  confirmBooking,
+  clearCartState,
   removeFromCart,
-  setCartItemQuantity,
-  setVipAccess,
+  requestCart,
+  setCart,
+  upsertCartItem,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

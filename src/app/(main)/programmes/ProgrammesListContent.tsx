@@ -36,7 +36,7 @@ export function ProgrammesListContent({
   // const pathname = usePathname();
   // const searchParams = useSearchParams();
   const { isVip } = useCart();
-  const { programmes: apiProgrammes, loading, error } = useProgrammes({ page: 1 });
+  const { programmes: apiProgrammes, loading, error } = useProgrammes({ limit: 1000 });
 
   // Filter state
   const [category, setCategory] = useState(initialCategory);

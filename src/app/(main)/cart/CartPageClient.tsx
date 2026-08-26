@@ -7,29 +7,144 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/use-auth";
+import {
+  createCheckout,
+  type RazorpayCheckoutOptions,
+  verifyCheckout,
+} from "@/services/cart.service";
+
+type RazorpayPaymentResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayInstance = {
+  open: () => void;
+};
+
+type RazorpayConstructor = new (
+  options: RazorpayCheckoutOptions & {
+    handler: (response: RazorpayPaymentResponse) => void;
+    modal: { ondismiss: () => void };
+  },
+) => RazorpayInstance;
+
+declare global {
+  interface Window {
+    Razorpay?: RazorpayConstructor;
+  }
+}
+
+const RAZORPAY_SCRIPT_ID = "razorpay-checkout-script";
+
+function loadRazorpay(): Promise<RazorpayConstructor> {
+  if (window.Razorpay) return Promise.resolve(window.Razorpay);
+
+  return new Promise((resolve, reject) => {
+    const existingScript = document.getElementById(RAZORPAY_SCRIPT_ID) as HTMLScriptElement | null;
+    const script = existingScript ?? document.createElement("script");
+
+    const onLoad = () =>
+      window.Razorpay
+        ? resolve(window.Razorpay)
+        : reject(new Error("Razorpay failed to initialise."));
+    const onError = () => reject(new Error("Unable to load Razorpay checkout."));
+
+    script.addEventListener("load", onLoad, { once: true });
+    script.addEventListener("error", onError, { once: true });
+
+    if (!existingScript) {
+      script.id = RAZORPAY_SCRIPT_ID;
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      document.body.appendChild(script);
+    }
+  });
+}
+
+async function openRazorpayCheckout(
+  options: RazorpayCheckoutOptions,
+): Promise<RazorpayPaymentResponse> {
+  const Razorpay = await loadRazorpay();
+
+  return new Promise((resolve, reject) => {
+    const checkout = new Razorpay({
+      ...options,
+      handler: resolve,
+      modal: {
+        ondismiss: () => reject(new Error("Payment was cancelled.")),
+      },
+    });
+
+    checkout.open();
+  });
+}
 
 export function CartPageClient() {
-  const { items, remove, setQty, subtotal, confirmBooking, isVip } = useCart();
+  const { items, remove, setQty, subtotal, refresh, isVip, loading, error } = useCart();
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  const checkout = () => {
-    if (!isAuthenticated) {
+  const checkout = async () => {
+    if (!isAuthenticated || !user) {
       router.push("/login?next=/cart");
       return;
     }
 
-    setShowSuccess(true);
+    setCheckoutError(null);
+    setCheckoutLoading(true);
+
+    try {
+      const checkoutResult = await createCheckout({ name: user.name, email: user.email });
+
+      if (!checkoutResult.paymentGateway) {
+        await refresh(true);
+        setShowSuccess(true);
+        return;
+      }
+
+      if (checkoutResult.paymentGateway.name !== "RAZORPAY") {
+        throw new Error("This payment method is not supported by the website yet.");
+      }
+
+      const payment = await openRazorpayCheckout(checkoutResult.paymentGateway.checkout);
+
+      await verifyCheckout({
+        orderId: checkoutResult.order.id,
+        razorpayOrderId: payment.razorpay_order_id,
+        razorpayPaymentId: payment.razorpay_payment_id,
+        razorpaySignature: payment.razorpay_signature,
+      });
+
+      await refresh(true);
+      setShowSuccess(true);
+    } catch (checkoutFailure) {
+      setCheckoutError(
+        checkoutFailure instanceof Error ? checkoutFailure.message : "Unable to complete checkout.",
+      );
+    } finally {
+      setCheckoutLoading(false);
+    }
   };
 
   const finish = () => {
-    confirmBooking();
     setShowSuccess(false);
     router.push("/dashboard");
   };
+
+  if (loading && items.length === 0 && !showSuccess) {
+    return (
+      <div className="container-editorial pt-10 md:pt-24 pb-32">
+        <h1 className="display uppercase text-[14vw] md:text-[10vw] leading-[0.9]">Cart</h1>
+        <p className="mt-8 text-muted-foreground">Loading your cart…</p>
+      </div>
+    );
+  }
 
   if (items.length === 0 && !showSuccess) {
     return (
@@ -81,6 +196,12 @@ export function CartPageClient() {
         </div>
       )}
 
+      {(checkoutError || error) && (
+        <p className="mt-6 border border-red-600 px-4 py-3 text-sm text-red-600">
+          {checkoutError ?? error}
+        </p>
+      )}
+
       <ul className="mt-10 md:mt-14 rule-t">
         {items.map((it) => (
           <li
@@ -112,7 +233,8 @@ export function CartPageClient() {
             <div className="flex items-center gap-2 md:gap-3">
               <button
                 type="button"
-                onClick={() => setQty(it.id, it.qty - 1)}
+                onClick={() => void setQty(it.id, it.qty - 1).catch(setCheckoutError)}
+                disabled={loading}
                 className="headline font-semibold text-xl w-8"
               >
                 −
@@ -124,7 +246,8 @@ export function CartPageClient() {
 
               <button
                 type="button"
-                onClick={() => setQty(it.id, Math.min(isVip ? 2 : 6, it.qty + 1))}
+                onClick={() => void setQty(it.id, Math.min(5, it.qty + 1)).catch(setCheckoutError)}
+                disabled={loading || it.qty >= 5}
                 className="headline font-semibold text-xl w-8"
               >
                 +
@@ -133,7 +256,8 @@ export function CartPageClient() {
 
             <button
               type="button"
-              onClick={() => remove(it.id)}
+              onClick={() => void remove(it.id).catch(setCheckoutError)}
+              disabled={loading}
               className="label text-muted-foreground hover:text-accent col-span-3 md:col-span-1 justify-self-end"
             >
               Remove
@@ -146,7 +270,7 @@ export function CartPageClient() {
         <div>
           <p className="label text-muted-foreground">Subtotal</p>
 
-          <p className="display text-4xl md:text-6xl tabular-nums">₹{subtotal}</p>
+          <p className="display text-4xl md:text-6xl tabular-nums">₹{subtotal.toFixed(2)}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 md:gap-4">
@@ -159,10 +283,11 @@ export function CartPageClient() {
 
           <button
             type="button"
-            onClick={checkout}
-            className="headline font-semibold uppercase text-lg md:text-xl bg-foreground text-background rounded-full px-8 py-4 hover:bg-accent transition-colors"
+            onClick={() => void checkout()}
+            disabled={checkoutLoading || loading}
+            className="headline font-semibold uppercase text-lg md:text-xl bg-foreground text-background rounded-full px-8 py-4 hover:bg-accent transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {gate ? gate.cta : "Continue to checkout →"}
+            {checkoutLoading ? "Processing…" : gate ? gate.cta : "Continue to checkout →"}
           </button>
         </div>
       </div>

@@ -34,6 +34,10 @@ type LegacyWishlistState = Partial<WishlistState> & {
   }>;
 };
 
+type LegacyCartState = Partial<CartState> & {
+  isVip?: boolean;
+};
+
 function migrateLegacyWishlist(state: PersistedState): PersistedState {
   if (!state) return state;
 
@@ -111,16 +115,37 @@ function migrateWishlistProgrammeIds(state: PersistedState): PersistedState {
   } as PersistedState;
 }
 
+function migrateServerCartState(state: PersistedState): PersistedState {
+  if (!state) return state;
+
+  const persistedState = state as PersistedRootState;
+  const cart = persistedState.cart as LegacyCartState | undefined;
+
+  if (!cart || typeof cart.synced === "boolean") return persistedState;
+
+  return {
+    ...persistedState,
+    cart: {
+      items: [],
+      bookings: [],
+      loading: false,
+      error: null,
+      synced: false,
+    },
+  } as PersistedState;
+}
+
 export const rootPersistConfig = {
   key: "serendipity-arts-festival",
   storage,
   keyPrefix: "redux-",
-  version: 3,
+  version: 4,
   migrate: createMigrate(
     {
       1: migrateLegacyWishlist,
       2: migrateLegacyAuthSession,
       3: migrateWishlistProgrammeIds,
+      4: migrateServerCartState,
     },
     { debug: false },
   ),

@@ -196,9 +196,10 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
         </button>
         <button
           onClick={handleAddClick}
-          className="headline px-3 py-2 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background md:text-xs"
+          disabled={!programme.isBookingAllowed}
+          className="headline px-3 py-2 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50 md:text-xs"
         >
-          Add to cart
+          {programme.isBookingAllowed ? "Add to cart" : "Booking unavailable"}
         </button>
       </div>
     </div>

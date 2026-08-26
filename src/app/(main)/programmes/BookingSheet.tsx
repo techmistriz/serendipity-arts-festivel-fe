@@ -18,8 +18,8 @@ import { Modal } from "./Modal";
 // ===== Constants =====
 const PLACEHOLDER_IMAGE = "/placeholder-image.jpg";
 const DEFAULT_DURATION_MIN = 90;
-const MAX_TICKETS = 6;
-const VIP_MAX_TICKETS = 2;
+const MAX_TICKETS = 5;
+const VIP_MAX_TICKETS = 5;
 const RELATED_LIMIT = 3;
 const SCROLL_DELAY_MS = 120;
 const ANIMATION_DURATION_MS = 300;
@@ -119,7 +119,7 @@ export function BookingSheet({
 }: BookingSheetProps) {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
-  const { add, items, bookings, isVip } = useCart();
+  const { add, items, bookings, isVip, loading: cartLoading } = useCart();
 
   // State
   const [quantity, setQuantity] = useState(1);
@@ -130,6 +130,7 @@ export function BookingSheet({
   const [clashItem, setClashItem] = useState<ClashItem | null>(null);
   const [showRegisterGate, setShowRegisterGate] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [cartError, setCartError] = useState<string | null>(null);
 
   const addBoxRef = useRef<HTMLElement>(null);
   const isMountedRef = useRef(true);
@@ -169,23 +170,7 @@ export function BookingSheet({
     [programme.slots, slotIndex],
   );
 
-  const chosenDate = useMemo(
-    () => (chosenSlot ? `${chosenSlot.day} Dec` : "Date TBA"),
-    [chosenSlot],
-  );
-
-  const chosenTime = useMemo(
-    () => (chosenSlot ? formatTimeRange(chosenSlot) : "Time TBA"),
-    [chosenSlot],
-  );
-
-  const cartId = useMemo(
-    () =>
-      chosenSlot
-        ? `${programme.id}-${chosenSlot.day}-${chosenSlot.time}`
-        : `${programme.id}-unscheduled`,
-    [programme.id, chosenSlot],
-  );
+  const selectedDetailId = chosenSlot?.detailId;
 
   const hasLongBlurb = !!programme.longBlurb;
 
@@ -234,66 +219,57 @@ export function BookingSheet({
 
   const findClash = useCallback(() => {
     if (programme.category === "Exhibition") return null;
-    if (items.some((i) => i.id === cartId)) return null;
-    if (!chosenSlot) return null;
+    if (!chosenSlot || !selectedDetailId) return null;
+    if (items.some((item) => item.programmeDetailId === selectedDetailId)) return null;
 
-    const chosenDay = chosenSlot.day;
-    const chosenStart = chosenSlot.time;
-
-    const slotOf = (id: string) => {
-      const match = id.match(/-(\d{1,2})-(\d{2}:\d{2})$/);
-      return match ? { day: Number(match[1]), time: match[2] } : null;
-    };
+    const chosenDate = `${chosenSlot.day} Dec`;
 
     const conflictingItem = [...bookings, ...items].find((item) => {
-      if (item.id === cartId) return false;
-      const slot = slotOf(item.id);
-      return !!slot && slot.day === chosenDay && slot.time === chosenStart;
+      if (item.programmeDetailId === selectedDetailId) return false;
+      return item.date === chosenDate && item.time === chosenSlot.time;
     });
 
     return conflictingItem ?? null;
-  }, [programme.category, items, cartId, chosenSlot, bookings]);
+  }, [programme.category, items, chosenSlot, selectedDetailId, bookings]);
 
-  const doAddToCart = useCallback(() => {
-    add(
-      {
-        id: cartId,
-        title: programme.title,
-        venue: programme.venue || "Venue TBA",
-        date: chosenDate,
-        time: chosenTime,
-        price: effectivePrice,
-        img: programme.img || PLACEHOLDER_IMAGE,
-      },
-      quantity,
-    );
+  const doAddToCart = useCallback(
+    async (checkClashing: boolean) => {
+      const programmeId = Number(programme.id);
 
-    // Add add-ons
-    for (const addOn of chosenAddOns) {
-      add(
-        {
-          id: `${programme.id}-${addOn.id}-${addOn.day}-${addOn.time}`,
-          title: addOn.title,
-          venue: programme.venue || "Venue TBA",
-          date: `${addOn.day} Dec`,
-          time: formatTimeRange({ day: addOn.day, time: addOn.time }),
-          price: isVip ? 0 : addOn.price,
-          img: programme.img || PLACEHOLDER_IMAGE,
-        },
+      if (!Number.isInteger(programmeId) || !selectedDetailId) {
+        throw new Error("This programme does not have a bookable schedule.");
+      }
+
+      const addedItem = await add({
+        programmeId,
+        programmeDetailId: selectedDetailId,
         quantity,
-      );
-    }
-  }, [
-    add,
-    cartId,
-    programme,
-    chosenDate,
-    chosenTime,
-    effectivePrice,
-    quantity,
-    chosenAddOns,
-    isVip,
-  ]);
+        checkClashing,
+      });
+
+      for (const addOn of chosenAddOns) {
+        const addOnProgramme = allProgrammes.find((item) => String(item.id) === addOn.id);
+        const addOnDetailId = addOnProgramme?.slots.find(
+          (slot) => slot.day === addOn.day && slot.time === addOn.time,
+        )?.detailId;
+        const addOnProgrammeId = Number(addOnProgramme?.id);
+
+        if (!Number.isInteger(addOnProgrammeId) || !addOnDetailId) {
+          throw new Error(`${addOn.title} is not available to add to your cart.`);
+        }
+
+        await add({
+          programmeId: addOnProgrammeId,
+          programmeDetailId: addOnDetailId,
+          quantity,
+          checkClashing: false,
+        });
+      }
+
+      return addedItem;
+    },
+    [add, allProgrammes, chosenAddOns, programme.id, quantity, selectedDetailId],
+  );
 
   const handleClose = useCallback(() => {
     if (isClosing) return;
@@ -308,7 +284,7 @@ export function BookingSheet({
     }, ANIMATION_DURATION_MS);
   }, [onClose, isClosing]);
 
-  const handleAddToCart = useCallback(() => {
+  const handleAddToCart = useCallback(async () => {
     const clash = findClash();
 
     if (clash) {
@@ -325,21 +301,35 @@ export function BookingSheet({
       return;
     }
 
-    doAddToCart();
-    handleClose();
-    router.push(`/cart/added?id=${encodeURIComponent(cartId)}`);
-  }, [findClash, isAuthenticated, doAddToCart, handleClose, router, cartId]);
+    try {
+      setCartError(null);
+      const item = await doAddToCart(true);
+      handleClose();
+      router.push(`/cart/added?id=${encodeURIComponent(item.id)}`);
+    } catch (error) {
+      setCartError(
+        error instanceof Error ? error.message : "Unable to add this programme to your cart.",
+      );
+    }
+  }, [findClash, isAuthenticated, doAddToCart, handleClose, router]);
 
-  const handleProceedWithClash = useCallback(() => {
+  const handleProceedWithClash = useCallback(async () => {
     setClashItem(null);
     if (!isAuthenticated) {
       setShowRegisterGate(true);
       return;
     }
-    doAddToCart();
-    handleClose();
-    router.push(`/cart/added?id=${encodeURIComponent(cartId)}`);
-  }, [isAuthenticated, doAddToCart, handleClose, router, cartId]);
+    try {
+      setCartError(null);
+      const item = await doAddToCart(false);
+      handleClose();
+      router.push(`/cart/added?id=${encodeURIComponent(item.id)}`);
+    } catch (error) {
+      setCartError(
+        error instanceof Error ? error.message : "Unable to add this programme to your cart.",
+      );
+    }
+  }, [isAuthenticated, doAddToCart, handleClose, router]);
 
   const handleOpenRelated = useCallback(
     (relatedProgramme: UIProgramme) => {
@@ -522,6 +512,14 @@ export function BookingSheet({
       );
     }
 
+    if (!programme.isBookingAllowed || !selectedDetailId) {
+      return (
+        <p className="headline text-sm text-muted-foreground">
+          Booking is not available for this programme right now.
+        </p>
+      );
+    }
+
     return (
       <>
         <label className="label text-muted-foreground">Tickets</label>
@@ -561,11 +559,13 @@ export function BookingSheet({
           </p>
           <button
             onClick={handleAddToCart}
-            className="headline uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors"
+            disabled={cartLoading}
+            className="headline uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Add to cart →
+            {cartLoading ? "Adding…" : "Add to cart →"}
           </button>
         </div>
+        {cartError && <p className="mt-3 text-sm text-red-600">{cartError}</p>}
       </>
     );
   };

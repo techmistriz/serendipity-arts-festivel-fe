@@ -7,25 +7,17 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
   const firstDetail = apiProgramme.program_details?.[0];
 
   // Generate slots from program_details
-  const slots =
-    apiProgramme.program_details?.map((detail) => ({
-      day: extractDayFromDate(detail.event_date),
-      time: formatTime(detail.from_time),
-    })) || [];
+  const slots = (apiProgramme.program_details ?? []).flatMap((detail) => {
+    const day = extractDayFromDate(detail.event_date);
 
-  // If no slots, create a default one
-  if (slots.length === 0) {
-    slots.push({
-      day: 15,
-      time: "10:00",
-    });
-  }
+    return day === null ? [] : [{ detailId: detail.id, day, time: formatTime(detail.from_time) }];
+  });
 
   // Get category name
   const category = apiProgramme.category?.name || "Uncategorized";
 
   // Get venue name (from program_details or fallback)
-  const venue = firstDetail?.venue?.name || "Venue TBA";
+  const venue = firstDetail?.venue?.title || firstDetail?.venue?.name || "Venue TBA";
 
   // Get curator (from curator_ids or fallback)
   const curator =
@@ -58,6 +50,7 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
     blurb: blurb,
     longBlurb: longBlurb,
     tags: tags,
+    isBookingAllowed: String(apiProgramme.is_booking_allowed) === "1" && slots.length > 0,
     newlyAdded: false,
   };
 }
@@ -75,10 +68,12 @@ export function mapApiProgrammesToUi(apiProgrammes: ApiProgramme[]): UIProgramme
 
 // Extract day from date string (DD-MM-YYYY)
 
-function extractDayFromDate(dateStr: string): number {
-  if (!dateStr) return 15;
-  const parts = dateStr.split("-");
-  return parseInt(parts[0], 10);
+function extractDayFromDate(dateStr: string): number | null {
+  const localDate = /^(\d{1,2})[-/]\d{1,2}[-/]\d{4}$/.exec(dateStr);
+  if (localDate) return Number(localDate[1]);
+
+  const isoDate = /^\d{4}-\d{1,2}-(\d{1,2})$/.exec(dateStr);
+  return isoDate ? Number(isoDate[1]) : null;
 }
 
 // Format time from HH:MM:SS to HH:MM
