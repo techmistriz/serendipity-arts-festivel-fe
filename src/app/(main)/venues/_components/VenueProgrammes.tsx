@@ -6,7 +6,7 @@ import type { VenueProgramDetail } from "../types";
 
 type VenueProgrammesProps = {
   programs: VenueProgramDetail[];
-  onNavigate: () => void;
+  onNavigate?: () => void;
 };
 
 export function VenueProgrammes({ programs, onNavigate }: VenueProgrammesProps) {

@@ -30,6 +30,9 @@ export interface VenueProgramDetail {
 }
 
 export interface VenueDetail extends VenueListItem {
+  meta_title: string | null;
+  meta_keywords: string | null;
+  meta_description: string | null;
   google_map_url: string | null;
   childs: VenueChild[];
   program_details: VenueProgramDetail[];

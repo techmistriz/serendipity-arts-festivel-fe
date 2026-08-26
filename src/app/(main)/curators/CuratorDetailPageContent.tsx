@@ -4,7 +4,8 @@ import GlitchBar from "@/components/common/GlitchBar";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { getSafeExternalUrl } from "@/utils/url";
 
-import { CuratorBio } from "./_components/CuratorBio";
+import { SanitizedRichText } from "@/components/common/SanitizedRichText";
+
 import { CuratorImage } from "./_components/CuratorImage";
 import { CuratorProgrammes } from "./_components/CuratorProgrammes";
 import type { CuratorDetailData } from "./types";
@@ -60,7 +61,10 @@ export function CuratorDetailPageContent({ detail }: CuratorDetailPageContentPro
             </p>
           )}
 
-          <CuratorBio key={curator.bio ?? curator.id} bio={curator.bio} />
+          <SanitizedRichText
+            html={curator.bio}
+            className="headline mt-6 max-w-prose space-y-4 text-base leading-relaxed md:text-lg [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+          />
 
           {(instagramUrl || curator.instagram_handle) && (
             <div className="mt-8">

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { stripHtml } from "@/utils/html";
 
@@ -6,18 +8,14 @@ import { VenueImage } from "./VenueImage";
 
 type VenueCardProps = {
   venue: VenueListItem;
-  onOpen: (venue: VenueListItem) => void;
-  disabled: boolean;
 };
 
-export function VenueCard({ venue, onOpen, disabled }: VenueCardProps) {
+export function VenueCard({ venue }: VenueCardProps) {
   return (
-    <button
-      type="button"
-      onClick={() => onOpen(venue)}
-      disabled={disabled}
+    <Link
+      href={`/venues/${venue.id}`}
       aria-label={`View details for ${venue.title}`}
-      className="group block text-left outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait disabled:opacity-70"
+      className="group block text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <GlitchBorder
         seed={venue.title.length + 9}
@@ -42,6 +40,6 @@ export function VenueCard({ venue, onOpen, disabled }: VenueCardProps) {
       <span className="headline mt-3 inline-block border border-foreground px-3 py-1.5 text-[11px] tracking-[0.08em] uppercase transition-colors group-hover:bg-foreground group-hover:text-background">
         More info +
       </span>
-    </button>
+    </Link>
   );
 }

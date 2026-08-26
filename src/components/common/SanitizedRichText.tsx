@@ -18,17 +18,19 @@ const allowedTags = [
   "ul",
 ];
 
-type CuratorBioProps = {
-  bio: string | null;
+type SanitizedRichTextProps = {
+  html: string | null;
+  className: string;
 };
 
-export function CuratorBio({ bio }: CuratorBioProps) {
-  const [sanitizedBio, setSanitizedBio] = useState<string | null>(null);
+/** Renders CMS rich text after browser-side DOMPurify sanitisation. */
+export function SanitizedRichText({ html, className }: SanitizedRichTextProps) {
+  const [sanitizedHtml, setSanitizedHtml] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    if (!bio) {
+    if (!html) {
       return;
     }
 
@@ -36,9 +38,9 @@ export function CuratorBio({ bio }: CuratorBioProps) {
       if (!cancelled) {
         const purifier = typeof DOMPurify.sanitize === "function" ? DOMPurify : DOMPurify(window);
 
-        setSanitizedBio(
+        setSanitizedHtml(
           String(
-            purifier.sanitize(bio, {
+            purifier.sanitize(html, {
               ALLOWED_TAGS: allowedTags,
               ALLOWED_ATTR: ["href"],
             }),
@@ -50,14 +52,9 @@ export function CuratorBio({ bio }: CuratorBioProps) {
     return () => {
       cancelled = true;
     };
-  }, [bio]);
+  }, [html]);
 
-  if (!sanitizedBio) return null;
+  if (!sanitizedHtml) return null;
 
-  return (
-    <div
-      className="headline mt-6 max-w-prose space-y-4 text-base leading-relaxed md:text-lg [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
-      dangerouslySetInnerHTML={{ __html: sanitizedBio }}
-    />
-  );
+  return <div className={className} dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />;
 }
