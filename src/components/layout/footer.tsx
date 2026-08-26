@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import GlitchBar from "@/components/common/GlitchBar";
+import { NewsletterForm } from "@/components/layout/NewsletterForm";
 import { footerImages } from "@/config/images";
 import { siteConfig } from "@/config/site";
 
@@ -57,18 +58,7 @@ export default function Footer() {
               Subscribe to The Serendipity Dispatch, our monthly newsletter.
             </p>
 
-            <form className="flex max-w-md items-center gap-3 border-b border-foreground pb-2">
-              <input
-                type="email"
-                placeholder="your@email"
-                aria-label="Email address"
-                className="flex-1 bg-transparent py-2 text-base outline-none placeholder:text-muted-foreground"
-              />
-
-              <button type="submit" className="label transition-colors hover:text-accent">
-                Subscribe →
-              </button>
-            </form>
+            <NewsletterForm />
           </div>
 
           {/* Navigation */}
