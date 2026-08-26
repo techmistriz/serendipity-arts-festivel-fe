@@ -9,12 +9,12 @@ import { PressSection } from "@/components/home/PressSection";
 import { SponsorsSection } from "@/components/home/SponsorsSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { VenuesSection } from "@/components/home/VenuesSection";
-// import { VenuesSection } from "@/components/home/VenuesSection";
+// import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
 
 export default function Home() {
   return (
     <>
-      <ScrollGlitchRain />
+      {/* <RouteLoadingOverlay /> */}
       <HomeHero />
       <HomeIntroduction />
       <HomeProgrammes />
