@@ -8,10 +8,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/use-auth";
 import {
+  cancelCheckout,
   createCheckout,
   type RazorpayCheckoutOptions,
   verifyCheckout,
 } from "@/services/cart.service";
+import { getErrorMessage } from "@/utils/error";
 
 type RazorpayPaymentResponse = {
   razorpay_order_id: string;
@@ -19,8 +21,15 @@ type RazorpayPaymentResponse = {
   razorpay_signature: string;
 };
 
+type RazorpayPaymentFailure = {
+  error?: {
+    description?: string;
+  };
+};
+
 type RazorpayInstance = {
   open: () => void;
+  on?: (event: "payment.failed", handler: (response: RazorpayPaymentFailure) => void) => void;
 };
 
 type RazorpayConstructor = new (
@@ -37,19 +46,38 @@ declare global {
 }
 
 const RAZORPAY_SCRIPT_ID = "razorpay-checkout-script";
+let razorpayScriptPromise: Promise<RazorpayConstructor> | null = null;
 
 function loadRazorpay(): Promise<RazorpayConstructor> {
   if (window.Razorpay) return Promise.resolve(window.Razorpay);
+  if (razorpayScriptPromise) return razorpayScriptPromise;
 
-  return new Promise((resolve, reject) => {
-    const existingScript = document.getElementById(RAZORPAY_SCRIPT_ID) as HTMLScriptElement | null;
+  razorpayScriptPromise = new Promise((resolve, reject) => {
+    let existingScript = document.getElementById(RAZORPAY_SCRIPT_ID) as HTMLScriptElement | null;
+
+    if (existingScript?.dataset.loadState === "error") {
+      existingScript.remove();
+      existingScript = null;
+    }
+
     const script = existingScript ?? document.createElement("script");
 
-    const onLoad = () =>
-      window.Razorpay
-        ? resolve(window.Razorpay)
-        : reject(new Error("Razorpay failed to initialise."));
-    const onError = () => reject(new Error("Unable to load Razorpay checkout."));
+    const onLoad = () => {
+      script.dataset.loadState = "loaded";
+
+      if (window.Razorpay) {
+        resolve(window.Razorpay);
+        return;
+      }
+
+      razorpayScriptPromise = null;
+      reject(new Error("Razorpay failed to initialise."));
+    };
+    const onError = () => {
+      script.dataset.loadState = "error";
+      razorpayScriptPromise = null;
+      reject(new Error("Unable to load Razorpay checkout."));
+    };
 
     script.addEventListener("load", onLoad, { once: true });
     script.addEventListener("error", onError, { once: true });
@@ -57,9 +85,12 @@ function loadRazorpay(): Promise<RazorpayConstructor> {
     if (!existingScript) {
       script.id = RAZORPAY_SCRIPT_ID;
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
       document.body.appendChild(script);
     }
   });
+
+  return razorpayScriptPromise;
 }
 
 async function openRazorpayCheckout(
@@ -68,20 +99,39 @@ async function openRazorpayCheckout(
   const Razorpay = await loadRazorpay();
 
   return new Promise((resolve, reject) => {
+    let settled = false;
+    const resolveOnce = (response: RazorpayPaymentResponse) => {
+      if (settled) return;
+
+      settled = true;
+      resolve(response);
+    };
+    const rejectOnce = (message: string) => {
+      if (settled) return;
+
+      settled = true;
+      reject(new Error(message));
+    };
     const checkout = new Razorpay({
       ...options,
-      handler: resolve,
+      handler: resolveOnce,
       modal: {
-        ondismiss: () => reject(new Error("Payment was cancelled.")),
+        ondismiss: () => rejectOnce("Payment was cancelled."),
       },
     });
 
+    checkout.on?.("payment.failed", (response) => {
+      rejectOnce(
+        response.error?.description ?? "Payment failed. Please try another payment method.",
+      );
+    });
     checkout.open();
   });
 }
 
 export function CartPageClient() {
-  const { items, remove, setQty, subtotal, refresh, isVip, loading, error } = useCart();
+  const { items, remove, setQty, subtotal, refresh, isComplimentary, isVip, loading, error } =
+    useCart();
 
   const { isAuthenticated, user } = useAuth();
 
@@ -98,9 +148,12 @@ export function CartPageClient() {
 
     setCheckoutError(null);
     setCheckoutLoading(true);
+    let orderId: number | null = null;
+    let paymentSubmitted = false;
 
     try {
       const checkoutResult = await createCheckout({ name: user.name, email: user.email });
+      orderId = checkoutResult.order.id;
 
       if (!checkoutResult.paymentGateway) {
         await refresh(true);
@@ -113,6 +166,7 @@ export function CartPageClient() {
       }
 
       const payment = await openRazorpayCheckout(checkoutResult.paymentGateway.checkout);
+      paymentSubmitted = true;
 
       await verifyCheckout({
         orderId: checkoutResult.order.id,
@@ -124,8 +178,14 @@ export function CartPageClient() {
       await refresh(true);
       setShowSuccess(true);
     } catch (checkoutFailure) {
+      if (orderId && !paymentSubmitted) {
+        await cancelCheckout(orderId).catch(() => undefined);
+      }
+
       setCheckoutError(
-        checkoutFailure instanceof Error ? checkoutFailure.message : "Unable to complete checkout.",
+        paymentSubmitted
+          ? "Your payment was received and is being confirmed. Please check your bookings shortly before trying again."
+          : getErrorMessage(checkoutFailure, "Unable to complete checkout."),
       );
     } finally {
       setCheckoutLoading(false);
@@ -136,6 +196,8 @@ export function CartPageClient() {
     setShowSuccess(false);
     router.push("/dashboard");
   };
+
+  const payableSubtotal = isComplimentary ? 0 : subtotal;
 
   if (loading && items.length === 0 && !showSuccess) {
     return (
@@ -177,9 +239,11 @@ export function CartPageClient() {
     <div className="container-editorial pt-12 md:pt-24 pb-32">
       <h1 className="display uppercase text-[14vw] md:text-[10vw] leading-[0.9]">Cart</h1>
 
-      {isVip && (
+      {isComplimentary && (
         <p className="mt-6 headline text-sm uppercase tracking-[0.06em] border border-accent text-accent inline-block px-3 py-2">
-          Special guest access · All programmes complimentary
+          {isVip
+            ? "Special guest access · All programmes complimentary"
+            : "Delegate access · All programmes complimentary"}
         </p>
       )}
 
@@ -226,15 +290,21 @@ export function CartPageClient() {
               </p>
 
               <p className="text-xs md:text-sm text-muted-foreground">
-                {it.price === 0 ? "Free" : `₹${it.price}`}
+                {isComplimentary || it.price === 0 ? "Complimentary" : `₹${it.price}`}
               </p>
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
               <button
                 type="button"
-                onClick={() => void setQty(it.id, it.qty - 1).catch(setCheckoutError)}
-                disabled={loading}
+                onClick={() =>
+                  void setQty(it.id, it.qty - 1).catch((updateError) =>
+                    setCheckoutError(
+                      getErrorMessage(updateError, "Unable to update this cart item."),
+                    ),
+                  )
+                }
+                disabled={loading || checkoutLoading}
                 className="headline font-semibold text-xl w-8"
               >
                 −
@@ -246,8 +316,14 @@ export function CartPageClient() {
 
               <button
                 type="button"
-                onClick={() => void setQty(it.id, Math.min(5, it.qty + 1)).catch(setCheckoutError)}
-                disabled={loading || it.qty >= 5}
+                onClick={() =>
+                  void setQty(it.id, Math.min(5, it.qty + 1)).catch((updateError) =>
+                    setCheckoutError(
+                      getErrorMessage(updateError, "Unable to update this cart item."),
+                    ),
+                  )
+                }
+                disabled={loading || checkoutLoading || it.qty >= 5}
                 className="headline font-semibold text-xl w-8"
               >
                 +
@@ -256,8 +332,14 @@ export function CartPageClient() {
 
             <button
               type="button"
-              onClick={() => void remove(it.id).catch(setCheckoutError)}
-              disabled={loading}
+              onClick={() =>
+                void remove(it.id).catch((removeError) =>
+                  setCheckoutError(
+                    getErrorMessage(removeError, "Unable to remove this cart item."),
+                  ),
+                )
+              }
+              disabled={loading || checkoutLoading}
               className="label text-muted-foreground hover:text-accent col-span-3 md:col-span-1 justify-self-end"
             >
               Remove
@@ -270,7 +352,7 @@ export function CartPageClient() {
         <div>
           <p className="label text-muted-foreground">Subtotal</p>
 
-          <p className="display text-4xl md:text-6xl tabular-nums">₹{subtotal.toFixed(2)}</p>
+          <p className="display text-4xl md:text-6xl tabular-nums">₹{payableSubtotal.toFixed(2)}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 md:gap-4">

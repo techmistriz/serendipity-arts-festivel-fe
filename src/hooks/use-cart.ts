@@ -23,9 +23,7 @@ import {
   updateCartItem,
 } from "@/services/cart.service";
 import type { CartItemInput } from "@/types/cart";
-
-const getErrorMessage = (error: unknown, fallback: string) =>
-  error instanceof Error ? error.message : fallback;
+import { getErrorMessage } from "@/utils/error";
 
 let cartSyncRequest: Promise<void> | null = null;
 
@@ -53,7 +51,9 @@ export function useCart() {
   const { isAuthenticated, user } = useAuth();
   const { bookings, error, items, loading, synced } = useAppSelector((state) => state.cart);
 
-  const isVip = user?.role?.name?.toUpperCase() === "VIP";
+  const roleCode = (user?.role?.role_code ?? user?.role?.name ?? "").toUpperCase();
+  const isVip = roleCode === "VIP" || roleCode === "MEDIA";
+  const isComplimentary = isVip || roleCode === "SEA_DELEGATE";
 
   const refresh = useCallback(
     async (force = false) => {
@@ -168,6 +168,7 @@ export function useCart() {
     clear,
     count,
     error,
+    isComplimentary,
     isVip,
     items,
     loading,

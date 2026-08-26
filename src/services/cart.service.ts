@@ -211,3 +211,11 @@ export async function verifyCheckout(input: {
 
   getApiResponseData(response, "Unable to verify your payment.");
 }
+
+export async function cancelCheckout(orderId: number): Promise<void> {
+  const response = await API<ApiResponse<unknown>>("/checkout/cancel-payment", METHODS.POST, {
+    order_id: orderId,
+  });
+
+  getApiResponseData(response, "Unable to cancel your payment checkout.");
+}

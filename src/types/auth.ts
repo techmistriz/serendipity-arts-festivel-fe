@@ -75,6 +75,7 @@ export interface AuthUser {
   role?: {
     id: number;
     name: string;
+    role_code?: string;
   };
 
   referrer?: string;

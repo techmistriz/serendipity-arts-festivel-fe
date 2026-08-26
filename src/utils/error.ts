@@ -23,12 +23,9 @@ export function getErrorMessage(
 ) {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as ErrorPayload | undefined;
+    const validationError = getFirstValidationError(data?.errors);
 
-    return (
-      (typeof data?.message === "string" && data.message) ||
-      getFirstValidationError(data?.errors) ||
-      fallback
-    );
+    return validationError || (typeof data?.message === "string" && data.message) || fallback;
   }
 
   return error instanceof Error ? error.message : fallback;

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import type { UIProgramme } from "@/types/programme";
 import { imagePaths } from "@/config/images";
 import { useCart } from "@/hooks/use-cart";
+import { getErrorMessage } from "@/utils/error";
 import { useAuth } from "@/hooks/use-auth";
 import { tagStyle } from "@/lib/tag-colors";
 
@@ -308,9 +309,7 @@ export function BookingSheet({
       handleClose();
       router.push(`/cart/added?id=${encodeURIComponent(item.id)}`);
     } catch (error) {
-      setCartError(
-        error instanceof Error ? error.message : "Unable to add this programme to your cart.",
-      );
+      setCartError(getErrorMessage(error, "Unable to add this programme to your cart."));
     }
   }, [findClash, isAuthenticated, doAddToCart, handleClose, router]);
 
@@ -326,9 +325,7 @@ export function BookingSheet({
       handleClose();
       router.push(`/cart/added?id=${encodeURIComponent(item.id)}`);
     } catch (error) {
-      setCartError(
-        error instanceof Error ? error.message : "Unable to add this programme to your cart.",
-      );
+      setCartError(getErrorMessage(error, "Unable to add this programme to your cart."));
     }
   }, [isAuthenticated, doAddToCart, handleClose, router]);
 
