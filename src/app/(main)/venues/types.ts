@@ -1,5 +1,6 @@
 export interface VenueListItem {
   id: number;
+  slug: string;
   title: string;
   description: string | null;
   featured_image: string | null;

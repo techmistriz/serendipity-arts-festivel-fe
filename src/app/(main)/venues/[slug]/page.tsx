@@ -7,27 +7,24 @@ import { getServerApiData } from "@/network/server-api";
 import { VenueDetailPageContent } from "../VenueDetailPageContent";
 import type { VenueDetail } from "../types";
 
-async function getVenueDetail(id: string): Promise<VenueDetail | null> {
-  if (!/^\d+$/.test(id)) {
-    return null;
-  }
-
-  return getServerApiData<VenueDetail>(`/venue-detail/${id}`);
+async function getVenueDetail(slug: string): Promise<VenueDetail | null> {
+  return getServerApiData<VenueDetail>(`/venue-detail/${encodeURIComponent(slug)}`);
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  const venue = await getVenueDetail(id);
+  const { slug } = await params;
+  const venue = await getVenueDetail(slug);
+  const pathname = `/venues/${encodeURIComponent(slug)}`;
 
   if (!venue) {
     return createPageMetadata({
       title: "Venue",
       description: "Explore Serendipity Arts Festival venues across Panjim, Goa.",
-      pathname: `/venues/${id}`,
+      pathname,
       noIndex: true,
     });
   }
@@ -44,15 +41,15 @@ export async function generateMetadata({
   return createPageMetadata({
     title: venue.meta_title || venue.title,
     description,
-    pathname: `/venues/${id}`,
+    pathname,
     keywords,
     image: venue.featured_image,
   });
 }
 
-export default async function VenueDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const venue = await getVenueDetail(id);
+export default async function VenueDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const venue = await getVenueDetail(slug);
 
   if (!venue) {
     notFound();

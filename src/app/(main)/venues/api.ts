@@ -10,8 +10,11 @@ export async function getVenues(): Promise<VenueListItem[]> {
   return getApiResponseData(response, "Unable to fetch venues.");
 }
 
-export async function getVenueDetail(id: number): Promise<VenueDetail> {
-  const response = await API<ApiResponse<VenueDetail>>(`/venue-detail/${id}`, METHODS.GET);
+export async function getVenueDetail(slug: string): Promise<VenueDetail> {
+  const response = await API<ApiResponse<VenueDetail>>(
+    `/venue-detail/${encodeURIComponent(slug)}`,
+    METHODS.GET,
+  );
 
   return getApiResponseData(response, "Unable to fetch venue details.");
 }
