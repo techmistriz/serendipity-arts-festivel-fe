@@ -1,5 +1,1 @@
-export type LaunchFilm = {
-  id: number;
-  year: string;
-  youtube_video_id: string;
-};
+export type { LaunchFilm } from "@/types/launch-film";

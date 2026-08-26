@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { AsyncErrorAlert, EmptyState, LoadingState } from "@/components/common/AsyncState";
+import { getCurators } from "@/services/curator.service";
 import { getErrorMessage } from "@/utils/error";
 
-import { getCurators } from "./api";
 import { CuratorCard } from "./_components/CuratorCard";
 import { CuratorFilters } from "./_components/CuratorFilters";
 import { filterCuratorsByDiscipline, getCuratorDisciplines } from "./helpers";

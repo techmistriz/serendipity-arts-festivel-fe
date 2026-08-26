@@ -1,12 +1,23 @@
 import API, { METHODS } from "@/network/API";
-import type { Venue, VenuesResponse } from "@/types/venue";
+import type { ApiResponse } from "@/types/api";
+import type { VenueDetail, VenueListItem } from "@/types/venue";
+import { getApiResponseData } from "@/utils/api";
 
-export async function getVenues(limit?: number): Promise<Venue[]> {
-  const response = await API<VenuesResponse>("/venues", METHODS.GET, limit ? { limit } : undefined);
+export async function getVenues(limit?: number): Promise<VenueListItem[]> {
+  const response = await API<ApiResponse<VenueListItem[]>>(
+    "/venues",
+    METHODS.GET,
+    limit ? { limit } : undefined,
+  );
 
-  if (!response.status) {
-    throw new Error(response.message || "Failed to fetch venues");
-  }
+  return getApiResponseData(response, "Unable to fetch venues.");
+}
 
-  return response.data || [];
+export async function getVenueDetail(slug: string): Promise<VenueDetail> {
+  const response = await API<ApiResponse<VenueDetail>>(
+    `/venue-detail/${encodeURIComponent(slug)}`,
+    METHODS.GET,
+  );
+
+  return getApiResponseData(response, "Unable to fetch venue details.");
 }

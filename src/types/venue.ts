@@ -1,15 +1,45 @@
-export interface Venue {
-  title: string;
-  featured_image: string | null;
+import type { ApiResponse } from "./api";
+
+export interface VenueListItem {
   id: number;
-  name: string;
-  slug?: string;
-  image?: string;
-  description?: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  featured_image: string | null;
 }
 
-export interface VenuesResponse {
-  status: boolean;
-  message?: string;
-  data: Venue[];
+export interface VenueChild extends VenueListItem {
+  google_map_url: string | null;
 }
+
+export interface VenueProgramDetail {
+  id: number;
+  program_id: number;
+  event_date: string | null;
+  from_time: string | null;
+  to_time: string | null;
+  program: {
+    id: number;
+    name: string;
+    category: {
+      id: number;
+      name: string;
+    } | null;
+    curators: Array<{
+      id: number;
+      name: string;
+    }>;
+  };
+}
+
+export interface VenueDetail extends VenueListItem {
+  meta_title: string | null;
+  meta_keywords: string | null;
+  meta_description: string | null;
+  google_map_url: string | null;
+  childs: VenueChild[];
+  program_details: VenueProgramDetail[];
+}
+
+export type Venue = VenueListItem;
+export type VenuesResponse = ApiResponse<VenueListItem[]>;

@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 import { getErrorMessage } from "@/utils/error";
+import { sendContactMessage } from "@/services/contact.service";
 
-import { sendContactMessage } from "../api";
 import { CONTACT_SUBJECTS, PARTICIPATION_NOTE, PARTICIPATION_SUBJECT } from "../constants";
 import type { ContactFormData } from "../types";
 

@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { AsyncErrorAlert, EmptyState, LoadingState } from "@/components/common/AsyncState";
+import { getVenues } from "@/services/venue.service";
 import { getErrorMessage } from "@/utils/error";
 
-import { getVenues } from "./api";
 import { VenueCard } from "./_components/VenueCard";
 import type { VenueListItem } from "./types";
 import { GoogleWayfindingMap } from "@/components/maps/google-wayfinding-map";

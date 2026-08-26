@@ -1,6 +1,1 @@
-export type ContactFormData = {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-};
+export type { ContactFormData } from "@/types/contact";

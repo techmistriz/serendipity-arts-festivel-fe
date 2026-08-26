@@ -2,11 +2,11 @@
 
 import GrantsGif from "@/components/about/GrantsGif";
 import { images } from "@/config/images";
+import { getLaunchFilms } from "@/services/about.service";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { LaunchFilmGrid } from "./_components/LaunchFilmGrid";
-import { getLaunchFilms } from "./api";
 import type { LaunchFilm } from "./types";
 
 export function AboutPageClient() {

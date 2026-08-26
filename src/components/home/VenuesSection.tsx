@@ -159,7 +159,11 @@ export function VenuesSection() {
         /* VENUES GRID */
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
           {venues.map((venue, i) => (
-            <Link key={venue.id} href={`/venues`} className="group block">
+            <Link
+              href={`/venues/${encodeURIComponent(venue.slug)}`}
+              key={venue.id}
+              className="group block"
+            >
               <GlitchBorder
                 seed={i + 17}
                 thickness={1}
