@@ -46,7 +46,7 @@ export function ProgrammesListContent({
   const [query, setQuery] = useState("");
   const [pageState, setPageState] = useState({ filterKey: "", page: 1 });
 
-  // Modal state - LOCAL ONLY, no URL sync
+  // Legacy modal state remains available for existing ?p=<id> links.
   const [activeProgramme, setActiveProgramme] = useState<UIProgramme | null>(null);
   const [activeIntent, setActiveIntent] = useState<Intent>("about");
   const [isOpening, setIsOpening] = useState(false);
@@ -140,7 +140,7 @@ export function ProgrammesListContent({
     router.push("/programmes");
   }, [router]);
 
-  // Open programme WITHOUT changing URL
+  // Open a legacy programme modal without changing the URL.
   const openProgramme = useCallback(
     (programme: UIProgramme, intent: Intent = "about") => {
       if (!programme?.id || isOpening) {
@@ -171,6 +171,19 @@ export function ProgrammesListContent({
       }
     },
     [activeProgramme, activeIntent, isOpening],
+  );
+
+  const openProgrammePage = useCallback(
+    (programme: UIProgramme, intent: Intent = "about") => {
+      if (!programme.slug) {
+        openProgramme(programme, intent);
+        return;
+      }
+
+      const programmePath = `/programmes/${encodeURIComponent(programme.slug)}`;
+      router.push(intent === "cart" ? `${programmePath}?intent=cart` : programmePath);
+    },
+    [openProgramme, router],
   );
 
   // Close programme WITHOUT changing URL
@@ -265,8 +278,8 @@ export function ProgrammesListContent({
           <ProgrammeCard
             key={programme.id}
             programme={programme}
-            onAbout={() => openProgramme(programme, "about")}
-            onAdd={() => openProgramme(programme, "cart")}
+            onAbout={() => openProgrammePage(programme, "about")}
+            onAdd={() => openProgrammePage(programme, "cart")}
           />
         ))}
       </div>

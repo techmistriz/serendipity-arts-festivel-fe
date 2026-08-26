@@ -109,6 +109,8 @@ interface BookingSheetProps {
   onClose: () => void;
   onOpen: (programme: UIProgramme) => void;
   allProgrammes?: UIProgramme[];
+  variant?: "modal" | "page";
+  returnPath?: string;
 }
 
 // ===== Main Component =====
@@ -118,10 +120,14 @@ export function BookingSheet({
   onClose,
   onOpen,
   allProgrammes = [],
+  variant = "modal",
+  returnPath,
 }: BookingSheetProps) {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { add, items, bookings, isVip, loading: cartLoading } = useCart();
+  const isPage = variant === "page";
+  const programmeReturnPath = returnPath ?? `/programmes?p=${programme.id}`;
 
   // State
   const [quantity, setQuantity] = useState(1);
@@ -570,14 +576,20 @@ export function BookingSheet({
 
   // ===== Render =====
   return (
-    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm overflow-y-auto ed-fade">
+    <div
+      className={
+        isPage
+          ? "relative min-h-screen bg-background ed-fade"
+          : "fixed inset-0 z-50 overflow-y-auto bg-background/95 backdrop-blur-sm ed-fade"
+      }
+    >
       <GlitchBar
         seed={11}
         direction="v"
         variant="vibrate"
         speed={0.4}
         count={90}
-        className="fixed left-0 top-0 bottom-0 w-1.5 z-10"
+        className={`${isPage ? "absolute" : "fixed"} left-0 top-0 bottom-0 z-10 w-1.5`}
       />
       <GlitchBar
         seed={29}
@@ -585,7 +597,7 @@ export function BookingSheet({
         variant="bulge"
         speed={1.8}
         count={90}
-        className="fixed right-0 top-0 bottom-0 w-1.5 z-10"
+        className={`${isPage ? "absolute" : "fixed"} right-0 top-0 bottom-0 z-10 w-1.5`}
       />
 
       <div className="container-editorial pt-6 md:pt-10 pb-16">
@@ -769,9 +781,7 @@ export function BookingSheet({
             <button
               onClick={() => {
                 setShowRegisterGate(false);
-                router.push(
-                  `/register?next=${encodeURIComponent(`/programmes?p=${programme.id}`)}`,
-                );
+                router.push(`/register?next=${encodeURIComponent(programmeReturnPath)}`);
               }}
               className="headline text-xs uppercase tracking-[0.06em] bg-foreground text-background rounded-full px-5 py-3 hover:bg-accent transition-colors"
             >
@@ -780,7 +790,7 @@ export function BookingSheet({
             <button
               onClick={() => {
                 setShowRegisterGate(false);
-                router.push(`/login?next=${encodeURIComponent(`/programmes?p=${programme.id}`)}`);
+                router.push(`/login?next=${encodeURIComponent(programmeReturnPath)}`);
               }}
               className="headline text-xs uppercase tracking-[0.06em] border border-foreground px-5 py-3 hover:bg-foreground hover:text-background transition-colors"
             >
