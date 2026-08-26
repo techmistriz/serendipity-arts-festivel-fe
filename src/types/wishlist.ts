@@ -3,6 +3,7 @@ export interface WishlistProgramme {
   program?: {
     name: string;
     slug: string;
+    program_image: string | null;
     category: {
       name: string;
       font_color: string;

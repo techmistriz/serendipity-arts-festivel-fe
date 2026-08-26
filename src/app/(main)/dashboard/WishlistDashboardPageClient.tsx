@@ -3,12 +3,15 @@
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 import { fmtTime } from "@/data/programmes-data";
 import { useWishlist } from "@/hooks/use-wishlist";
 
 import { DashboardShell } from "./DashboardShell";
 import { ErrorMessage, LoadingMessage } from "./DashboardPageClient";
+
+const FALLBACK_IMAGE = "/images/prog-1.jpg";
 
 export function WishlistDashboardPageClient() {
   return (
@@ -28,6 +31,7 @@ function WishlistContent() {
     return {
       id: item.programmeId,
       title: programme?.name || "Untitled",
+      image: programme?.program_image || FALLBACK_IMAGE,
       category: programme?.category?.name || "Uncategorized",
       venue: firstSlot?.venue?.title || "Venue TBA",
       date: formatDate(firstSlot?.event_date),
@@ -66,14 +70,7 @@ function WishlistContent() {
       {programmes.map((programme) => (
         <li key={programme.id} className="rule-b grid grid-cols-12 items-center gap-4 py-6">
           <div className="relative col-span-2 aspect-square w-full overflow-hidden rounded bg-muted md:col-span-1">
-            <Image
-              src="/placeholder-image.jpg"
-              alt={programme.title}
-              fill
-              className="object-cover"
-              loading="lazy"
-              sizes="(max-width: 768px) 20vw, 10vw"
-            />
+            <WishlistImage src={programme.image} alt={programme.title} />
           </div>
           <div className="col-span-7 md:col-span-8">
             <span
@@ -114,6 +111,23 @@ function WishlistContent() {
         </li>
       ))}
     </ul>
+  );
+}
+
+function WishlistImage({ alt, src }: { alt: string; src: string }) {
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+  const imageSrc = failedImage === src ? FALLBACK_IMAGE : src;
+
+  return (
+    <Image
+      src={imageSrc}
+      alt={alt}
+      fill
+      className="object-cover"
+      loading="lazy"
+      sizes="(max-width: 768px) 20vw, 10vw"
+      onError={() => setFailedImage(src)}
+    />
   );
 }
 
