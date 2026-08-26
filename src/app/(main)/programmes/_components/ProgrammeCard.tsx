@@ -154,7 +154,10 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
 
         {/* Programme Info */}
         <div className="mt-3">
-          <h3 className="headline break-words text-sm leading-tight font-semibold tracking-[-0.01em] hyphens-auto transition-colors group-hover:text-accent md:text-lg">
+          <h3
+            title={programme.title || "Untitled"}
+            className="headline truncate text-sm leading-tight font-semibold tracking-[-0.01em] transition-colors group-hover:text-accent md:text-lg"
+          >
             {programme.title || "Untitled"}
           </h3>
 
