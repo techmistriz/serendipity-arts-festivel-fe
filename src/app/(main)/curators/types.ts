@@ -15,6 +15,9 @@ export interface CuratorListItem {
 
 export interface CuratorDetail extends CuratorListItem {
   bio: string | null;
+  meta_title: string | null;
+  meta_keywords: string | null;
+  meta_description: string | null;
   instagram_link: string | null;
   instagram_handle: string | null;
 }

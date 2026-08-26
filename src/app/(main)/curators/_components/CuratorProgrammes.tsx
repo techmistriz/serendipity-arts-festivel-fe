@@ -6,7 +6,7 @@ import type { CuratorProgram } from "../types";
 
 type CuratorProgrammesProps = {
   programs: CuratorProgram[];
-  onNavigate: () => void;
+  onNavigate?: () => void;
 };
 
 export function CuratorProgrammes({ programs, onNavigate }: CuratorProgrammesProps) {

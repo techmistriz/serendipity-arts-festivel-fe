@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 
 import type { CuratorListItem } from "../types";
@@ -5,18 +7,14 @@ import { CuratorImage } from "./CuratorImage";
 
 type CuratorCardProps = {
   curator: CuratorListItem;
-  onOpen: (curator: CuratorListItem) => void;
-  disabled: boolean;
 };
 
-export function CuratorCard({ curator, onOpen, disabled }: CuratorCardProps) {
+export function CuratorCard({ curator }: CuratorCardProps) {
   return (
-    <button
-      type="button"
-      onClick={() => onOpen(curator)}
-      disabled={disabled}
+    <Link
+      href={`/curators/${encodeURIComponent(curator.slug)}`}
       aria-label={`View details for ${curator.name}`}
-      className="group flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait disabled:opacity-70"
+      className="group flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <GlitchBorder
         seed={curator.name.length + 4}
@@ -45,6 +43,6 @@ export function CuratorCard({ curator, onOpen, disabled }: CuratorCardProps) {
       <span className="headline mt-auto inline-block self-start border border-foreground px-3 py-1.5 pt-3 text-[11px] tracking-[0.08em] uppercase transition-colors group-hover:bg-foreground group-hover:text-background">
         More info +
       </span>
-    </button>
+    </Link>
   );
 }

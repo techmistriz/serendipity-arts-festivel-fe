@@ -5,6 +5,7 @@ import { ProgrammesPageClient } from "../ProgrammesPageClient";
 import { CATEGORY_SLUGS } from "../constants";
 import { siteConfig } from "@/config/site";
 import { createPageMetadata, textFromHtml } from "@/lib/metadata";
+import { getPublicApiHeaders } from "@/network/api-headers";
 import type { Programme } from "@/types/programme";
 
 type ProgrammeMetaResponse = {
@@ -23,10 +24,7 @@ async function getProgrammeMetadata(slug: string): Promise<Programme | null> {
     const response = await fetch(
       `${siteConfig.api_base_url.replace(/\/$/, "")}/programme/${encodeURIComponent(slug)}`,
       {
-        headers: {
-          Accept: "application/json",
-          "X-API-TOKEN": "bb15a7d7d24c13088ae34fb19db7b0f5d064d315be568b4ce0c01106a061deea",
-        },
+        headers: getPublicApiHeaders(),
         next: { revalidate: 3600 },
       },
     );
