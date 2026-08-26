@@ -3,7 +3,7 @@
 import { useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
-import { BookingSheet } from "./BookingSheet";
+import { BookingSheet } from "../BookingSheet";
 import { DetailPageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { mapApiProgrammeToUi, mapApiProgrammesToUi } from "@/lib/programme-adapter";
 import { useProgramme } from "@/hooks/useProgrammeDetail";

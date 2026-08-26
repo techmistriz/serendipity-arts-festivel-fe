@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 import { createPageMetadata, textFromHtml } from "@/lib/metadata";
 import { getServerApiData } from "@/network/server-api";
 import type { Programme } from "@/types/programme";
 
-import { ProgrammeDetailPageClient } from "../ProgrammeDetailPageClient";
-import { CATEGORY_SLUGS } from "../constants";
+import { ProgrammeDetailPageClient } from "./ProgrammeDetailPageClient";
 
 type ProgrammeMetadataData = {
   program?: Programme;
@@ -64,10 +62,6 @@ export default async function ProgrammeDetailPage({
   searchParams: Promise<{ intent?: string | string[] }>;
 }) {
   const { slug } = await params;
-
-  if (CATEGORY_SLUGS[slug]) {
-    redirect(`/programmes/category/${encodeURIComponent(slug)}`);
-  }
 
   const { intent } = await searchParams;
   const initialIntent = intent === "cart" ? "cart" : "about";
