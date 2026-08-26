@@ -7,7 +7,7 @@ import cartReducer from "@/redux/slices/cartSlice";
 import wishlistReducer from "@/redux/slices/wishlistSlice";
 import type { AuthState, AuthUser } from "@/types/auth";
 import type { CartState } from "@/types/cart";
-import type { WishlistState } from "@/types/wishlist";
+import type { WishlistProgramme, WishlistState } from "@/types/wishlist";
 
 export const createNoopStorage = () => ({
   getItem: () => Promise.resolve(null),
@@ -25,6 +25,13 @@ type PersistedRootState = Exclude<PersistedState, undefined> & {
   auth?: Partial<AuthState> & { token?: string | null; user?: AuthUser | null };
   cart?: CartState & { wishlist?: unknown };
   wishlist?: WishlistState;
+};
+
+type LegacyWishlistState = Partial<WishlistState> & {
+  items?: Array<{
+    program_id?: string | number;
+    program?: WishlistProgramme["program"];
+  }>;
 };
 
 function migrateLegacyWishlist(state: PersistedState): PersistedState {
@@ -68,13 +75,53 @@ function migrateLegacyAuthSession(state: PersistedState): PersistedState {
   } as PersistedState;
 }
 
+function migrateWishlistProgrammeIds(state: PersistedState): PersistedState {
+  if (!state) return state;
+
+  const persistedState = state as PersistedRootState;
+  const wishlist = persistedState.wishlist as LegacyWishlistState | undefined;
+
+  if (!wishlist || Array.isArray(wishlist.programmes)) return persistedState;
+
+  const programmes = (wishlist.items ?? []).reduce<WishlistProgramme[]>((entries, item) => {
+    if (item.program_id) {
+      entries.push({ programmeId: String(item.program_id), program: item.program });
+    }
+
+    return entries;
+  }, []);
+
+  const programmeIds = Array.from(
+    new Set(
+      [...(wishlist.programmeIds ?? []), ...programmes.map(({ programmeId }) => programmeId)].map(
+        String,
+      ),
+    ),
+  );
+
+  return {
+    ...persistedState,
+    wishlist: {
+      programmeIds,
+      programmes,
+      loading: false,
+      error: null,
+      synced: Boolean(wishlist.synced),
+    },
+  } as PersistedState;
+}
+
 export const rootPersistConfig = {
   key: "serendipity-arts-festival",
   storage,
   keyPrefix: "redux-",
-  version: 2,
+  version: 3,
   migrate: createMigrate(
-    { 1: migrateLegacyWishlist, 2: migrateLegacyAuthSession },
+    {
+      1: migrateLegacyWishlist,
+      2: migrateLegacyAuthSession,
+      3: migrateWishlistProgrammeIds,
+    },
     { debug: false },
   ),
   whitelist: ["auth", "cart", "wishlist"],

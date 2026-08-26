@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useEffect, useCallback, useRef } from "react";
-import type { Programme as UiProgramme } from "@/types/programme";
+import type { UIProgramme } from "@/types/programme";
 import { useCart } from "@/hooks/use-cart";
 import { useProgrammes } from "@/hooks/useProgrammes";
 import { mapApiProgrammesToUi } from "@/lib/programme-adapter";
@@ -36,7 +36,7 @@ export function ProgrammesListContent({
   // const pathname = usePathname();
   // const searchParams = useSearchParams();
   const { isVip } = useCart();
-  const { programmes: apiProgrammes, loading, error } = useProgrammes(1);
+  const { programmes: apiProgrammes, loading, error } = useProgrammes({ page: 1 });
 
   // Filter state
   const [category, setCategory] = useState(initialCategory);
@@ -47,13 +47,13 @@ export function ProgrammesListContent({
   const [pageState, setPageState] = useState({ filterKey: "", page: 1 });
 
   // Modal state - LOCAL ONLY, no URL sync
-  const [activeProgramme, setActiveProgramme] = useState<UiProgramme | null>(null);
+  const [activeProgramme, setActiveProgramme] = useState<UIProgramme | null>(null);
   const [activeIntent, setActiveIntent] = useState<Intent>("about");
   const [isOpening, setIsOpening] = useState(false);
   const hasInitializedRef = useRef(false);
 
   // Convert API programmes to UI format
-  const programmes = useMemo<UiProgramme[]>(() => {
+  const programmes = useMemo<UIProgramme[]>(() => {
     if (!apiProgrammes?.length) return [];
     return mapApiProgrammesToUi(apiProgrammes);
   }, [apiProgrammes]);
@@ -142,7 +142,7 @@ export function ProgrammesListContent({
 
   // Open programme WITHOUT changing URL
   const openProgramme = useCallback(
-    (programme: UiProgramme, intent: Intent = "about") => {
+    (programme: UIProgramme, intent: Intent = "about") => {
       if (!programme?.id || isOpening) {
         console.warn("[ProgrammesList] Invalid programme or already opening:", programme);
         return;

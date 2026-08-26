@@ -1,77 +1,14 @@
-import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { WishlistState, WishlistItem } from "@/types/wishlist";
-
-import { getWishlist, addToWishlist, removeFromWishlist } from "@/services/wishlist.service";
+import type { WishlistProgramme, WishlistState } from "@/types/wishlist";
 
 const initialState: WishlistState = {
   programmeIds: [],
-  items: [],
+  programmes: [],
   loading: false,
   error: null,
   synced: false,
 };
-
-export const fetchWishlist = createAsyncThunk("wishlist/fetch", async (_, { rejectWithValue }) => {
-  try {
-    const response = await getWishlist();
-
-    return {
-      programmeIds: response.programmeIds ?? [],
-      items: response.data ?? [],
-    };
-  } catch (error) {
-    return rejectWithValue(error instanceof Error ? error.message : "Failed to fetch wishlist");
-  }
-});
-
-export const addToWishlistThunk = createAsyncThunk(
-  "wishlist/add",
-  async (programId: string | number, { rejectWithValue }) => {
-    try {
-      const response = await addToWishlist(programId);
-
-      if (!response.status) {
-        return rejectWithValue(response.message ?? "Failed to add to wishlist");
-      }
-
-      return {
-        programId: String(programId),
-        item: response.data ?? null,
-      };
-    } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : "Failed to add to wishlist");
-    }
-  },
-);
-
-export const removeFromWishlistThunk = createAsyncThunk(
-  "wishlist/remove",
-  async (
-    {
-      programId,
-      wishlistId,
-    }: {
-      programId: string | number;
-      wishlistId: number;
-    },
-    { rejectWithValue },
-  ) => {
-    try {
-      const response = await removeFromWishlist(wishlistId, programId);
-
-      if (!response.status) {
-        return rejectWithValue(response.message ?? "Failed to remove from wishlist");
-      }
-
-      return String(programId);
-    } catch (error) {
-      return rejectWithValue(
-        error instanceof Error ? error.message : "Failed to remove from wishlist",
-      );
-    }
-  },
-);
 
 const wishlistSlice = createSlice({
   name: "wishlist",
@@ -80,7 +17,7 @@ const wishlistSlice = createSlice({
   reducers: {
     clearWishlist: (state) => {
       state.programmeIds = [];
-      state.items = [];
+      state.programmes = [];
       state.loading = false;
       state.error = null;
       state.synced = false;
@@ -90,92 +27,75 @@ const wishlistSlice = createSlice({
       state.error = null;
     },
 
-    setWishlist: (
-      state,
-      action: PayloadAction<{
-        programmeIds: string[];
-        items: WishlistItem[];
-      }>,
-    ) => {
-      state.programmeIds = action.payload.programmeIds;
-      state.items = action.payload.items;
+    requestWishlist: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+
+    setWishlist: (state, action: PayloadAction<WishlistProgramme[]>) => {
+      const programmesById = new Map<string, WishlistProgramme>();
+
+      action.payload.forEach((programme) => {
+        if (programme.programmeId) {
+          programmesById.set(String(programme.programmeId), programme);
+        }
+      });
+
+      state.programmeIds = [...programmesById.keys()];
+      state.programmes = [...programmesById.values()];
+      state.loading = false;
+      state.error = null;
       state.synced = true;
     },
-  },
 
-  extraReducers: (builder) => {
-    builder
+    addWishlistProgramme: (state, action: PayloadAction<WishlistProgramme>) => {
+      const programmeId = String(action.payload.programmeId);
+      const existingIndex = state.programmes.findIndex(
+        (programme) => programme.programmeId === programmeId,
+      );
 
-      // FETCH
-      .addCase(fetchWishlist.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      if (!state.programmeIds.includes(programmeId)) {
+        state.programmeIds.push(programmeId);
+      }
 
-      .addCase(fetchWishlist.fulfilled, (state, action) => {
-        state.loading = false;
-        state.programmeIds = action.payload.programmeIds;
-        state.items = action.payload.items;
-        state.synced = true;
-      })
+      if (existingIndex === -1) {
+        state.programmes.push({ ...action.payload, programmeId });
+      } else {
+        state.programmes[existingIndex] = { ...action.payload, programmeId };
+      }
 
-      .addCase(fetchWishlist.rejected, (state, action) => {
-        state.loading = false;
-        state.error = (action.payload as string) ?? "Failed to fetch wishlist";
-      })
+      state.loading = false;
+      state.error = null;
+      state.synced = true;
+    },
 
-      // ADD
-      .addCase(addToWishlistThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+    removeWishlistProgramme: (state, action: PayloadAction<string | number>) => {
+      const programmeId = String(action.payload);
 
-      .addCase(addToWishlistThunk.fulfilled, (state, action) => {
-        state.loading = false;
+      state.programmeIds = state.programmeIds.filter((id) => id !== programmeId);
+      state.programmes = state.programmes.filter(
+        (programme) => programme.programmeId !== programmeId,
+      );
+      state.loading = false;
+      state.error = null;
+      state.synced = true;
+    },
 
-        const { programId, item } = action.payload;
-
-        if (!state.programmeIds.includes(programId)) {
-          state.programmeIds.push(programId);
-        }
-
-        if (item && !state.items.some((wishlistItem) => wishlistItem.id === item.id)) {
-          state.items.push(item);
-        }
-
-        state.synced = true;
-      })
-
-      .addCase(addToWishlistThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = (action.payload as string) ?? "Failed to add to wishlist";
-      })
-
-      // REMOVE
-      .addCase(removeFromWishlistThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-
-      .addCase(removeFromWishlistThunk.fulfilled, (state, action) => {
-        state.loading = false;
-
-        const programId = action.payload;
-
-        state.programmeIds = state.programmeIds.filter((id) => id !== programId);
-
-        state.items = state.items.filter((item) => String(item.program_id) !== programId);
-
-        state.synced = true;
-      })
-
-      .addCase(removeFromWishlistThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = (action.payload as string) ?? "Failed to remove from wishlist";
-      });
+    wishlistRequestFailed: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { clearWishlist, resetWishlistError, setWishlist } = wishlistSlice.actions;
+export const {
+  clearWishlist,
+  resetWishlistError,
+  requestWishlist,
+  setWishlist,
+  addWishlistProgramme,
+  removeWishlistProgramme,
+  wishlistRequestFailed,
+} = wishlistSlice.actions;
 
 export default wishlistSlice.reducer;

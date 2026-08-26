@@ -1,4 +1,4 @@
-export interface Program {
+export interface CartProgramme {
   id: number;
   name: string;
   amount: string | null;
@@ -7,14 +7,14 @@ export interface Program {
   is_booking_allowed: number;
 }
 
-export interface CartItem {
+export interface ApiCartItem {
   id: number;
   program_id: number;
   program_detail_id: number;
   amount: string;
   quantity: number;
   status: number;
-  program: Program;
+  program: CartProgramme;
 }
 
 export interface CartSummary {
@@ -24,7 +24,7 @@ export interface CartSummary {
 }
 
 export interface CartResponse {
-  items: CartItem[];
+  items: ApiCartItem[];
   summary: CartSummary;
 }
 
@@ -40,9 +40,22 @@ export interface UpdateCartPayload {
   check_clashing?: boolean;
 }
 
+export interface CartItemInput {
+  id: string;
+  title: string;
+  venue: string;
+  date: string;
+  time: string;
+  price: number;
+  img: string;
+}
+
+export interface CartItem extends CartItemInput {
+  qty: number;
+}
+
 export interface CartState {
   items: CartItem[];
-  summary: CartSummary | null;
-  loading: boolean;
-  error: string | null;
+  bookings: CartItem[];
+  isVip: boolean;
 }

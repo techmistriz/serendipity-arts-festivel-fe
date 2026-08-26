@@ -14,7 +14,7 @@ import { RecommendModal } from "../common/RecommendModal";
 export default function Programmes() {
   const [recOpen, setRecOpen] = useState(false);
 
-  const { programmes, loading, error } = useProgrammes(1, 8);
+  const { programmes, loading, error } = useProgrammes({ page: 1, limit: 8 });
 
   const sortedProgrammes = [...programmes].sort((a, b) => a.name.localeCompare(b.name));
 

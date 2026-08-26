@@ -22,16 +22,15 @@ export function DashboardPageClient() {
   const dispatch = useAppDispatch();
   const [tab, setTab] = useState<"bookings" | "wishlist" | "schedule" | "profile">("bookings");
   const { bookings } = useCart();
-  const { wishlistItems, toggleProgramme, loading } = useWishlist();
+  const { wishlistProgrammes, toggleProgramme, loading, total: wishlistTotal } = useWishlist();
 
   // Transform wishlist items to display format
-  const displayWishlistItems = wishlistItems.map((item) => {
+  const displayWishlistItems = wishlistProgrammes.map((item) => {
     const program = item.program;
     const firstSlot = program?.program_details?.[0];
 
     return {
-      id: item.program_id,
-      wishlistId: item.id,
+      id: item.programmeId,
       title: program?.name || "Untitled",
       category: program?.category?.name || "Uncategorized",
       img: "/placeholder-image.jpg", // Default image, you can add image field if available
@@ -115,7 +114,7 @@ export function DashboardPageClient() {
       <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 rule-t rule-b py-8">
         <Stat n={String(bookings.length).padStart(2, "0")} l="Bookings" />
         <Stat n={String(totalTickets).padStart(2, "0")} l="Tickets" />
-        <Stat n={String(wishlistItems.length).padStart(2, "0")} l="Wishlist" />
+        <Stat n={String(wishlistTotal).padStart(2, "0")} l="Wishlist" />
         <Stat n={String(venuesCovered).padStart(2, "0")} l="Venues covered" />
       </div>
 
@@ -132,8 +131,8 @@ export function DashboardPageClient() {
             }`}
           >
             {t}
-            {t === "wishlist" && wishlistItems.length > 0 && (
-              <span className="ml-2 text-sm text-accent">({wishlistItems.length})</span>
+            {t === "wishlist" && wishlistTotal > 0 && (
+              <span className="ml-2 text-sm text-accent">({wishlistTotal})</span>
             )}
           </button>
         ))}

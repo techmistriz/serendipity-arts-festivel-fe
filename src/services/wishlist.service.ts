@@ -2,17 +2,18 @@ import type {
   WishlistResponse,
   WishlistAddResponse,
   WishlistRemoveResponse,
-  WishlistItem,
+  WishlistProgramme,
 } from "@/types/wishlist";
 import API, { METHODS } from "@/network/API";
 
-const handleError = (error: unknown, context: string) => {
-  console.error(`[Wishlist API] ${context}:`, error instanceof Error ? error.message : error);
-  throw error;
-};
+type WishlistResponseItem = WishlistResponse["data"][number];
 
-// Get wishlist
-export async function getWishlist(): Promise<WishlistResponse> {
+const toWishlistProgramme = ({ program_id, program }: WishlistResponseItem): WishlistProgramme => ({
+  programmeId: String(program_id),
+  program,
+});
+
+export async function getWishlist(): Promise<WishlistProgramme[]> {
   try {
     const response = await API<WishlistResponse>("/wishlist", METHODS.GET);
 
@@ -20,21 +21,14 @@ export async function getWishlist(): Promise<WishlistResponse> {
       throw new Error(response.message || "Failed to fetch wishlist");
     }
 
-    const items = response.data || [];
-    const programmeIds = items.map((item: WishlistItem) => String(item.program_id)).filter(Boolean);
-
-    return {
-      ...response,
-      programmeIds,
-    };
+    return response.data.map(toWishlistProgramme);
   } catch (error) {
-    handleError(error, "Error fetching wishlist");
-    throw error; // TypeScript requires this
+    console.error("[Wishlist API] Error fetching wishlist:", error);
+    throw error;
   }
 }
 
-// Add to wishlist
-export async function addToWishlist(programId: string | number): Promise<WishlistAddResponse> {
+export async function addToWishlist(programId: string | number): Promise<WishlistProgramme> {
   if (!programId) throw new Error("Program ID is required");
 
   try {
@@ -46,27 +40,26 @@ export async function addToWishlist(programId: string | number): Promise<Wishlis
       throw new Error(response.message || "Failed to add to wishlist");
     }
 
-    return response;
+    if (!response.data) {
+      throw new Error("Wishlist response did not include the added programme");
+    }
+
+    return toWishlistProgramme(response.data);
   } catch (error) {
-    handleError(error, `Error adding programme "${programId}" to wishlist`);
+    console.error(`[Wishlist API] Error adding programme "${programId}" to wishlist:`, error);
     throw error;
   }
 }
 
-// Remove from wishlist
 export async function removeFromWishlist(
-  wishlistId: number,
   programId: string | number,
 ): Promise<WishlistRemoveResponse> {
-  if (!wishlistId) throw new Error("Wishlist ID is required");
   if (!programId) throw new Error("Program ID is required");
 
   try {
-    const response = await API<WishlistRemoveResponse>(
-      `/wishlist/remove/${wishlistId}`,
-      METHODS.POST,
-      { program_id: String(programId) },
-    );
+    const response = await API<WishlistRemoveResponse>("/wishlist/remove", METHODS.POST, {
+      program_id: String(programId),
+    });
 
     if (!response.status) {
       throw new Error(response.message || "Failed to remove from wishlist");
@@ -74,7 +67,7 @@ export async function removeFromWishlist(
 
     return response;
   } catch (error) {
-    handleError(error, `Error removing programme "${programId}" from wishlist`);
+    console.error(`[Wishlist API] Error removing programme "${programId}" from wishlist:`, error);
     throw error;
   }
 }

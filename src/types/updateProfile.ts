@@ -6,7 +6,7 @@ export type UpdateProfilePayload = {
   state_id: number | null;
   city_id: number | null;
   custom_city: string;
-  interest: string;
+  interest: string[];
   hearabout: string;
   subscribe: number;
   visited: string;

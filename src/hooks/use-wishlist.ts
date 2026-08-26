@@ -3,26 +3,64 @@
 import { useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
-  fetchWishlist,
-  addToWishlistThunk,
-  removeFromWishlistThunk,
+  addWishlistProgramme,
   clearWishlist,
+  removeWishlistProgramme,
+  requestWishlist,
+  setWishlist,
+  wishlistRequestFailed,
 } from "@/redux/slices/wishlistSlice";
 import { useAuth } from "@/hooks/use-auth";
+import { addToWishlist, getWishlist, removeFromWishlist } from "@/services/wishlist.service";
+
+const getErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof Error ? error.message : fallback;
+
+let wishlistRequest: Promise<void> | null = null;
+
+function syncWishlist(dispatch: ReturnType<typeof useAppDispatch>) {
+  if (!wishlistRequest) {
+    dispatch(requestWishlist());
+    wishlistRequest = getWishlist()
+      .then((programmes) => {
+        dispatch(setWishlist(programmes));
+      })
+      .catch((error: unknown) => {
+        dispatch(wishlistRequestFailed(getErrorMessage(error, "Failed to fetch wishlist")));
+        throw error;
+      })
+      .finally(() => {
+        wishlistRequest = null;
+      });
+  }
+
+  return wishlistRequest;
+}
 
 export function useWishlist() {
   const dispatch = useAppDispatch();
   const { isAuthenticated } = useAuth();
 
-  const { programmeIds, items, loading, error, synced } = useAppSelector((state) => state.wishlist);
+  const { programmeIds, programmes, loading, error, synced } = useAppSelector(
+    (state) => state.wishlist,
+  );
+
+  const loadWishlist = useCallback(
+    async (force = false) => {
+      if (!isAuthenticated || (!force && synced)) return;
+
+      await syncWishlist(dispatch);
+    },
+    [dispatch, isAuthenticated, synced],
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
-      void dispatch(fetchWishlist());
+      void loadWishlist().catch(() => undefined);
     } else {
       dispatch(clearWishlist());
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, isAuthenticated, loadWishlist]);
 
   const isSaved = useCallback(
     (programId: string | number) => programmeIds.includes(String(programId)),
@@ -32,37 +70,42 @@ export function useWishlist() {
   const addProgramme = useCallback(
     async (programId: string | number) => {
       if (!isAuthenticated) {
-        console.warn("[useWishlist] User is not authenticated");
-        return;
+        throw new Error("You must be logged in to update your wishlist");
       }
 
-      await dispatch(addToWishlistThunk(programId)).unwrap();
+      if (isSaved(programId)) return;
+
+      dispatch(requestWishlist());
+
+      try {
+        dispatch(addWishlistProgramme(await addToWishlist(programId)));
+      } catch (error) {
+        dispatch(wishlistRequestFailed(getErrorMessage(error, "Failed to add to wishlist")));
+        throw error;
+      }
     },
-    [dispatch, isAuthenticated],
+    [dispatch, isAuthenticated, isSaved],
   );
 
   const removeProgramme = useCallback(
     async (programId: string | number) => {
       if (!isAuthenticated) {
-        console.warn("[useWishlist] User is not authenticated");
-        return;
+        throw new Error("You must be logged in to update your wishlist");
       }
 
-      const wishlistItem = items.find((item) => String(item.program_id) === String(programId));
+      if (!isSaved(programId)) return;
 
-      if (!wishlistItem) {
-        console.warn("[useWishlist] Wishlist item not found:", programId);
-        return;
+      dispatch(requestWishlist());
+
+      try {
+        await removeFromWishlist(programId);
+        dispatch(removeWishlistProgramme(programId));
+      } catch (error) {
+        dispatch(wishlistRequestFailed(getErrorMessage(error, "Failed to remove from wishlist")));
+        throw error;
       }
-
-      await dispatch(
-        removeFromWishlistThunk({
-          programId,
-          wishlistId: wishlistItem.id,
-        }),
-      ).unwrap();
     },
-    [dispatch, isAuthenticated, items],
+    [dispatch, isAuthenticated, isSaved],
   );
 
   const toggleProgramme = useCallback(
@@ -77,14 +120,12 @@ export function useWishlist() {
   );
 
   const refetch = useCallback(async () => {
-    if (!isAuthenticated) return;
-
-    await dispatch(fetchWishlist()).unwrap();
-  }, [dispatch, isAuthenticated]);
+    await loadWishlist(true);
+  }, [loadWishlist]);
 
   return {
     programmeIds,
-    wishlistItems: items,
+    wishlistProgrammes: programmes,
     loading,
     error,
     isSaved,
@@ -92,7 +133,7 @@ export function useWishlist() {
     addProgramme,
     removeProgramme,
     refetch,
-    total: items.length,
+    total: programmeIds.length,
     synced,
   };
 }
