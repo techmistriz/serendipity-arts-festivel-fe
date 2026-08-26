@@ -1,5 +1,6 @@
 import axios, { type Method } from "axios";
 
+import { getApiHeaders } from "@/network/api-headers";
 import { store } from "@/redux/store";
 import { siteConfig } from "@/config/site";
 
@@ -14,17 +15,6 @@ export const METHODS = {
 } as const;
 
 export type ApiMethod = (typeof METHODS)[keyof typeof METHODS];
-
-function getHeaders(payload: unknown, authToken: string | null) {
-  const isFormData = typeof FormData !== "undefined" && payload instanceof FormData;
-
-  return {
-    Accept: "application/json",
-    "X-API-TOKEN": "bb15a7d7d24c13088ae34fb19db7b0f5d064d315be568b4ce0c01106a061deea",
-    ...(isFormData ? {} : { "Content-Type": "application/json" }),
-    ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-  };
-}
 
 function clearUserToken() {
   if (typeof window === "undefined" || !store.getState().auth.accessToken) return;
@@ -46,7 +36,7 @@ export default async function API<T>(
     const response = await axios.request<T>({
       method: method as Method,
       url: `${baseURL}${endpoint}`,
-      headers: getHeaders(payload, authToken),
+      headers: getApiHeaders(payload, authToken),
       ...(method === METHODS.GET ? { params: payload } : { data: payload }),
     });
 
