@@ -1,5 +1,11 @@
-import { AddedToCartPageClient } from "./AddedToCartPageClient";
+import { Suspense } from "react";
+
+import { AddedLoading, AddedToCartPageClient } from "./AddedToCartPageClient";
 
 export default function AddedToCartPage() {
-  return <AddedToCartPageClient />;
+  return (
+    <Suspense fallback={<AddedLoading />}>
+      <AddedToCartPageClient />
+    </Suspense>
+  );
 }

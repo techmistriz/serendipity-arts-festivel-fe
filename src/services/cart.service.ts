@@ -81,6 +81,16 @@ export type CheckoutResult = {
   } | null;
 };
 
+export type CouponValidation = {
+  coupon: {
+    code: string;
+    name: string | null;
+  };
+  subtotal: number;
+  discount: number;
+  total: number;
+};
+
 const toPrice = (amount: string | number | null | undefined) => {
   const parsedAmount = Number(amount);
   return Number.isFinite(parsedAmount) ? parsedAmount : 0;
@@ -177,14 +187,17 @@ export async function clearCart(): Promise<void> {
 export async function createCheckout(input: {
   name: string;
   email: string;
+  couponCode?: string;
 }): Promise<CheckoutResult> {
+  const { couponCode, ...checkoutInput } = input;
   const response = await API<
     ApiResponse<{
       order: { id: number };
       payment_gateway?: { name: string; checkout: RazorpayCheckoutOptions };
     }>
   >("/checkout", METHODS.POST, {
-    ...input,
+    ...checkoutInput,
+    coupon_code: couponCode,
     platform: "WEB",
   });
 
@@ -194,6 +207,16 @@ export async function createCheckout(input: {
     order: data.order,
     paymentGateway: data.payment_gateway ?? null,
   };
+}
+
+export async function validateCheckoutCoupon(couponCode: string): Promise<CouponValidation> {
+  const response = await API<ApiResponse<CouponValidation>>(
+    "/checkout/validate-coupon",
+    METHODS.POST,
+    { coupon_code: couponCode },
+  );
+
+  return getApiResponseData(response, "Unable to apply this coupon.");
 }
 
 export async function verifyCheckout(input: {
