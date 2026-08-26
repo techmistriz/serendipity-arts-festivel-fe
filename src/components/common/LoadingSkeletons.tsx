@@ -71,6 +71,31 @@ export function ContentGridSkeleton({
   );
 }
 
+export function VenueGridLoadingSkeleton({
+  className,
+  count = 4,
+  label = "Loading venues",
+}: ContentGridSkeletonProps) {
+  return (
+    <div className={cn("mt-12 md:mt-16", className)} role="status" aria-live="polite">
+      <LoadingAnnouncement label={label} />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-10">
+        {Array.from({ length: count }).map((_, index) => (
+          <div key={index} aria-hidden="true">
+            <Skeleton className="aspect-[4/3] w-full" />
+            <Skeleton className="mt-4 h-7 w-3/4 md:h-10" />
+            <div className="mt-3 space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/5" />
+            </div>
+            <Skeleton className="mt-3 h-8 w-24" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function LogoGridLoadingSkeleton({
   className,
   count = 4,

@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { AsyncErrorAlert, EmptyState, LoadingState } from "@/components/common/AsyncState";
+import { AsyncErrorAlert, EmptyState } from "@/components/common/AsyncState";
+import { VenueGridLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { getVenues } from "@/services/venue.service";
 import { getErrorMessage } from "@/utils/error";
 
@@ -65,7 +66,7 @@ export default function VenuesPageClient() {
         />
       )}
       {loading ? (
-        <LoadingState label="Loading venues" variant="inline" />
+        <VenueGridLoadingSkeleton />
       ) : venues.length > 0 ? (
         <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 md:gap-10">
           {venues.map((venue) => (
