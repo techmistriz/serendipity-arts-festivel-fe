@@ -166,7 +166,7 @@ export default function Header() {
               </>
             )}
 
-            {(!isHomePage || hasScrolledPastHero) && (
+            {!loading && !isAuthenticated && (!isHomePage || hasScrolledPastHero) && (
               <Link
                 href="/register"
                 className="label notch rounded-full bg-foreground px-4 py-2 text-background transition-colors hover:bg-accent"
