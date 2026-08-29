@@ -41,7 +41,10 @@ export function VenuesSection() {
   };
 
   return (
-    <section className="container-editorial mt-20 md:mt-32">
+    <section
+      className="tex-band container-editorial mt-20 md:mt-32 py-12 md:py-20"
+      style={{ [" " as string]: "#62C6C233" }}
+    >
       {/* HEADER */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start mb-10 md:mb-14">
         <h2 className="md:col-span-7 display uppercase text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9]">

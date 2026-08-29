@@ -6,7 +6,7 @@ export function HomeIntroduction() {
   return (
     <section className="container-editorial mt-20 md:mt-32">
       <div
-        className="relative min-h-[320px] w-full overflow-hidden md:min-h-[420px] lg:min-h-[520px]"
+        className="paper-grain relative min-h-[320px] w-full overflow-hidden md:min-h-[420px] lg:min-h-[520px]"
         // style={tornPaperStyle}
       >
         <Image

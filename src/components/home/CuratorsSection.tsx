@@ -19,7 +19,10 @@ export function CuratorsSection({ limit = 4 }: CuratorsSectionProps) {
   const { curators, loading, error } = useCurators(limit);
 
   return (
-    <section className="container-editorial mt-20 md:mt-32">
+    <section
+      className="tex-band container-editorial mt-20 md:mt-32 py-12 md:py-20"
+      style={{ ["--tex-tint" as string]: "#B39ECC33" }}
+    >
       <HomeSectionHeader title="Curators">
         <a
           href="https://serendipityarts.org/curator-overview/"
