@@ -13,9 +13,9 @@ export async function getVenues(limit?: number): Promise<VenueListItem[]> {
   return getApiResponseData(response, "Unable to fetch venues.");
 }
 
-export async function getVenueDetail(slug: string): Promise<VenueDetail> {
+export async function getVenueDetail(id: number | string): Promise<VenueDetail> {
   const response = await API<ApiResponse<VenueDetail>>(
-    `/venue-detail/${encodeURIComponent(slug)}`,
+    `/venue-detail/${encodeURIComponent(String(id))}`,
     METHODS.GET,
   );
 
