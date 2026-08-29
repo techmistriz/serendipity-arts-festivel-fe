@@ -7,18 +7,18 @@ import { getServerApiData } from "@/network/server-api";
 import { VenueDetailPageContent } from "../VenueDetailPageContent";
 import type { VenueDetail } from "../types";
 
-async function getVenueDetail(slug: string): Promise<VenueDetail | null> {
-  return getServerApiData<VenueDetail>(`/venue-detail/${encodeURIComponent(slug)}`);
+async function getVenueDetail(id: string): Promise<VenueDetail | null> {
+  return getServerApiData<VenueDetail>(`/venue-detail/${encodeURIComponent(id)}`);
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const venue = await getVenueDetail(slug);
-  const pathname = `/venues/${encodeURIComponent(slug)}`;
+  const { id } = await params;
+  const venue = await getVenueDetail(id);
+  const pathname = `/venues/${encodeURIComponent(id)}`;
 
   if (!venue) {
     return createPageMetadata({
@@ -47,9 +47,9 @@ export async function generateMetadata({
   });
 }
 
-export default async function VenueDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const venue = await getVenueDetail(slug);
+export default async function VenueDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const venue = await getVenueDetail(id);
 
   if (!venue) {
     notFound();

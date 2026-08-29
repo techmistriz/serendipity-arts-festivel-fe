@@ -527,3 +527,48 @@ html.a11y-dyslexia button {
   pointer-events: none;
   z-index: 99;
 }
+
+/* ── Textured section bands ─────────────────────────────────────────── */
+
+.tex-band {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--tex-tint, transparent);
+}
+
+.tex-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image:
+    url("/punk/grain-texture.png"),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.06) 0 1px, transparent 1px 4px);
+
+  background-size:
+    420px 420px,
+    100% 100%;
+  background-repeat: repeat, repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+/* Grainy paper texture for torn-paper creatives */
+.paper-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-image:
+    url("/punk/grain-texture.png"), radial-gradient(rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0 1px, transparent 1px 3px);
+  background-size:
+    280px 280px,
+    3px 3px,
+    100% 100%;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
