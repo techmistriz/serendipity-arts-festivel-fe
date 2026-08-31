@@ -15,12 +15,16 @@ export const getCountries = async (): Promise<LocationOption[]> => {
   return response.data;
 };
 
-export const getStates = async (): Promise<LocationOption[]> => {
-  const response = await API<LocationsResponse>("/states", METHODS.GET);
+export const getStates = async (countryId: number): Promise<LocationOption[]> => {
+  const response = await API<LocationsResponse>("/states", METHODS.GET, {
+    country_id: countryId,
+  });
   return response.data;
 };
 
-export const getCities = async (): Promise<LocationOption[]> => {
-  const response = await API<LocationsResponse>("/cities", METHODS.GET);
+export const getCities = async (stateId: number): Promise<LocationOption[]> => {
+  const response = await API<LocationsResponse>("/cities", METHODS.GET, {
+    state_id: stateId,
+  });
   return response.data;
 };

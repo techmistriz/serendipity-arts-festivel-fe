@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Controller,
   type Control,
@@ -31,7 +31,7 @@ const toId = (value: unknown) => {
 };
 
 const toOptions = (items: LocationOption[]): SelectOption[] =>
-  items.map((item) => ({ label: item.name, value: item.id }));
+  items.map((item) => ({ label: item.name, value: Number(item.id) }));
 
 const findSelectedOption = (options: SelectOption[], value: unknown) => {
   const id = toId(value);
@@ -42,7 +42,10 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
   const [countries, setCountries] = useState<LocationOption[]>([]);
   const [states, setStates] = useState<LocationOption[]>([]);
   const [cities, setCities] = useState<LocationOption[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [statesForCountryId, setStatesForCountryId] = useState<number | null>(null);
+  const [citiesForStateId, setCitiesForStateId] = useState<number | null>(null);
+  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   const selectedCountry = toId(watch("country"));
   const selectedState = toId(watch("state"));
@@ -50,18 +53,18 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
   useEffect(() => {
     let active = true;
 
-    void Promise.all([getCountries(), getStates(), getCities()])
-      .then(([countryData, stateData, cityData]) => {
+    void getCountries()
+      .then((countryData) => {
         if (!active) return;
         setCountries(countryData);
-        setStates(stateData);
-        setCities(cityData);
       })
       .catch((error: unknown) => {
-        if (error instanceof Error) console.error("Unable to load location data:", error.message);
+        if (!active) return;
+        console.error("Unable to load countries:", error);
+        setLocationError("Unable to load countries. Please refresh and try again.");
       })
       .finally(() => {
-        if (active) setIsLoading(false);
+        if (active) setIsCountriesLoading(false);
       });
 
     return () => {
@@ -69,21 +72,72 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
     };
   }, []);
 
-  const filteredStates = useMemo(
-    () => states.filter((state) => state.country_id === selectedCountry),
-    [selectedCountry, states],
-  );
-  const filteredCities = useMemo(
-    () => cities.filter((city) => city.state_id === selectedState),
-    [cities, selectedState],
-  );
+  useEffect(() => {
+    let active = true;
+
+    if (selectedCountry === null) {
+      return () => {
+        active = false;
+      };
+    }
+
+    void getStates(selectedCountry)
+      .then((stateData) => {
+        if (!active) return;
+        setStates(stateData);
+        setStatesForCountryId(selectedCountry);
+        setLocationError(null);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error("Unable to load states:", error);
+        setStates([]);
+        setStatesForCountryId(selectedCountry);
+        setLocationError("Unable to load states. Please select the country again.");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    let active = true;
+
+    if (selectedState === null) {
+      return () => {
+        active = false;
+      };
+    }
+
+    void getCities(selectedState)
+      .then((cityData) => {
+        if (!active) return;
+        setCities(cityData);
+        setCitiesForStateId(selectedState);
+        setLocationError(null);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error("Unable to load cities:", error);
+        setCities([]);
+        setCitiesForStateId(selectedState);
+        setLocationError("Unable to load cities. Please select the state again.");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [selectedState]);
 
   const handleCountryChange = (option: SingleValue<SelectOption>) => {
+    setLocationError(null);
     setValue("country", option ? String(option.value) : "");
     setValue("state", "");
     setValue("city", "");
   };
   const handleStateChange = (option: SingleValue<SelectOption>) => {
+    setLocationError(null);
     setValue("state", option ? String(option.value) : "");
     setValue("city", "");
   };
@@ -91,43 +145,51 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
     setValue("city", option ? String(option.value) : "");
   };
 
+  const isStatesLoading = selectedCountry !== null && statesForCountryId !== selectedCountry;
+  const isCitiesLoading = selectedState !== null && citiesForStateId !== selectedState;
+  const stateOptions = statesForCountryId === selectedCountry ? toOptions(states) : [];
+  const cityOptions = citiesForStateId === selectedState ? toOptions(cities) : [];
+
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-      <LocationField
-        control={control}
-        name="country"
-        label="Country*"
-        options={toOptions(countries)}
-        isLoading={isLoading}
-        placeholder={isLoading ? "Loading..." : "Search country"}
-        onChange={handleCountryChange}
-      />
-      <LocationField
-        control={control}
-        name="state"
-        label="State*"
-        options={toOptions(filteredStates)}
-        isLoading={isLoading}
-        isDisabled={isLoading || selectedCountry === null}
-        placeholder={selectedCountry === null ? "Select country first" : "Search state"}
-        emptyMessage={
-          selectedCountry === null ? "Please select a country first" : "No states available"
-        }
-        onChange={handleStateChange}
-      />
-      <LocationField
-        control={control}
-        name="city"
-        label="City*"
-        options={toOptions(filteredCities)}
-        isLoading={isLoading}
-        isDisabled={isLoading || selectedState === null}
-        placeholder={selectedState === null ? "Select state first" : "Search city"}
-        emptyMessage={
-          selectedState === null ? "Please select a state first" : "No cities available"
-        }
-        onChange={handleCityChange}
-      />
+    <div>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <LocationField
+          control={control}
+          name="country"
+          label="Country*"
+          options={toOptions(countries)}
+          isLoading={isCountriesLoading}
+          placeholder={isCountriesLoading ? "Loading..." : "Search country"}
+          onChange={handleCountryChange}
+        />
+        <LocationField
+          control={control}
+          name="state"
+          label="State*"
+          options={stateOptions}
+          isLoading={isStatesLoading}
+          isDisabled={isStatesLoading || selectedCountry === null}
+          placeholder={selectedCountry === null ? "Select country first" : "Search state"}
+          emptyMessage={
+            selectedCountry === null ? "Please select a country first" : "No states available"
+          }
+          onChange={handleStateChange}
+        />
+        <LocationField
+          control={control}
+          name="city"
+          label="City*"
+          options={cityOptions}
+          isLoading={isCitiesLoading}
+          isDisabled={isCitiesLoading || selectedState === null}
+          placeholder={selectedState === null ? "Select state first" : "Search city"}
+          emptyMessage={
+            selectedState === null ? "Please select a state first" : "No cities available"
+          }
+          onChange={handleCityChange}
+        />
+      </div>
+      {locationError && <p className="mt-2 text-sm text-red-500">{locationError}</p>}
     </div>
   );
 }
