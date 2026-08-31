@@ -13,7 +13,7 @@ type VenueCardProps = {
 export function VenueCard({ venue }: VenueCardProps) {
   return (
     <Link
-      href={`/venues/${venue.id}`}
+      href={`/venues/${encodeURIComponent(venue.slug)}`}
       aria-label={`View details for ${venue.title}`}
       className="group block text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
