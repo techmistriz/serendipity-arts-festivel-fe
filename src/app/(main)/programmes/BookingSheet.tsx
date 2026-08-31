@@ -13,9 +13,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { tagStyle } from "@/lib/tag-colors";
 
 import GlitchBar from "@/components/common/GlitchBar";
-import { SidePanel } from "./SidePanel";
 import { ProgrammeCard } from "./_components/ProgrammeCard";
 import { Modal } from "./Modal";
+import { ProgrammeDisclaimerModal } from "./ProgrammeDisclaimerModal";
 
 // ===== Constants =====
 const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
@@ -134,7 +134,7 @@ export function BookingSheet({
   const [slotIndex, setSlotIndex] = useState(0);
   const [addOnIds, setAddOnIds] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [clashItem, setClashItem] = useState<ClashItem | null>(null);
   const [showRegisterGate, setShowRegisterGate] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -545,17 +545,19 @@ export function BookingSheet({
           </button>
         </div>
 
-        <div className="mt-5">
+        {/* <div className="mt-5">
           <label className="label text-muted-foreground">Discount code</label>
           <input placeholder="Enter code (optional)" className="input mt-2 max-w-xs" />
-        </div>
+        </div> */}
 
-        <button
-          onClick={() => setShowTerms(true)}
-          className="mt-6 label text-accent hover:underline underline-offset-4"
-        >
-          Read disclaimer +
-        </button>
+        {programme.disclaimer && (
+          <button
+            onClick={() => setShowDisclaimer(true)}
+            className="mt-6 label text-accent hover:underline underline-offset-4"
+          >
+            Read disclaimer +
+          </button>
+        )}
 
         <div className="mt-6 flex items-center justify-between rule-t pt-4 gap-4 flex-wrap">
           <p className="display text-3xl md:text-4xl">
@@ -720,19 +722,11 @@ export function BookingSheet({
       </div>
 
       {/* Modals */}
-      {showTerms && (
-        <SidePanel onClose={() => setShowTerms(false)} label="Disclaimer">
-          <h3 className="display uppercase text-2xl md:text-4xl leading-[0.95] tracking-[-0.02em]">
-            Please read before booking.
-          </h3>
-          <p className="mt-4 text-sm text-muted-foreground headline">
-            Read the full{" "}
-            <Link href="/terms" className="text-foreground underline underline-offset-4">
-              Terms &amp; Conditions
-            </Link>
-            .
-          </p>
-        </SidePanel>
+      {showDisclaimer && programme.disclaimer && (
+        <ProgrammeDisclaimerModal
+          disclaimer={programme.disclaimer}
+          onClose={() => setShowDisclaimer(false)}
+        />
       )}
 
       {clashItem && (

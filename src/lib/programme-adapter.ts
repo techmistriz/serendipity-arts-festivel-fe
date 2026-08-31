@@ -38,6 +38,9 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
   // Extract long description (longBlurb)
   const longBlurb = stripHtml(apiProgramme.description || "") || blurb;
 
+  // The API stores disclaimers as rich text; expose safe plain text to the booking UI.
+  const disclaimer = stripHtml(apiProgramme.disclaimer || "");
+
   return {
     id: apiProgramme.id,
     title: apiProgramme.name || "Untitled",
@@ -50,6 +53,7 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
     img: apiProgramme.program_image || imagePaths.programmeFallback,
     blurb: blurb,
     longBlurb: longBlurb,
+    disclaimer: disclaimer || undefined,
     tags: tags,
     isBookingAllowed: String(apiProgramme.is_booking_allowed) === "1" && slots.length > 0,
     newlyAdded: false,

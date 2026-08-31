@@ -201,6 +201,7 @@ export interface UIProgramme {
   img: string;
   blurb: string;
   longBlurb: string;
+  disclaimer?: string;
   tags: string[];
   isBookingAllowed: boolean;
   newlyAdded?: boolean;
