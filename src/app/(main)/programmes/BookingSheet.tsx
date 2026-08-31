@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { tagStyle } from "@/lib/tag-colors";
 
 import GlitchBar from "@/components/common/GlitchBar";
+import { SanitizedRichText } from "@/components/common/SanitizedRichText";
 import { ProgrammeCard } from "./_components/ProgrammeCard";
 import { Modal } from "./Modal";
 import { ProgrammeDisclaimerModal } from "./ProgrammeDisclaimerModal";
@@ -637,17 +638,16 @@ export function BookingSheet({
             <section className="mt-4 border border-rule p-4 md:p-5">
               <p className="label text-muted-foreground mb-3">About</p>
               <div className="max-w-prose text-base leading-relaxed headline">
-                <p
-                  className={
-                    hasLongBlurb && !isExpanded
-                      ? "line-clamp-4 text-muted-foreground"
-                      : "text-muted-foreground"
-                  }
-                >
-                  {isExpanded && hasLongBlurb
-                    ? programme.longBlurb
-                    : programme.blurb || "No description available"}
-                </p>
+                {isExpanded && hasLongBlurb ? (
+                  <SanitizedRichText
+                    html={programme.longBlurb}
+                    className="space-y-4 text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+                  />
+                ) : (
+                  <p className="line-clamp-4 text-muted-foreground">
+                    {programme.blurb || "No description available"}
+                  </p>
+                )}
                 {hasLongBlurb && (
                   <button
                     onClick={handleToggleExpanded}

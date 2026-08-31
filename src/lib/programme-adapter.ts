@@ -32,11 +32,12 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
   // Get tags (you'll need to map tag IDs to names if you have a lookup)
   const tags = apiProgramme.program_tag_ids?.map((id) => `Tag ${id}`) || [];
 
-  // Extract short description (blurb)
-  const blurb = stripHtml(apiProgramme.short_description || "");
+  // Keep the full CMS description as HTML for formatted rich-text rendering.
+  const descriptionHtml = apiProgramme.description || apiProgramme.short_description || "";
+  const longBlurb = stripHtml(descriptionHtml) ? descriptionHtml : "";
 
-  // Extract long description (longBlurb)
-  const longBlurb = stripHtml(apiProgramme.description || "") || blurb;
+  // Use a plain-text summary where rich text is not rendered (such as programme cards).
+  const blurb = stripHtml(apiProgramme.short_description || "") || stripHtml(longBlurb);
 
   // The API stores disclaimers as rich text; expose safe plain text to the booking UI.
   const disclaimer = stripHtml(apiProgramme.disclaimer || "");
