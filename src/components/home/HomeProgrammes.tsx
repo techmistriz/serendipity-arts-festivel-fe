@@ -89,7 +89,15 @@ export default function Programmes() {
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-14">
               {sortedProgrammes.slice(0, 8).map((programme, index) => (
-                <Link key={programme.id} href={`/programmes`} className="group block">
+                <Link
+                  key={programme.id}
+                  href={
+                    programme.slug
+                      ? `/programmes/${encodeURIComponent(programme.slug)}`
+                      : "/programmes"
+                  }
+                  className="group block"
+                >
                   <GlitchBorder
                     seed={index + 5}
                     thickness={1}
