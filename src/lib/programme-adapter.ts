@@ -45,7 +45,8 @@ export function mapApiProgrammeToUi(
 
   const blurb = stripHtml(apiProgramme.short_description || "") || stripHtml(longBlurb);
 
-  const disclaimer = stripHtml(apiProgramme.disclaimer || "");
+  // Preserve CMS disclaimer HTML; it is sanitized when rendered in the booking UI.
+  const disclaimer = apiProgramme.disclaimer || "";
 
   return {
     id: apiProgramme.id,
