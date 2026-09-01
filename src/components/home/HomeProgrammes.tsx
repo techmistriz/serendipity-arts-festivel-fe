@@ -20,7 +20,7 @@ export default function Programmes() {
   return (
     <>
       <section
-        className="tex-band container-editorial mt-20 md:mt-32 py-12 md:py-20"
+        className="removed-tex-band container-editorial mt-20 md:mt-32 py-12 md:py-20"
         style={{ ["--tex-tint" as string]: "#CEDC2933" }}
       >
         {/* Header */}

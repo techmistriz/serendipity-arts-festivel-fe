@@ -20,7 +20,7 @@ export function CuratorsSection({ limit = 4 }: CuratorsSectionProps) {
 
   return (
     <section
-      className="tex-band container-editorial mt-20 md:mt-32 py-12 md:py-20"
+      className="removed-tex-band container-editorial mt-20 md:mt-32 py-12 md:py-20"
       style={{ ["--tex-tint" as string]: "#B39ECC33" }}
     >
       <HomeSectionHeader title="Curators">

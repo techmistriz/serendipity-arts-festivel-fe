@@ -42,7 +42,7 @@ export function VenuesSection() {
 
   return (
     <section
-      className="tex-band container-editorial mt-20 md:mt-32 py-12 md:py-20"
+      className="removed-tex-band container-editorial mt-20 md:mt-32 py-12 md:py-20"
       style={{ [" " as string]: "#62C6C233" }}
     >
       {/* HEADER */}
