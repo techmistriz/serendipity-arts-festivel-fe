@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { BookingSheet } from "../BookingSheet";
 import { DetailPageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { mapApiProgrammeToUi, mapApiProgrammesToUi } from "@/lib/programme-adapter";
-import { useProgramme } from "@/hooks/useProgrammeDetail";
+import { useProgrammeWithDetails } from "@/hooks/useProgrammeDetail";
 import { useProgrammes } from "@/hooks/useProgrammes";
 
 type ProgrammeIntent = "about" | "cart";
@@ -26,12 +26,20 @@ export function ProgrammeDetailPageClient({
     loading: isProgrammeLoading,
     error,
     refetch,
-  } = useProgramme(slug);
+    fullResponse,
+  } = useProgrammeWithDetails(slug);
   const { programmes: apiProgrammes } = useProgrammes({ limit: 1000 });
 
   const programme = useMemo(
-    () => (apiProgramme ? mapApiProgrammeToUi(apiProgramme) : null),
-    [apiProgramme],
+    () =>
+      apiProgramme
+        ? mapApiProgrammeToUi(
+            apiProgramme,
+            fullResponse?.data?.curators ?? [],
+            fullResponse?.data?.program_tags ?? [], // ← ADD THIS!
+          )
+        : null,
+    [apiProgramme, fullResponse],
   );
 
   const allProgrammes = useMemo(() => {

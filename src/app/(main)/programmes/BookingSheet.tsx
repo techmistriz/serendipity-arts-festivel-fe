@@ -10,7 +10,7 @@ import { imagePaths } from "@/config/images";
 import { useCart } from "@/hooks/use-cart";
 import { getErrorMessage } from "@/utils/error";
 import { useAuth } from "@/hooks/use-auth";
-import { tagStyle } from "@/lib/tag-colors";
+// import { priceStyle } from "@/lib/tag-colors";
 
 import GlitchBar from "@/components/common/GlitchBar";
 import { SanitizedRichText } from "@/components/common/SanitizedRichText";
@@ -20,7 +20,7 @@ import { ProgrammeDisclaimerModal } from "./ProgrammeDisclaimerModal";
 
 // ===== Constants =====
 const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
-const DEFAULT_DURATION_MIN = 90;
+// const DEFAULT_DURATION_MIN = 90;
 const MAX_TICKETS = 5;
 const VIP_MAX_TICKETS = 5;
 const RELATED_LIMIT = 3;
@@ -36,23 +36,11 @@ const formatTime = (time: string) => {
   return `${hh}:${m.toString().padStart(2, "0")} ${period}`;
 };
 
-const formatTimeRange = (
-  slot: { day: number; time: string },
-  durationMin = DEFAULT_DURATION_MIN,
-) => {
-  const [h, m] = slot.time.split(":").map(Number);
-  const total = h * 60 + m + durationMin;
-  const nh = Math.floor(total / 60) % 24;
-  const nm = total % 60;
-  const end = `${nh.toString().padStart(2, "0")}:${nm.toString().padStart(2, "0")}`;
-  const [eh] = end.split(":").map(Number);
-  const period = eh >= 12 ? "PM" : "AM";
-  const startH = h % 12 === 0 ? 12 : h % 12;
-  const endH = eh % 12 === 0 ? 12 : eh % 12;
-  return `${startH}:${m.toString().padStart(2, "0")} – ${endH}:${nm.toString().padStart(2, "0")} ${period}`;
+const formatTimeRange = (slot: { day: number; fromTime: string; toTime: string }) => {
+  return `${formatTime(slot.fromTime)} – ${formatTime(slot.toTime)}`;
 };
 
-const formatSlot = (slot: { day: number; time: string }) =>
+const formatSlot = (slot: { day: number; fromTime: string; toTime: string }) =>
   `${slot.day} Dec · ${formatTimeRange(slot)}`;
 
 const getDateLabel = (programme: UIProgramme) => {
@@ -129,6 +117,9 @@ export function BookingSheet({
   const { add, items, bookings, isVip, loading: cartLoading } = useCart();
   const isPage = variant === "page";
   const programmeReturnPath = returnPath ?? `/programmes?p=${programme.id}`;
+
+  console.log("Tags in BookingSheet:", programme.tags);
+  console.log("Tags length:", programme.tags?.length);
 
   // State
   const [quantity, setQuantity] = useState(1);
@@ -235,7 +226,7 @@ export function BookingSheet({
 
     const conflictingItem = [...bookings, ...items].find((item) => {
       if (item.programmeDetailId === selectedDetailId) return false;
-      return item.date === chosenDate && item.time === chosenSlot.time;
+      return item.date === chosenDate && item.time === chosenSlot.fromTime;
     });
 
     return conflictingItem ?? null;
@@ -259,7 +250,7 @@ export function BookingSheet({
       for (const addOn of chosenAddOns) {
         const addOnProgramme = allProgrammes.find((item) => String(item.id) === addOn.id);
         const addOnDetailId = addOnProgramme?.slots.find(
-          (slot) => slot.day === addOn.day && slot.time === addOn.time,
+          (slot) => slot.day === addOn.day && slot.fromTime === addOn.time,
         )?.detailId;
         const addOnProgrammeId = Number(addOnProgramme?.id);
 
@@ -345,6 +336,11 @@ export function BookingSheet({
     [onOpen],
   );
 
+  // const priceLabel = useMemo(() => {
+  //   if (isVip) return "Guest";
+  //   return programme.price === 0 ? "Free" : `₹${programme.price || 0}`;
+  // }, [isVip, programme.price]);
+
   // ===== Render helpers =====
   const renderScheduleSelector = () => {
     if (!programme.slots?.length) {
@@ -364,7 +360,7 @@ export function BookingSheet({
         <div className="mt-3 mb-6 flex flex-wrap gap-2">
           {programme.slots.map((slot, index) => (
             <button
-              key={`${slot.day}-${slot.time}`}
+              key={`slot-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
               onClick={() => setSlotIndex(index)}
               className={`headline text-xs uppercase tracking-[0.06em] border px-3 py-2 transition-colors ${
                 slotIndex === index
@@ -460,8 +456,7 @@ export function BookingSheet({
                 <div className="flex-1 min-w-0">
                   <p className="headline text-sm leading-tight">{addOn.title}</p>
                   <p className="mt-1 headline text-xs text-muted-foreground">
-                    {addOn.day} Dec · {formatTimeRange({ day: addOn.day, time: addOn.time })} ·{" "}
-                    {addOn.category}
+                    {addOn.day} Dec · {formatTime(addOn.time)} · {addOn.category}
                   </p>
                   {addOn.blurb && (
                     <p className="mt-2 headline text-xs text-muted-foreground">{addOn.blurb}</p>
@@ -634,35 +629,14 @@ export function BookingSheet({
               {programme.title || "Untitled"}
             </h2>
 
-            {/* About */}
-            <section className="mt-4 border border-rule p-4 md:p-5">
-              <p className="label text-muted-foreground mb-3">About</p>
-              <div className="max-w-prose text-base leading-relaxed headline">
-                {isExpanded && hasLongBlurb ? (
-                  <SanitizedRichText
-                    html={programme.longBlurb}
-                    className="space-y-4 text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
-                  />
-                ) : (
-                  <p className="line-clamp-4 text-muted-foreground">
-                    {programme.blurb || "No description available"}
-                  </p>
-                )}
-                {hasLongBlurb && (
-                  <button
-                    onClick={handleToggleExpanded}
-                    className="mt-3 label text-accent hover:underline underline-offset-4"
-                  >
-                    {isExpanded ? "Read less −" : "Read more +"}
-                  </button>
-                )}
-              </div>
-            </section>
-
             {/* Details Grid */}
             <dl className="mt-6 md:mt-8 grid grid-cols-2 gap-y-3 text-sm rule-t rule-b py-4 headline">
               <dt className="label text-muted-foreground">Curator</dt>
-              <dd>{programme.curator || "TBA"}</dd>
+              <dd>
+                {programme.curators?.length
+                  ? programme.curators.map((curator) => curator.name).join(", ")
+                  : "TBA"}
+              </dd>
               <dt className="label text-muted-foreground">Date</dt>
               <dd>{getDateLabel(programme)}</dd>
               <dt className="label text-muted-foreground">Time</dt>
@@ -679,13 +653,54 @@ export function BookingSheet({
               </dd>
             </dl>
 
+            {/* About */}
+            <section className="mt-4 border border-rule p-4 md:p-5">
+              <p className="label text-muted-foreground mb-3">About</p>
+
+              <div className="max-w-prose text-base leading-relaxed headline">
+                <p className="text-muted-foreground">
+                  {programme.blurb || "No description available"}
+                </p>
+
+                {isExpanded && hasLongBlurb && (
+                  <SanitizedRichText
+                    html={programme.longBlurb}
+                    className="mt-4 space-y-4 text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+                  />
+                )}
+
+                {hasLongBlurb && (
+                  <button
+                    onClick={handleToggleExpanded}
+                    className="mt-3 label text-accent hover:underline underline-offset-4"
+                  >
+                    {isExpanded ? "Read less −" : "Read more +"}
+                  </button>
+                )}
+              </div>
+            </section>
+
             {/* Tags */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {(programme.tags || []).map((tag) => (
-                <span key={tag} className="label px-2 py-1" style={tagStyle(tag)}>
-                  {tag}
+            <div className="mt-4 w-full flex flex-wrap items-start gap-2">
+              {programme.tags?.map((tag) => (
+                <span
+                  key={tag.id}
+                  className="label inline-block shrink-0 px-2 py-1 whitespace-normal"
+                  style={{
+                    background: tag.background_color,
+                    color: tag.font_color,
+                  }}
+                >
+                  {tag.name}
                 </span>
               ))}
+
+              {/* <span
+                className="label inline-block shrink-0 px-2 py-1"
+                style={priceStyle(priceLabel)}
+              >
+                {priceLabel}
+              </span> */}
             </div>
 
             {/* Booking Section */}

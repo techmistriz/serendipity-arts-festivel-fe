@@ -170,7 +170,9 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                     />
                     <h3 className="mt-2 headline font-semibold text-sm leading-tight">{p.title}</h3>
                     <p className="text-[11px] text-muted-foreground headline">
-                      {p.slots[0] ? `Day ${p.slots[0].day} · ${p.slots[0].time}` : "Schedule TBA"}
+                      {p.slots[0]
+                        ? `Day ${p.slots[0].day} · ${p.slots[0].fromTime} - ${p.slots[0].toTime}`
+                        : "Schedule TBA"}
                     </p>
                   </Link>
                 ))}

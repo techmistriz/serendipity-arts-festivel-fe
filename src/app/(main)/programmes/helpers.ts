@@ -33,7 +33,9 @@ export function filterProgrammes(
 
       // Tags filter
       if (filters.tags.length > 0) {
-        const hasAllTags = filters.tags.every((tag) => programme.tags?.includes(tag));
+        const hasAllTags = filters.tags.every((tag) =>
+          programme.tags?.some((programmeTag) => programmeTag.name === tag),
+        );
         if (!hasAllTags) {
           return false;
         }
@@ -97,7 +99,7 @@ export function getUniqueTags(programmes: UIProgramme[]): string[] {
   const tags = new Set<string>();
   programmes.forEach((p) => {
     if (p.tags && Array.isArray(p.tags)) {
-      p.tags.forEach((tag) => tags.add(tag));
+      p.tags.forEach((tag) => tags.add(tag.name));
     }
   });
 

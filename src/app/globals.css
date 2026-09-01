@@ -572,3 +572,27 @@ html.a11y-dyslexia button {
   mix-blend-mode: overlay;
   opacity: 0.6;
 }
+
+.schedule-marquee-track {
+  display: inline-flex;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Pause animation on hover to allow easy reading */
+.schedule-marquee-track.is-animating {
+  animation: schedule-marquee var(--marquee-duration, 16s) linear infinite;
+}
+
+.schedule-marquee-track.is-animating:hover {
+  animation-play-state: paused;
+}
+
+@keyframes schedule-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

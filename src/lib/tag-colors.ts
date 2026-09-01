@@ -18,3 +18,14 @@ export function priceStyle(priceLabel: string): TagStyle {
 export function tagStyle(tag: string): TagStyle {
   return TAG_COLOR[tag] ?? DEFAULT_TAG_STYLE;
 }
+
+export function disciplineStyle(discipline: {
+  name: string;
+  font_color: string;
+  background_color: string;
+}): TagStyle {
+  return {
+    color: discipline.font_color,
+    background: discipline.background_color,
+  };
+}

@@ -18,7 +18,7 @@ export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
   const directionsUrl = getSafeExternalUrl(venue.google_map_url);
 
   return (
-    <div className="container-editorial relative py-10 pb-24 md:pt-16 md:pb-32">
+    <div className="container-editorial relative py-10 pb-24 md:pb-32">
       {/* Left glitch edge */}
       <GlitchBar
         seed={17}

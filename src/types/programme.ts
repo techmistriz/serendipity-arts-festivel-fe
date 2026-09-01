@@ -1,4 +1,5 @@
 // API Response Types
+
 export interface ProgrammeCategory {
   id: number;
   name: string;
@@ -22,21 +23,19 @@ export interface Venue {
   id: number;
   name: string;
   title?: string;
-  // Add other venue fields as needed
 }
 
 export interface SubVenue {
   id: number;
   name: string;
-  // Add other sub-venue fields as needed
 }
 
 export interface ProgramDetail {
   id: number;
   program_id: number;
-  event_date: string; // "14-12-2025"
-  from_time: string; // "11:00:00"
-  to_time: string; // "12:00:00"
+  event_date: string;
+  from_time: string;
+  to_time: string;
   total_seats: number;
   vip_seats: number;
   venue_id: number;
@@ -112,7 +111,7 @@ export interface Programme {
   is_booking_allowed: number;
   ordering: number;
   status: number;
-  amount: string | null; // "499" or null
+  amount: string | null;
   event_date: string | null;
   from_time: string | null;
   to_time: string | null;
@@ -129,15 +128,23 @@ export interface Programme {
   webhook_response: string;
   deleted_at: string | null;
   deleted_by: string | null;
+
   category?: ProgrammeCategory;
   discipline?: ProgrammeDiscipline | null;
   program_city?: ProgrammeCity;
   program_details?: ProgramDetail[];
+
+  // IMPORTANT:
+  // List API response mein bhi program_tags aa sakta hai,
+  // isliye yahan optional rakha hai.
+  program_tags?: ProgramTag[];
 }
 
 // API Response Types
+
 export interface ProgrammesListResponse {
   status: boolean;
+
   data: {
     current_page: number;
     data: Programme[];
@@ -145,11 +152,13 @@ export interface ProgrammesListResponse {
     from: number | null;
     last_page: number;
     last_page_url: string;
+
     links: {
       url: string | null;
       label: string;
       active: boolean;
     }[];
+
     next_page_url: string | null;
     path: string;
     per_page: number;
@@ -157,6 +166,7 @@ export interface ProgrammesListResponse {
     to: number | null;
     total: number;
   };
+
   meta: {
     paging: {
       current_page: number;
@@ -165,11 +175,13 @@ export interface ProgrammesListResponse {
       last_page: number;
     };
   };
+
   message: string;
 }
 
 export interface ProgramDetailResponse {
   status: boolean;
+
   data: {
     program: Programme;
     program_tags: ProgramTag[];
@@ -177,6 +189,7 @@ export interface ProgramDetailResponse {
     artists: ProgrammeArtist[];
     sponsors: ProgrammeSponsor[];
     related_programs: Programme[];
+
     booking: {
       booking_allowed: number;
       booking_type: string | null;
@@ -184,27 +197,62 @@ export interface ProgramDetailResponse {
       amount: string | null;
     };
   };
+
   meta: unknown[];
   message: string;
 }
 
-// UI Programme Type (for components)
+// UI Programme Type
+
+export interface UIProgrammeTag {
+  id: number;
+  name: string;
+  backgroundColor: string;
+  fontColor: string;
+}
+
+export interface UITag {
+  name: string;
+  font_color: string;
+  background_color: string;
+}
+
 export interface UIProgramme {
+  // program_tags: any;
   id: string | number;
   title: string;
   slug: string;
   category: string;
+
+  discipline?: {
+    name: string;
+    font_color: string;
+    background_color: string;
+  };
+
   curator: string;
-  slots: { detailId?: number; day: number; time: string }[];
+  curators: ProgrammePerson[];
+
+  slots: {
+    detailId?: number;
+    day: number;
+    fromTime: string;
+    toTime: string;
+  }[];
+
   venue: string;
   price: number;
   img: string;
   blurb: string;
   longBlurb: string;
   disclaimer?: string;
-  tags: string[];
+
+  // API ke complete program tags
+  tags: ProgramTag[];
+
   isBookingAllowed: boolean;
   newlyAdded?: boolean;
+
   includes?: {
     title: string;
     time: string;
@@ -212,6 +260,7 @@ export interface UIProgramme {
     note?: string;
     refId?: string;
   }[];
+
   addOns?: {
     id: string;
     title: string;
@@ -224,6 +273,7 @@ export interface UIProgramme {
 }
 
 // Filter Types
+
 export type ProgrammeFilters = {
   category: string;
   day: number | null;
