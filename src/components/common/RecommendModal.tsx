@@ -61,6 +61,13 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
   const toggle = (id: string) =>
     setPicks((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
+  const showRecommendations = () => {
+    setLoading(true);
+    setError(null);
+    setRecs([]);
+    setShown(true);
+  };
+
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-3 md:p-8">
       <div className="absolute inset-0 bg-foreground/70" onClick={onClose} aria-hidden />
@@ -104,7 +111,7 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                 </div>
               </div>
               <button
-                onClick={() => setShown(true)}
+                onClick={showRecommendations}
                 disabled={!picks.length}
                 className="headline font-semibold uppercase text-base bg-foreground text-background px-6 py-3 disabled:opacity-40"
               >
@@ -131,10 +138,14 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                 </button>
               </div>
               {error && <p className="mt-3 text-sm text-muted-foreground">{error}</p>}
-              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div
+                className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4"
+                aria-busy={loading}
+                aria-live="polite"
+              >
                 {loading &&
-                  Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="space-y-2 animate-pulse">
+                  Array.from({ length: 8 }).map((_, index) => (
+                    <div key={index} className="space-y-2 animate-pulse" aria-hidden="true">
                       <div className="aspect-square bg-muted" />
                       <div className="h-4 w-3/4 bg-muted" />
                       <div className="h-3 w-1/2 bg-muted" />
