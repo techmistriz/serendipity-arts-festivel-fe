@@ -10,7 +10,7 @@ import { imagePaths } from "@/config/images";
 import { useCart } from "@/hooks/use-cart";
 import { getErrorMessage } from "@/utils/error";
 import { useAuth } from "@/hooks/use-auth";
-import { tagStyle } from "@/lib/tag-colors";
+import { categoryStyle, disciplineStyle, priceStyle, tagStyle } from "@/lib/tag-colors";
 
 import GlitchBar from "@/components/common/GlitchBar";
 import { SanitizedRichText } from "@/components/common/SanitizedRichText";
@@ -129,6 +129,8 @@ export function BookingSheet({
   const { add, items, bookings, isVip, loading: cartLoading } = useCart();
   const isPage = variant === "page";
   const programmeReturnPath = returnPath ?? `/programmes?p=${programme.id}`;
+
+  console.log(programme);
 
   // State
   const [quantity, setQuantity] = useState(1);
@@ -344,6 +346,11 @@ export function BookingSheet({
     },
     [onOpen],
   );
+
+  const priceLabel = useMemo(() => {
+    if (isVip) return "Guest";
+    return programme.price === 0 ? "Free" : `₹${programme.price || 0}`;
+  }, [isVip, programme.price]);
 
   // ===== Render helpers =====
   const renderScheduleSelector = () => {
@@ -634,35 +641,14 @@ export function BookingSheet({
               {programme.title || "Untitled"}
             </h2>
 
-            {/* About */}
-            <section className="mt-4 border border-rule p-4 md:p-5">
-              <p className="label text-muted-foreground mb-3">About</p>
-              <div className="max-w-prose text-base leading-relaxed headline">
-                {isExpanded && hasLongBlurb ? (
-                  <SanitizedRichText
-                    html={programme.longBlurb}
-                    className="space-y-4 text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
-                  />
-                ) : (
-                  <p className="line-clamp-4 text-muted-foreground">
-                    {programme.blurb || "No description available"}
-                  </p>
-                )}
-                {hasLongBlurb && (
-                  <button
-                    onClick={handleToggleExpanded}
-                    className="mt-3 label text-accent hover:underline underline-offset-4"
-                  >
-                    {isExpanded ? "Read less −" : "Read more +"}
-                  </button>
-                )}
-              </div>
-            </section>
-
             {/* Details Grid */}
             <dl className="mt-6 md:mt-8 grid grid-cols-2 gap-y-3 text-sm rule-t rule-b py-4 headline">
               <dt className="label text-muted-foreground">Curator</dt>
-              <dd>{programme.curator || "TBA"}</dd>
+              <dd>
+                {programme.curators?.length
+                  ? programme.curators.map((curator) => curator.name).join(", ")
+                  : "TBA"}
+              </dd>
               <dt className="label text-muted-foreground">Date</dt>
               <dd>{getDateLabel(programme)}</dd>
               <dt className="label text-muted-foreground">Time</dt>
@@ -679,13 +665,64 @@ export function BookingSheet({
               </dd>
             </dl>
 
+            {/* About */}
+            <section className="mt-4 border border-rule p-4 md:p-5">
+              <p className="label text-muted-foreground mb-3">About</p>
+
+              <div className="max-w-prose text-base leading-relaxed headline">
+                <p className="text-muted-foreground">
+                  {programme.blurb || "No description available"}
+                </p>
+
+                {isExpanded && hasLongBlurb && (
+                  <SanitizedRichText
+                    html={programme.longBlurb}
+                    className="mt-4 space-y-4 text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+                  />
+                )}
+
+                {hasLongBlurb && (
+                  <button
+                    onClick={handleToggleExpanded}
+                    className="mt-3 label text-accent hover:underline underline-offset-4"
+                  >
+                    {isExpanded ? "Read less −" : "Read more +"}
+                  </button>
+                )}
+              </div>
+            </section>
+
             {/* Tags */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {(programme.tags || []).map((tag) => (
-                <span key={tag} className="label px-2 py-1" style={tagStyle(tag)}>
-                  {tag}
+              {/* First Tag */}
+              {programme.tags?.[0] && (
+                <span
+                  className="label max-w-full break-words px-2 py-1"
+                  style={tagStyle(programme.tags[0])}
+                >
+                  {programme.tags[0]}
                 </span>
-              ))}
+              )}
+              {/* Price */}
+              <span className="label px-2 py-1" style={priceStyle(priceLabel)}>
+                {priceLabel}
+              </span>
+              {/* Discipline */}
+              {programme.discipline && (
+                <span
+                  className="label max-w-full break-words px-2 py-1"
+                  style={disciplineStyle(programme.discipline)}
+                >
+                  {programme.discipline.name}
+                </span>
+              )}
+              {/* Category */}
+              <span
+                className="label max-w-full break-words px-2 py-1"
+                style={categoryStyle(programme.category || "Uncategorized")}
+              >
+                {programme.category || "Uncategorized"}
+              </span>
             </div>
 
             {/* Booking Section */}

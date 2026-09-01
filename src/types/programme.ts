@@ -194,8 +194,16 @@ export interface UIProgramme {
   title: string;
   slug: string;
   category: string;
+  discipline?: {
+    name: string;
+    font_color: string;
+    background_color: string;
+  };
   curator: string;
+  curators: ProgrammePerson[];
+
   slots: { detailId?: number; day: number; time: string }[];
+
   venue: string;
   price: number;
   img: string;
@@ -204,7 +212,9 @@ export interface UIProgramme {
   disclaimer?: string;
   tags: string[];
   isBookingAllowed: boolean;
+
   newlyAdded?: boolean;
+
   includes?: {
     title: string;
     time: string;
@@ -212,6 +222,7 @@ export interface UIProgramme {
     note?: string;
     refId?: string;
   }[];
+
   addOns?: {
     id: string;
     title: string;

@@ -1,9 +1,17 @@
 import { imagePaths } from "@/config/images";
-import type { Programme as ApiProgramme, UIProgramme } from "@/types/programme";
+import type {
+  Programme as ApiProgramme,
+  Programme,
+  ProgrammePerson,
+  UIProgramme,
+} from "@/types/programme";
 
 // Map API programme to UI programme format
 
-export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
+export function mapApiProgrammeToUi(
+  apiProgramme: ApiProgramme,
+  curators: ProgrammePerson[] = [],
+): UIProgramme {
   // Get the first program detail
   const firstDetail = apiProgramme.program_details?.[0];
 
@@ -17,14 +25,14 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
   // Get category name
   const category = apiProgramme.category?.name || "Uncategorized";
 
+  // Get discipline name
+  // const discipline = apiProgramme.discipline?.name || "";
+
   // Get venue name (from program_details or fallback)
   const venue = firstDetail?.venue?.title || firstDetail?.venue?.name || "Venue TBA";
 
   // Get curator (from curator_ids or fallback)
-  const curator =
-    apiProgramme.curator_ids && apiProgramme.curator_ids.length > 0
-      ? `Curator ${apiProgramme.curator_ids.join(", ")}`
-      : "TBA";
+  const curator = curators.length > 0 ? curators.map((item) => item.name).join(", ") : "TBA";
 
   // Parse price from amount
   const price = apiProgramme.amount ? parseFloat(apiProgramme.amount) : 0;
@@ -48,6 +56,14 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
     slug: apiProgramme.slug || "",
     category: category,
     curator: curator,
+    discipline: apiProgramme.discipline
+      ? {
+          name: apiProgramme.discipline.name,
+          font_color: apiProgramme.discipline.font_color,
+          background_color: apiProgramme.discipline.background_color,
+        }
+      : undefined,
+    curators: curators,
     slots: slots,
     venue: venue,
     price: price,
@@ -63,13 +79,11 @@ export function mapApiProgrammeToUi(apiProgramme: ApiProgramme): UIProgramme {
 
 // Map multiple API programmes to UI format
 
-export function mapApiProgrammesToUi(apiProgrammes: ApiProgramme[]): UIProgramme[] {
-  if (!apiProgrammes || !Array.isArray(apiProgrammes)) {
-    console.warn("[Adapter] No programmes to map");
-    return [];
-  }
-
-  return apiProgrammes.map(mapApiProgrammeToUi);
+export function mapApiProgrammesToUi(
+  apiProgrammes: Programme[],
+  curators?: ProgrammePerson[],
+): UIProgramme[] {
+  return apiProgrammes.map((programme) => mapApiProgrammeToUi(programme, curators));
 }
 
 // Extract day from date string (DD-MM-YYYY)
