@@ -202,7 +202,12 @@ export interface UIProgramme {
   curator: string;
   curators: ProgrammePerson[];
 
-  slots: { detailId?: number; day: number; time: string }[];
+  slots: {
+    detailId?: number;
+    day: number;
+    fromTime: string;
+    toTime: string;
+  }[];
 
   venue: string;
   price: number;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
@@ -19,13 +19,17 @@ type ProgrammeCardProps = {
 
 const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
 const BLUR_DATA_URL =
-  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAA8A/9k=";
+  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAA8A/9k=";
 
 export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps) {
   const { isVip } = useCart();
   const { isSaved, toggleProgramme, loading: wishlistLoading } = useWishlist();
   const [imageError, setImageError] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+
+  // Overflow state
+  const scheduleRef = useRef<HTMLDivElement>(null);
+  const [hasOverflow, setHasOverflow] = useState(false);
 
   // Memoized values
   const isSavedProgramme = useMemo(() => isSaved(programme.id), [isSaved, programme.id]);
@@ -42,17 +46,37 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
   // Helper functions
   const formatTime = useCallback((time: string) => {
     if (!time) return "TBA";
+
     const [h, m] = time.split(":").map(Number);
     const period = h >= 12 ? "PM" : "AM";
     const hh = h % 12 === 0 ? 12 : h % 12;
+
     return `${hh}:${m.toString().padStart(2, "0")} ${period}`;
   }, []);
 
-  const getDateTimeLabel = useCallback(() => {
-    if (!programme.slots?.length) return "Schedule TBA";
-    const slot = programme.slots[0];
-    return `${slot.day} Dec · ${formatTime(slot.time)}`;
-  }, [programme.slots, formatTime]);
+  // Detect overflow dynamically
+  useEffect(() => {
+    const element = scheduleRef.current;
+    if (!element) return;
+
+    const checkOverflow = () => {
+      // Check if total content width exceeds visible container width
+      setHasOverflow(element.scrollWidth > element.clientWidth);
+    };
+
+    checkOverflow();
+
+    const resizeObserver = new ResizeObserver(checkOverflow);
+    resizeObserver.observe(element);
+
+    return () => resizeObserver.disconnect();
+  }, [programme.slots]);
+
+  // Dynamic animation duration so longer lists maintain a uniform, readable speed
+  const marqueeDuration = useMemo(() => {
+    const count = programme.slots?.length || 0;
+    return Math.max(25, count * 8); // minimum 12s duration
+  }, [programme.slots]);
 
   // Event handlers
   const handleImageError = useCallback(() => {
@@ -92,7 +116,6 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
     [onAdd],
   );
 
-  // Validation
   if (!programme?.id) {
     if (process.env.NODE_ENV === "development") {
       console.warn("[ProgrammeCard] Invalid programme data:", programme);
@@ -161,9 +184,51 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
             {programme.title || "Untitled"}
           </h3>
 
-          <p className="headline mt-1 text-[11px] text-muted-foreground md:text-xs">
-            {getDateTimeLabel()} · {programme.venue || "Venue TBA"}
-          </p>
+          {/* Schedule Section */}
+          <div
+            ref={scheduleRef}
+            className="headline mt-1 overflow-hidden whitespace-nowrap text-[11px] text-muted-foreground md:text-xs"
+          >
+            {programme.slots?.length ? (
+              <div
+                className={`schedule-marquee-track ${hasOverflow ? "is-animating" : ""}`}
+                style={{ "--marquee-duration": `${marqueeDuration}s` } as React.CSSProperties}
+              >
+                {/* Primary set of slots */}
+                {programme.slots.map((slot, index) => (
+                  <span
+                    key={`slot-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
+                    className="inline-block shrink-0 mr-4"
+                  >
+                    {slot.day} Dec · {formatTime(slot.fromTime)} - {formatTime(slot.toTime)}
+                  </span>
+                ))}
+
+                {hasOverflow &&
+                  programme.slots.map((slot, index) => (
+                    <span
+                      key={`dup-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
+                      className="inline-block shrink-0 mr-4"
+                    >
+                      {slot.day} Dec · {formatTime(slot.fromTime)} - {formatTime(slot.toTime)}
+                    </span>
+                  ))}
+
+                {/* Duplicated set for seamless loop when overflow is detected */}
+                {hasOverflow &&
+                  programme.slots.map((slot, index) => (
+                    <span
+                      key={`dup-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
+                      className="inline-block shrink-0 mr-4"
+                    >
+                      {slot.day} Dec · {formatTime(slot.fromTime)} - {formatTime(slot.toTime)}
+                    </span>
+                  ))}
+              </div>
+            ) : (
+              <span>Schedule TBA</span>
+            )}
+          </div>
 
           <div className="mt-2 flex flex-wrap gap-1.5">
             <span

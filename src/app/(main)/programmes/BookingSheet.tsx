@@ -20,7 +20,7 @@ import { ProgrammeDisclaimerModal } from "./ProgrammeDisclaimerModal";
 
 // ===== Constants =====
 const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
-const DEFAULT_DURATION_MIN = 90;
+// const DEFAULT_DURATION_MIN = 90;
 const MAX_TICKETS = 5;
 const VIP_MAX_TICKETS = 5;
 const RELATED_LIMIT = 3;
@@ -36,23 +36,11 @@ const formatTime = (time: string) => {
   return `${hh}:${m.toString().padStart(2, "0")} ${period}`;
 };
 
-const formatTimeRange = (
-  slot: { day: number; time: string },
-  durationMin = DEFAULT_DURATION_MIN,
-) => {
-  const [h, m] = slot.time.split(":").map(Number);
-  const total = h * 60 + m + durationMin;
-  const nh = Math.floor(total / 60) % 24;
-  const nm = total % 60;
-  const end = `${nh.toString().padStart(2, "0")}:${nm.toString().padStart(2, "0")}`;
-  const [eh] = end.split(":").map(Number);
-  const period = eh >= 12 ? "PM" : "AM";
-  const startH = h % 12 === 0 ? 12 : h % 12;
-  const endH = eh % 12 === 0 ? 12 : eh % 12;
-  return `${startH}:${m.toString().padStart(2, "0")} – ${endH}:${nm.toString().padStart(2, "0")} ${period}`;
+const formatTimeRange = (slot: { day: number; fromTime: string; toTime: string }) => {
+  return `${formatTime(slot.fromTime)} – ${formatTime(slot.toTime)}`;
 };
 
-const formatSlot = (slot: { day: number; time: string }) =>
+const formatSlot = (slot: { day: number; fromTime: string; toTime: string }) =>
   `${slot.day} Dec · ${formatTimeRange(slot)}`;
 
 const getDateLabel = (programme: UIProgramme) => {
@@ -237,7 +225,7 @@ export function BookingSheet({
 
     const conflictingItem = [...bookings, ...items].find((item) => {
       if (item.programmeDetailId === selectedDetailId) return false;
-      return item.date === chosenDate && item.time === chosenSlot.time;
+      return item.date === chosenDate && item.time === chosenSlot.fromTime;
     });
 
     return conflictingItem ?? null;
@@ -261,7 +249,7 @@ export function BookingSheet({
       for (const addOn of chosenAddOns) {
         const addOnProgramme = allProgrammes.find((item) => String(item.id) === addOn.id);
         const addOnDetailId = addOnProgramme?.slots.find(
-          (slot) => slot.day === addOn.day && slot.time === addOn.time,
+          (slot) => slot.day === addOn.day && slot.fromTime === addOn.time,
         )?.detailId;
         const addOnProgrammeId = Number(addOnProgramme?.id);
 
@@ -371,7 +359,7 @@ export function BookingSheet({
         <div className="mt-3 mb-6 flex flex-wrap gap-2">
           {programme.slots.map((slot, index) => (
             <button
-              key={`${slot.day}-${slot.time}`}
+              key={`${slot.day}-${slot.fromTime}-${slot.toTime}`}
               onClick={() => setSlotIndex(index)}
               className={`headline text-xs uppercase tracking-[0.06em] border px-3 py-2 transition-colors ${
                 slotIndex === index
@@ -467,8 +455,7 @@ export function BookingSheet({
                 <div className="flex-1 min-w-0">
                   <p className="headline text-sm leading-tight">{addOn.title}</p>
                   <p className="mt-1 headline text-xs text-muted-foreground">
-                    {addOn.day} Dec · {formatTimeRange({ day: addOn.day, time: addOn.time })} ·{" "}
-                    {addOn.category}
+                    {addOn.day} Dec · {formatTime(addOn.time)} · {addOn.category}
                   </p>
                   {addOn.blurb && (
                     <p className="mt-2 headline text-xs text-muted-foreground">{addOn.blurb}</p>

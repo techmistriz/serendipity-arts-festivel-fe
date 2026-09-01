@@ -19,7 +19,16 @@ export function mapApiProgrammeToUi(
   const slots = (apiProgramme.program_details ?? []).flatMap((detail) => {
     const day = extractDayFromDate(detail.event_date);
 
-    return day === null ? [] : [{ detailId: detail.id, day, time: formatTime(detail.from_time) }];
+    return day === null
+      ? []
+      : [
+          {
+            detailId: detail.id,
+            day,
+            fromTime: formatTime(detail.from_time),
+            toTime: formatTime(detail.to_time),
+          },
+        ];
   });
 
   // Get category name
@@ -99,7 +108,7 @@ function extractDayFromDate(dateStr: string): number | null {
 // Format time from HH:MM:SS to HH:MM
 
 function formatTime(timeStr: string): string {
-  if (!timeStr) return "10:00";
+  if (!timeStr) return "";
   return timeStr.substring(0, 5);
 }
 
