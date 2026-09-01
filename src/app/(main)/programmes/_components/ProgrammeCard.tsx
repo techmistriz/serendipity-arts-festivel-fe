@@ -7,9 +7,9 @@ import { Heart } from "lucide-react";
 import type { UIProgramme } from "@/types/programme";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { imagePaths } from "@/config/images";
-import { useCart } from "@/hooks/use-cart";
+// import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
-import { categoryStyle, priceStyle, tagStyle } from "@/lib/tag-colors";
+// import { priceStyle } from "@/lib/tag-colors";
 
 type ProgrammeCardProps = {
   programme: UIProgramme;
@@ -22,7 +22,7 @@ const BLUR_DATA_URL =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAA8A/9k=";
 
 export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps) {
-  const { isVip } = useCart();
+  // const { isVip } = useCart();
   const { isSaved, toggleProgramme, loading: wishlistLoading } = useWishlist();
   const [imageError, setImageError] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
@@ -33,10 +33,10 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
 
   // Memoized values
   const isSavedProgramme = useMemo(() => isSaved(programme.id), [isSaved, programme.id]);
-  const priceLabel = useMemo(() => {
-    if (isVip) return "Guest";
-    return programme.price === 0 ? "Free" : `₹${programme.price || 0}`;
-  }, [isVip, programme.price]);
+  // const priceLabel = useMemo(() => {
+  //   if (isVip) return "Guest";
+  //   return programme.price === 0 ? "Free" : `₹${programme.price || 0}`;
+  // }, [isVip, programme.price]);
 
   const imageSrc = useMemo(
     () => (imageError ? PLACEHOLDER_IMAGE : programme.img || PLACEHOLDER_IMAGE),
@@ -218,7 +218,7 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
                 {hasOverflow &&
                   programme.slots.map((slot, index) => (
                     <span
-                      key={`dup-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
+                      key={`dup2-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
                       className="inline-block shrink-0 mr-4"
                     >
                       {slot.day} Dec · {formatTime(slot.fromTime)} - {formatTime(slot.toTime)}
@@ -231,26 +231,25 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
           </div>
 
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <span
-              className="label max-w-full break-words px-1.5 py-0.5 text-[9px] leading-tight md:text-[10px]"
-              style={categoryStyle(programme.category || "Uncategorized")}
-            >
-              {programme.category || "Uncategorized"}
-            </span>
-            {programme.tags?.length > 0 && (
+            {programme.tags?.map((tag) => (
               <span
+                key={tag.id}
                 className="label max-w-full break-words px-1.5 py-0.5 text-[9px] leading-tight md:text-[10px]"
-                style={tagStyle(programme.tags[0])}
+                style={{
+                  background: tag.background_color,
+                  color: tag.font_color,
+                }}
               >
-                {programme.tags[0]}
+                {tag.name}
               </span>
-            )}
-            <span
+            ))}
+
+            {/* <span
               className="label px-1.5 py-0.5 text-[9px] leading-tight md:text-[10px]"
               style={priceStyle(priceLabel)}
             >
               {priceLabel}
-            </span>
+            </span> */}
           </div>
         </div>
       </button>

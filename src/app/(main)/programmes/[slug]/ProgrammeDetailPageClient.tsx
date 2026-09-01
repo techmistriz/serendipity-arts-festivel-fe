@@ -32,9 +32,16 @@ export function ProgrammeDetailPageClient({
 
   const programme = useMemo(
     () =>
-      apiProgramme ? mapApiProgrammeToUi(apiProgramme, fullResponse?.data?.curators ?? []) : null,
+      apiProgramme
+        ? mapApiProgrammeToUi(
+            apiProgramme,
+            fullResponse?.data?.curators ?? [],
+            fullResponse?.data?.program_tags ?? [], // ← ADD THIS!
+          )
+        : null,
     [apiProgramme, fullResponse],
   );
+
   const allProgrammes = useMemo(() => {
     const mappedProgrammes = mapApiProgrammesToUi(apiProgrammes);
 

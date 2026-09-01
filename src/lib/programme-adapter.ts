@@ -3,6 +3,7 @@ import type {
   Programme as ApiProgramme,
   Programme,
   ProgrammePerson,
+  ProgramTag,
   UIProgramme,
 } from "@/types/programme";
 
@@ -11,11 +12,10 @@ import type {
 export function mapApiProgrammeToUi(
   apiProgramme: ApiProgramme,
   curators: ProgrammePerson[] = [],
+  programTags?: ProgramTag[],
 ): UIProgramme {
-  // Get the first program detail
   const firstDetail = apiProgramme.program_details?.[0];
 
-  // Generate slots from program_details
   const slots = (apiProgramme.program_details ?? []).flatMap((detail) => {
     const day = extractDayFromDate(detail.event_date);
 
@@ -31,40 +31,28 @@ export function mapApiProgrammeToUi(
         ];
   });
 
-  // Get category name
   const category = apiProgramme.category?.name || "Uncategorized";
 
-  // Get discipline name
-  // const discipline = apiProgramme.discipline?.name || "";
-
-  // Get venue name (from program_details or fallback)
   const venue = firstDetail?.venue?.title || firstDetail?.venue?.name || "Venue TBA";
 
-  // Get curator (from curator_ids or fallback)
   const curator = curators.length > 0 ? curators.map((item) => item.name).join(", ") : "TBA";
 
-  // Parse price from amount
   const price = apiProgramme.amount ? parseFloat(apiProgramme.amount) : 0;
 
-  // Get tags (you'll need to map tag IDs to names if you have a lookup)
-  const tags = apiProgramme.program_tag_ids?.map((id) => `Tag ${id}`) || [];
-
-  // Keep the full CMS description as HTML for formatted rich-text rendering.
   const descriptionHtml = apiProgramme.description || apiProgramme.short_description || "";
+
   const longBlurb = stripHtml(descriptionHtml) ? descriptionHtml : "";
 
-  // Use a plain-text summary where rich text is not rendered (such as programme cards).
   const blurb = stripHtml(apiProgramme.short_description || "") || stripHtml(longBlurb);
 
-  // The API stores disclaimers as rich text; expose safe plain text to the booking UI.
   const disclaimer = stripHtml(apiProgramme.disclaimer || "");
 
   return {
     id: apiProgramme.id,
     title: apiProgramme.name || "Untitled",
     slug: apiProgramme.slug || "",
-    category: category,
-    curator: curator,
+    category,
+    curator,
     discipline: apiProgramme.discipline
       ? {
           name: apiProgramme.discipline.name,
@@ -72,15 +60,20 @@ export function mapApiProgrammeToUi(
           background_color: apiProgramme.discipline.background_color,
         }
       : undefined,
-    curators: curators,
-    slots: slots,
-    venue: venue,
-    price: price,
+    curators,
+    slots,
+    venue,
+    price,
     img: apiProgramme.program_image || imagePaths.programmeFallback,
-    blurb: blurb,
-    longBlurb: longBlurb,
+    blurb,
+    longBlurb,
     disclaimer: disclaimer || undefined,
-    tags: tags,
+
+    // USE the passed programTags parameter instead of apiProgramme.program_tags
+    tags: (programTags ?? apiProgramme.program_tags ?? []).filter(
+      (tag) => Boolean(tag.name) && Boolean(tag.background_color) && Boolean(tag.font_color),
+    ),
+
     isBookingAllowed: String(apiProgramme.is_booking_allowed) === "1" && slots.length > 0,
     newlyAdded: false,
   };
@@ -95,13 +88,17 @@ export function mapApiProgrammesToUi(
   return apiProgrammes.map((programme) => mapApiProgrammeToUi(programme, curators));
 }
 
-// Extract day from date string (DD-MM-YYYY)
+// Extract day from date string (DD-MM-YYYY / DD-MM-YYYY)
 
 function extractDayFromDate(dateStr: string): number | null {
   const localDate = /^(\d{1,2})[-/]\d{1,2}[-/]\d{4}$/.exec(dateStr);
-  if (localDate) return Number(localDate[1]);
+
+  if (localDate) {
+    return Number(localDate[1]);
+  }
 
   const isoDate = /^\d{4}-\d{1,2}-(\d{1,2})$/.exec(dateStr);
+
   return isoDate ? Number(isoDate[1]) : null;
 }
 
@@ -109,6 +106,7 @@ function extractDayFromDate(dateStr: string): number | null {
 
 function formatTime(timeStr: string): string {
   if (!timeStr) return "";
+
   return timeStr.substring(0, 5);
 }
 
@@ -116,6 +114,7 @@ function formatTime(timeStr: string): string {
 
 function stripHtml(html: string): string {
   if (!html) return "";
+
   if (typeof window === "undefined") {
     // Server-side: use a simple regex
     return html
@@ -123,7 +122,10 @@ function stripHtml(html: string): string {
       .replace(/\s+/g, " ")
       .trim();
   }
+
   const tmp = document.createElement("div");
+
   tmp.innerHTML = html;
+
   return tmp.textContent || tmp.innerText || "";
 }

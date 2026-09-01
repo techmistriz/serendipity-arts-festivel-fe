@@ -10,7 +10,7 @@ import { imagePaths } from "@/config/images";
 import { useCart } from "@/hooks/use-cart";
 import { getErrorMessage } from "@/utils/error";
 import { useAuth } from "@/hooks/use-auth";
-import { categoryStyle, disciplineStyle, priceStyle, tagStyle } from "@/lib/tag-colors";
+// import { priceStyle } from "@/lib/tag-colors";
 
 import GlitchBar from "@/components/common/GlitchBar";
 import { SanitizedRichText } from "@/components/common/SanitizedRichText";
@@ -118,7 +118,8 @@ export function BookingSheet({
   const isPage = variant === "page";
   const programmeReturnPath = returnPath ?? `/programmes?p=${programme.id}`;
 
-  console.log(programme);
+  console.log("Tags in BookingSheet:", programme.tags);
+  console.log("Tags length:", programme.tags?.length);
 
   // State
   const [quantity, setQuantity] = useState(1);
@@ -335,10 +336,10 @@ export function BookingSheet({
     [onOpen],
   );
 
-  const priceLabel = useMemo(() => {
-    if (isVip) return "Guest";
-    return programme.price === 0 ? "Free" : `₹${programme.price || 0}`;
-  }, [isVip, programme.price]);
+  // const priceLabel = useMemo(() => {
+  //   if (isVip) return "Guest";
+  //   return programme.price === 0 ? "Free" : `₹${programme.price || 0}`;
+  // }, [isVip, programme.price]);
 
   // ===== Render helpers =====
   const renderScheduleSelector = () => {
@@ -359,7 +360,7 @@ export function BookingSheet({
         <div className="mt-3 mb-6 flex flex-wrap gap-2">
           {programme.slots.map((slot, index) => (
             <button
-              key={`${slot.day}-${slot.fromTime}-${slot.toTime}`}
+              key={`slot-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
               onClick={() => setSlotIndex(index)}
               className={`headline text-xs uppercase tracking-[0.06em] border px-3 py-2 transition-colors ${
                 slotIndex === index
@@ -680,36 +681,26 @@ export function BookingSheet({
             </section>
 
             {/* Tags */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {/* First Tag */}
-              {programme.tags?.[0] && (
+            <div className="mt-4 w-full flex flex-wrap items-start gap-2">
+              {programme.tags?.map((tag) => (
                 <span
-                  className="label max-w-full break-words px-2 py-1"
-                  style={tagStyle(programme.tags[0])}
+                  key={tag.id}
+                  className="label inline-block shrink-0 px-2 py-1 whitespace-normal"
+                  style={{
+                    background: tag.background_color,
+                    color: tag.font_color,
+                  }}
                 >
-                  {programme.tags[0]}
+                  {tag.name}
                 </span>
-              )}
-              {/* Price */}
-              <span className="label px-2 py-1" style={priceStyle(priceLabel)}>
-                {priceLabel}
-              </span>
-              {/* Discipline */}
-              {programme.discipline && (
-                <span
-                  className="label max-w-full break-words px-2 py-1"
-                  style={disciplineStyle(programme.discipline)}
-                >
-                  {programme.discipline.name}
-                </span>
-              )}
-              {/* Category */}
-              <span
-                className="label max-w-full break-words px-2 py-1"
-                style={categoryStyle(programme.category || "Uncategorized")}
+              ))}
+
+              {/* <span
+                className="label inline-block shrink-0 px-2 py-1"
+                style={priceStyle(priceLabel)}
               >
-                {programme.category || "Uncategorized"}
-              </span>
+                {priceLabel}
+              </span> */}
             </div>
 
             {/* Booking Section */}
