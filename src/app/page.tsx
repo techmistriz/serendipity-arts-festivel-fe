@@ -1,11 +1,10 @@
 // import { ScrollGlitchRain } from "@/components/common/ScrollGlitchRain";
-
 import { CuratorsSection } from "@/components/home/CuratorsSection";
 import { HomeHero } from "@/components/home/HomeHero";
 import { HomeIntroduction } from "@/components/home/HomeIntroduction";
 import HomeProgrammes from "@/components/home/HomeProgrammes";
 import { HomeStructuredData } from "@/components/home/HomeStructuredData";
-import { ListenGatherMove } from "@/components/home/ListenGatherMove";
+// import { ListenGatherMove } from "@/components/home/ListenGatherMove";
 import { PressSection } from "@/components/home/PressSection";
 import { SponsorsSection } from "@/components/home/SponsorsSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
@@ -18,7 +17,7 @@ export default function Home() {
       {/* <RouteLoadingOverlay /> */}
       <HomeHero />
       <HomeIntroduction />
-      <ListenGatherMove />
+      {/* <ListenGatherMove /> */}
       <HomeProgrammes />
       <CuratorsSection />
       <VenuesSection />

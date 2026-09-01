@@ -1,13 +1,26 @@
 import type { Programme, ProgrammesListResponse, ProgramDetailResponse } from "@/types/programme";
 import API, { METHODS } from "@/network/API";
 
+export type ProgrammeClassificationFilters = {
+  categorySlugs?: string[];
+  disciplineSlugs?: string[];
+  classificationMatch?: "any" | "all";
+};
+
 //Fetch all programmes with pagination
 
-export async function getProgrammes(page?: number, limit?: number): Promise<Programme[]> {
-  const params: Record<string, number> = {};
+export async function getProgrammes(
+  page?: number,
+  limit?: number,
+  filters?: ProgrammeClassificationFilters,
+): Promise<Programme[]> {
+  const params: Record<string, number | string> = {};
 
   if (page) params.page = page;
   if (limit) params.limit = limit;
+  if (filters?.categorySlugs?.length) params.category_slug = filters.categorySlugs.join(",");
+  if (filters?.disciplineSlugs?.length) params.discipline_slug = filters.disciplineSlugs.join(",");
+  if (filters?.classificationMatch) params.classification_match = filters.classificationMatch;
 
   try {
     const response = await API<ProgrammesListResponse>(

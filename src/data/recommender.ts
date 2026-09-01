@@ -1,38 +1,65 @@
 export type RecommenderOption = {
   id: string;
   label: string;
-  match: string[];
+  categorySlugs?: string[];
+  disciplineSlugs?: string[];
 };
 
 export const RECOMMENDER_OPTIONS: RecommenderOption[] = [
-  { id: "reader", label: "I like to read a lot of books", match: ["Talk", "Theatre"] },
-  { id: "theatre", label: "I like to watch theatre", match: ["Theatre", "Performance"] },
+  {
+    id: "reader",
+    label: "I like to read a lot of books",
+    categorySlugs: ["talks"],
+    disciplineSlugs: ["theatre"],
+  },
+  {
+    id: "theatre",
+    label: "I like to watch theatre",
+    categorySlugs: ["performances"],
+    disciplineSlugs: ["theatre"],
+  },
   {
     id: "exhibitions",
     label: "I like to enjoy art exhibitions",
-    match: ["Exhibition", "Visual Arts"],
+    categorySlugs: ["exhibitions"],
+    disciplineSlugs: ["visual-arts"],
   },
   {
     id: "foodie",
     label: "I’m a foodie and love different cuisines",
-    match: ["Culinary Arts"],
+    disciplineSlugs: ["culinary-arts"],
   },
   {
     id: "children",
     label: "I have children who’d enjoy stimulating programmes",
-    match: ["Children’s Programmes"],
+    disciplineSlugs: ["childrens-programmes"],
   },
   {
     id: "crafts",
     label: "I’m into crafts — workshop or exhibition, either works",
-    match: ["Crafts", "Workshop"],
+    categorySlugs: ["workshops", "exhibitions"],
+    disciplineSlugs: ["craft"],
   },
   {
     id: "films",
     label: "I’m a film enthusiast and love underrated films",
-    match: ["Film Screening"],
+    categorySlugs: ["film-screening"],
   },
-  { id: "workshops", label: "I just like attending workshops", match: ["Workshop"] },
-  { id: "music", label: "I love live music", match: ["Music", "Performance"] },
-  { id: "dance", label: "I love dance and movement", match: ["Dance", "Performance"] },
+  {
+    id: "workshops",
+    label: "I just like attending workshops",
+    categorySlugs: ["workshops"],
+  },
+  {
+    id: "music",
+    label: "I love live music",
+    categorySlugs: ["performances"],
+    disciplineSlugs: ["music"],
+  },
+  {
+    id: "dance",
+    label: "I love dance and movement",
+    categorySlugs: ["performances"],
+    disciplineSlugs: ["dance"],
+  },
 ];

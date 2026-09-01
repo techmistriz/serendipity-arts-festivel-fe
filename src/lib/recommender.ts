@@ -1,23 +1,40 @@
 import { RECOMMENDER_OPTIONS } from "@/data/recommender";
-import { PROGRAMMES, type Programme } from "@/data/programmes-data";
+import { mapApiProgrammesToUi } from "@/lib/programme-adapter";
+import { getProgrammes } from "@/services/programme.service";
+import type { UIProgramme } from "@/types/programme";
 
-export function recommendProgrammes(selected: string[], limit = 12): Programme[] {
-  if (!selected.length) return [];
-  const wantedRaw = new Set<string>();
+export type RecommenderFilters = {
+  categorySlugs: string[];
+  disciplineSlugs: string[];
+};
+
+export function getRecommenderFilters(selected: string[]): RecommenderFilters {
+  const categorySlugs = new Set<string>();
+  const disciplineSlugs = new Set<string>();
+
   for (const id of selected) {
     const opt = RECOMMENDER_OPTIONS.find((o) => o.id === id);
-    if (opt) for (const m of opt.match) wantedRaw.add(m.toLowerCase());
+    opt?.categorySlugs?.forEach((slug) => categorySlugs.add(slug));
+    opt?.disciplineSlugs?.forEach((slug) => disciplineSlugs.add(slug));
   }
-  const scored = PROGRAMMES.map((p) => {
-    const cat = p.category.toLowerCase();
-    const tags = p.tags.map((t) => t.toLowerCase());
-    let score = 0;
-    for (const w of wantedRaw) {
-      if (cat === w) score += 3;
-      if (tags.includes(w)) score += 2;
-    }
-    return { p, score };
-  }).filter((s) => s.score > 0);
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, limit).map((s) => s.p);
+
+  return {
+    categorySlugs: [...categorySlugs],
+    disciplineSlugs: [...disciplineSlugs],
+  };
+}
+
+export async function recommendProgrammes(selected: string[], limit = 12): Promise<UIProgramme[]> {
+  const filters = getRecommenderFilters(selected);
+
+  if (!filters.categorySlugs.length && !filters.disciplineSlugs.length) {
+    return [];
+  }
+
+  const programmes = await getProgrammes(undefined, limit, {
+    ...filters,
+    classificationMatch: "any",
+  });
+
+  return mapApiProgrammesToUi(programmes);
 }

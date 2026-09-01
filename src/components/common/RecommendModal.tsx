@@ -3,18 +3,61 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import GlitchBar from "./GlitchBar";
-import { dateLabel, timeLabel } from "@/data/programmes-data";
 import { RECOMMENDER_OPTIONS } from "@/data/recommender";
 import { recommendProgrammes } from "@/lib/recommender";
+import type { UIProgramme } from "@/types/programme";
 
 export function RecommendModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [picks, setPicks] = useState<string[]>([]);
   const [shown, setShown] = useState(false);
+  const [recs, setRecs] = useState<UIProgramme[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open || !shown || !picks.length) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadRecommendations = async () => {
+      setLoading(true);
+      setError(null);
+      setRecs([]);
+
+      try {
+        const programmes = await recommendProgrammes(picks, 8);
+
+        if (!cancelled) {
+          setRecs(programmes);
+        }
+      } catch (requestError) {
+        if (!cancelled) {
+          setRecs([]);
+          setError(
+            requestError instanceof Error ? requestError.message : "Unable to load programmes.",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadRecommendations();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, picks, shown]);
+
   if (!open) return null;
-  const recs = shown ? recommendProgrammes(picks, 8) : [];
+
   const toggle = (id: string) =>
     setPicks((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
@@ -72,9 +115,13 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
             <div className="mt-6">
               <div className="flex flex-wrap items-baseline justify-between gap-3">
                 <p className="headline font-semibold uppercase text-xl md:text-2xl">
-                  {recs.length
-                    ? `Here’s what we’d pick for you.`
-                    : "No matches yet — check back soon."}
+                  {loading
+                    ? "Finding programmes for you…"
+                    : error
+                      ? "We couldn’t load recommendations."
+                      : recs.length
+                        ? `Here’s what we’d pick for you.`
+                        : "No matches yet — check back soon."}
                 </p>
                 <button
                   onClick={() => setShown(false)}
@@ -83,11 +130,22 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                   Change answers ↺
                 </button>
               </div>
+              {error && <p className="mt-3 text-sm text-muted-foreground">{error}</p>}
               <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                {loading &&
+                  Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="space-y-2 animate-pulse">
+                      <div className="aspect-square bg-muted" />
+                      <div className="h-4 w-3/4 bg-muted" />
+                      <div className="h-3 w-1/2 bg-muted" />
+                    </div>
+                  ))}
                 {recs.map((p) => (
                   <Link
                     key={p.id}
-                    href={`/programmes?p=${p.id}`}
+                    href={
+                      p.slug ? `/programmes/${encodeURIComponent(p.slug)}` : `/programmes?p=${p.id}`
+                    }
                     onClick={onClose}
                     className="group block"
                   >
@@ -101,7 +159,7 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                     />
                     <h3 className="mt-2 headline font-semibold text-sm leading-tight">{p.title}</h3>
                     <p className="text-[11px] text-muted-foreground headline">
-                      {dateLabel(p)} · {timeLabel(p)}
+                      {p.slots[0] ? `Day ${p.slots[0].day} · ${p.slots[0].time}` : "Schedule TBA"}
                     </p>
                   </Link>
                 ))}
