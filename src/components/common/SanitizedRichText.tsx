@@ -14,9 +14,12 @@ const allowedTags = [
   "li",
   "ol",
   "p",
+  "span",
   "strong",
   "ul",
 ];
+
+const allowedAttributes = ["href", "style"];
 
 type SanitizedRichTextProps = {
   html: string | null;
@@ -42,7 +45,7 @@ export function SanitizedRichText({ html, className }: SanitizedRichTextProps) {
           String(
             purifier.sanitize(html, {
               ALLOWED_TAGS: allowedTags,
-              ALLOWED_ATTR: ["href"],
+              ALLOWED_ATTR: allowedAttributes,
             }),
           ),
         );

@@ -12,9 +12,12 @@ const RICH_TEXT_ALLOWED_TAGS = [
   "li",
   "ol",
   "p",
+  "span",
   "strong",
   "ul",
 ];
+
+const RICH_TEXT_ALLOWED_ATTRIBUTES = ["href", "style"];
 
 export function stripHtml(html: string): string {
   if (!html) return "";
@@ -30,7 +33,7 @@ export function sanitizeRichText(html: string): string {
   return String(
     DOMPurify.sanitize(html, {
       ALLOWED_TAGS: RICH_TEXT_ALLOWED_TAGS,
-      ALLOWED_ATTR: ["href"],
+      ALLOWED_ATTR: RICH_TEXT_ALLOWED_ATTRIBUTES,
     }),
   );
 }
