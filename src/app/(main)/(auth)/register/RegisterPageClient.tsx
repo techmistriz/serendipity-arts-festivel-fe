@@ -233,10 +233,25 @@ function RegisterContent() {
             setSubmitted(true);
           }
         } else {
-          const errorMessage =
-            typeof response.message === "string" ? response.message : "Registration failed";
+          const backendErrors = response.errors;
 
-          setGlobalError(errorMessage);
+          if (backendErrors && typeof backendErrors === "object" && !Array.isArray(backendErrors)) {
+            const messages = Object.values(backendErrors)
+              .flat()
+              .filter((message): message is string => typeof message === "string");
+
+            if (messages.length > 0) {
+              setGlobalError(messages.join(" "));
+            } else {
+              setGlobalError(
+                typeof response.message === "string" ? response.message : "Registration failed",
+              );
+            }
+          } else {
+            setGlobalError(
+              typeof response.message === "string" ? response.message : "Registration failed",
+            );
+          }
         }
       } else {
         setGlobalError("Registration failed: Invalid response");
@@ -245,7 +260,7 @@ function RegisterContent() {
       if (err instanceof AxiosError) {
         const responseData = err.response?.data;
 
-        const backendErrors = responseData?.message;
+        const backendErrors = responseData?.errors;
 
         // Backend field-level errors
         if (backendErrors && typeof backendErrors === "object" && !Array.isArray(backendErrors)) {
@@ -345,10 +360,7 @@ function RegisterContent() {
 
       {/* Mode tabs */}
       <div className="mt-8 flex flex-wrap gap-2">
-        {/* for general show only */}
-        {/* {(["general"] as const).map((m) => ( */}
-
-        {(["general", "guest", "sea"] as const).map((m) => (
+        {/* {(["general", "guest", "sea"] as const).map((m) => (
           <button
             key={m}
             onClick={() => handleModeChange(m)}
@@ -359,6 +371,22 @@ function RegisterContent() {
             }`}
           >
             {m === "general" ? "Visitor" : m === "guest" ? "Special Guest" : "SEA Delegate"}
+          </button>
+        ))} */}
+
+        {/* for general show only */}
+
+        {(["general"] as const).map((m) => (
+          <button
+            key={m}
+            onClick={() => handleModeChange(m)}
+            className={`headline uppercase tracking-[0.06em] text-xs md:text-sm border-2 px-4 py-2 transition-colors ${
+              mode === m
+                ? "bg-foreground text-background border-foreground"
+                : "border-foreground hover:bg-foreground hover:text-background"
+            }`}
+          >
+            Visitor
           </button>
         ))}
       </div>
