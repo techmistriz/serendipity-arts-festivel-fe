@@ -4,27 +4,32 @@ import type { Sponsors } from "@/types/sponsor";
 
 export function SponsorGrid({ sponsors }: { sponsors: Sponsors[] }) {
   return (
-    <div className="mt-8 -mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible md:px-0">
-      {sponsors.map((sponsor) => (
-        <div
-          key={sponsor.name}
-          className="flex w-[46vw] shrink-0 snap-start flex-col border border-foreground px-2 py-2 md:w-auto"
-        >
-          <div className="grid h-[86px] flex-1 place-items-center md:h-[104px]">
-            <Image
-              src={sponsor.logo}
-              alt={sponsor.name}
-              width={200}
-              height={100}
-              sizes="(max-width: 768px) 46vw, 25vw"
-              className="h-auto max-h-[82px] w-auto max-w-full object-contain md:max-h-[100px]"
-            />
+    <div className="mt-8 border">
+      <div className="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible">
+        {sponsors.map((sponsor, i) => (
+          <div
+            key={sponsor.name}
+            className={`flex w-[46vw] min-h-[140px] shrink-0 snap-start flex-col justify-between px-4 py-5 md:w-auto md:min-h-[180px] md:px-6 md:py-6 ${
+              i !== sponsors.length - 1 ? "border-r" : ""
+            }`}
+          >
+            <div className="grid flex-1 place-items-center">
+              <Image
+                src={sponsor.logo}
+                alt={sponsor.name}
+                width={200}
+                height={100}
+                sizes="(max-width: 768px) 46vw, 25vw"
+                className="h-auto max-h-[72px] w-auto max-w-full object-contain md:max-h-[92px]"
+              />
+            </div>
+
+            <p className="headline mt-3 text-center text-[10px] leading-tight text-muted-foreground md:text-xs">
+              {sponsor.name}
+            </p>
           </div>
-          <p className="headline mt-1.5 text-[10px] leading-tight text-muted-foreground">
-            {sponsor.name}
-          </p>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
