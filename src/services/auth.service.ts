@@ -37,6 +37,18 @@ export const authService = {
     return session;
   },
 
+  async exchangeImpersonationGrant(grant: string): Promise<AuthSession> {
+    const response = await post<unknown>("/auth/impersonate", { grant });
+
+    const session = getApiResponseData(response, "Unable to start the impersonation session.");
+
+    if (!isAuthSession(session)) {
+      throw new Error("The server returned an invalid impersonation response.");
+    }
+
+    return session;
+  },
+
   async profile(): Promise<AuthUser> {
     const response = await API<ApiResponse<AuthUser>>("/profile", METHODS.GET);
 
