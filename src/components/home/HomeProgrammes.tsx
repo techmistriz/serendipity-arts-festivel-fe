@@ -126,7 +126,7 @@ export default function Programmes() {
                     </h3>
 
                     <p className="mt-1 text-[11px] md:text-xs text-muted-foreground headline">
-                      {programme.program_city?.name ?? "Goa"}
+                      {programme.program_details?.[0]?.venue?.title ?? "TBA"}
                     </p>
                   </div>
                 </Link>
