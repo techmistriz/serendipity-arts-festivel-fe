@@ -8,38 +8,69 @@ export const useOTP = () => {
   const [otpSent, setOtpSent] = useState(false);
 
   const handleSendOTP = async (email: string, contact: string, std_code: string) => {
-    if (!email || !contact) {
-      setOtpError("Email and contact number are required");
+    const cleanEmail = email?.trim();
+    const cleanContact = contact?.trim();
+    const cleanStdCode = std_code?.trim() || "91";
+
+    // Reset previous OTP state
+    setOtpError(null);
+    setOtpSent(false);
+
+    if (!cleanEmail) {
+      setOtpError("Email is required.");
+      return;
+    }
+
+    if (!cleanContact) {
+      setOtpError("Contact number is required.");
       return;
     }
 
     setIsSendingOTP(true);
-    setOtpError(null);
 
     try {
-      const response = await sendOTP({ email, contact, std_code });
+      const response = await sendOTP({
+        email: cleanEmail,
+        contact: cleanContact,
+        std_code: cleanStdCode,
+      });
 
-      // Check if response is successful
-      if (response) {
-        const isSuccess = response.success === true || response.status === true;
-        if (isSuccess) {
-          setOtpSent(true);
-        } else {
-          setOtpError(response.message || "Failed to send OTP");
-        }
-      } else {
-        setOtpError("Failed to send OTP: Invalid response");
+      console.log("SEND OTP RESPONSE:", response);
+
+      // SUCCESS
+      if (response?.status === true) {
+        setOtpSent(true);
+        setOtpError(null);
+        return;
       }
+
+      // BACKEND VALIDATION / BUSINESS ERROR
+      setOtpSent(false);
+
+      setOtpError(typeof response?.message === "string" ? response.message : "Unable to send OTP.");
     } catch (error) {
+      console.error("SEND OTP ERROR:", error);
+
+      setOtpSent(false);
+
       if (error instanceof AxiosError) {
-        setOtpError(error.response?.data?.message || "Failed to send OTP");
+        const message = error.response?.data?.message;
+
+        setOtpError(
+          typeof message === "string" ? message : "Unable to send OTP. Please try again.",
+        );
       } else {
-        setOtpError("An unexpected error occurred");
+        setOtpError("An unexpected error occurred.");
       }
     } finally {
       setIsSendingOTP(false);
     }
   };
 
-  return { handleSendOTP, isSendingOTP, otpError, otpSent };
+  return {
+    handleSendOTP,
+    isSendingOTP,
+    otpError,
+    otpSent,
+  };
 };

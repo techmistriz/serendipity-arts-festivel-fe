@@ -17,6 +17,8 @@ export function ProfileDashboardPageClient() {
 function ProfileContent() {
   const { user } = useAuth();
 
+  // console.log("User detail:", user);
+
   return (
     <div className="max-w-2xl">
       <div className="flex items-start justify-between gap-6">
@@ -35,6 +37,10 @@ function ProfileContent() {
       <dl className="mt-10 grid grid-cols-1 gap-x-12 gap-y-6 md:grid-cols-2">
         <ProfileRow label="Name" value={user?.name ?? "—"} />
         <ProfileRow label="Email" value={user?.email ?? "—"} />
+        <ProfileRow label="WhatsApp" value={user?.contact ?? "—"} />
+        <ProfileRow label="City" value={user?.city?.name ?? "—"} />
+        {/* <ProfileRow label="Interests" value={user?.interest ?? "—"} />
+        <ProfileRow label="Member since" value={user?.email ?? "—"} /> */}
       </dl>
 
       <div className="mt-12 border border-foreground p-5 md:p-8">

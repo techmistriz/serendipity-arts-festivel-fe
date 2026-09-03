@@ -110,12 +110,14 @@ export const GeneralForm = ({
         {isChecking && <p className="text-sm text-muted-foreground mt-1">Checking email...</p>}
 
         {!isChecking && userExists === true && (
-          <p className="text-red-500 text-sm mt-1">This email already exists.</p>
+          <p className="text-green-500 text-sm mt-1">
+            You’ve been part of previous editions of the Serendipity Arts Festival. Welcome back!
+          </p>
         )}
 
-        {!isChecking && userExists === false && (
+        {/* {!isChecking && userExists === false && (
           <p className="text-green-600 text-sm mt-1">Email is available.</p>
-        )}
+        )} */}
 
         {archiveError && <p className="text-red-500 text-sm mt-1">{archiveError}</p>}
       </Field>
