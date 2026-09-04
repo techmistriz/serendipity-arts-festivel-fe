@@ -98,19 +98,29 @@ export function VenueGridLoadingSkeleton({
 
 export function LogoGridLoadingSkeleton({
   className,
-  count = 4,
+  count = 8,
   label = "Loading partners",
 }: ContentGridSkeletonProps) {
   return (
-    <div className={cn("mt-8", className)} role="status" aria-live="polite">
+    <div className={cn("mt-8 border", className)} role="status" aria-live="polite">
       <LoadingAnnouncement label={label} />
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+
+      <div className="flex snap-x snap-mandatory overflow-hidden md:grid md:grid-cols-4">
         {Array.from({ length: count }).map((_, index) => (
-          <div key={index} className="border border-foreground px-2 py-2" aria-hidden="true">
-            <div className="grid h-[86px] place-items-center md:h-[104px]">
-              <Skeleton className="h-12 w-3/5" />
+          <div
+            key={index}
+            className={`flex w-[46vw] min-h-[140px] shrink-0 flex-col justify-between px-4 py-5 md:w-auto md:min-h-[180px] md:px-6 md:py-6 ${
+              index !== count - 1 ? "border-r" : ""
+            }`}
+            aria-hidden="true"
+          >
+            <div className="grid flex-1 place-items-center">
+              <Skeleton className="h-[72px] w-[120px] md:h-[92px] md:w-[150px]" />
             </div>
-            <Skeleton className="mt-2 h-3 w-2/3" />
+
+            <div className="mt-3 flex justify-center">
+              <Skeleton className="h-3 w-20" />
+            </div>
           </div>
         ))}
       </div>

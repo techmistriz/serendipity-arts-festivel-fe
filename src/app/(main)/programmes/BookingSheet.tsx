@@ -631,12 +631,17 @@ export function BookingSheet({
 
             {/* Details Grid */}
             <dl className="mt-6 md:mt-8 grid grid-cols-2 gap-y-3 text-sm rule-t rule-b py-4 headline">
-              <dt className="label text-muted-foreground">Curator</dt>
-              <dd>
-                {programme.curators?.length
-                  ? programme.curators.map((curator) => curator.name).join(", ")
-                  : "TBA"}
-              </dd>
+              {programme.curators?.some((curator) => curator.name) && (
+                <>
+                  <dt className="label text-muted-foreground">Curator</dt>
+                  <dd>
+                    {programme.curators
+                      .filter((curator) => curator.name)
+                      .map((curator) => curator.name)
+                      .join(", ")}
+                  </dd>
+                </>
+              )}
               <dt className="label text-muted-foreground">Date</dt>
               <dd>{getDateLabel(programme)}</dd>
               <dt className="label text-muted-foreground">Time</dt>
