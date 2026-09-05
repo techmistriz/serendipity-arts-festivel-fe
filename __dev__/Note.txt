@@ -44,3 +44,16 @@ Important
 - Read `AGENTS.md`, `CONTRIBUTING.md`, and `docs/ARCHITECTURE.md` before changing code.
 - Use `src/services` for API calls and `src/redux` for shared client state.
 - Do not store auth tokens in localStorage, Redux persistence, or any `NEXT_PUBLIC_*` variable.
+
+Start PM2:
+pm2 start yarn --name "saf-nextjs" -- start
+
+Check:
+pm2 status
+
+Logs:
+pm2 logs saf-nextjs
+
+3. Make PM2 survive server reboot
+pm2 save
+pm2 startup
