@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import { AsyncErrorAlert, EmptyState } from "@/components/common/AsyncState";
 import { VenueGridLoadingSkeleton } from "@/components/common/LoadingSkeletons";
@@ -9,10 +9,10 @@ import { getErrorMessage } from "@/utils/error";
 
 import { VenueCard } from "./_components/VenueCard";
 import type { VenueListItem } from "./types";
-// import { GoogleWayfindingMap } from "@/components/maps/google-wayfinding-map";
-// import { GOA_NODES, GOA_VENUE_POINTS } from "@/data/goa-map";
-// import { useCart } from "@/hooks/use-cart";
-// import { goaVenueSlug } from "@/lib/venue-slug";
+import { GoogleWayfindingMap } from "@/components/maps/google-wayfinding-map";
+import { GOA_NODES, GOA_VENUE_POINTS } from "@/data/goa-map";
+import { useCart } from "@/hooks/use-cart";
+import { goaVenueSlug } from "@/lib/venue-slug";
 
 export default function VenuesPageClient() {
   const [venues, setVenues] = useState<VenueListItem[]>([]);
@@ -38,13 +38,13 @@ export default function VenuesPageClient() {
     initializeVenues();
   };
 
-  // const { bookings } = useCart();
+  const { bookings } = useCart();
 
-  // const bookedVenueSlugs = useMemo(
-  //   () =>
-  //     Array.from(new Set(bookings.map((b) => goaVenueSlug(b.venue)).filter(Boolean) as string[])),
-  //   [bookings],
-  // );
+  const bookedVenueSlugs = useMemo(
+    () =>
+      Array.from(new Set(bookings.map((b) => goaVenueSlug(b.venue)).filter(Boolean) as string[])),
+    [bookings],
+  );
 
   return (
     <div className="container-editorial pt-10 pb-32 md:pt-20">
@@ -76,7 +76,7 @@ export default function VenuesPageClient() {
       ) : (
         <EmptyState message="No venues are available yet" />
       )}
-      {/* <section className="mt-20 md:mt-28">
+      <section className="mt-20 md:mt-28">
         <h2 className="display uppercase text-[9vw] md:text-[5vw] leading-[0.9]">Wayfinding</h2>
         <p className="mt-4 max-w-2xl text-muted-foreground headline text-sm">
           Pick a start and an end venue to get the route — on foot, by car or by transit.
@@ -90,7 +90,7 @@ export default function VenuesPageClient() {
             caption="Panjim riverfront · all venues sit within a twenty minute walk. Highlighted pins are venues on your booking list."
           />
         </div>
-      </section> */}
+      </section>
     </div>
   );
 }
