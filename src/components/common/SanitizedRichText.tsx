@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { WindowLike } from "dompurify";
 
 const allowedTags = [
   "a",
@@ -39,7 +40,10 @@ export function SanitizedRichText({ html, className }: SanitizedRichTextProps) {
 
     void import("dompurify").then(({ default: DOMPurify }) => {
       if (!cancelled) {
-        const purifier = typeof DOMPurify.sanitize === "function" ? DOMPurify : DOMPurify(window);
+        const purifier =
+          typeof DOMPurify.sanitize === "function"
+            ? DOMPurify
+            : DOMPurify(window as unknown as WindowLike);
 
         setSanitizedHtml(
           String(
