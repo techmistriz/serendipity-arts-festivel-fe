@@ -222,23 +222,26 @@ function LocationField({
         <Controller
           control={control}
           name={name}
-          render={({ field: { onChange: setFieldValue, value } }) => (
-            <Select<SelectOption>
-              instanceId={name}
-              placeholder={placeholder}
-              options={options}
-              value={findSelectedOption(options, value)}
-              onChange={(option) => {
-                setFieldValue(option ? String(option.value) : "");
-                onChange(option);
-              }}
-              isSearchable
-              isLoading={isLoading}
-              isDisabled={isDisabled}
-              className="react-select-container"
-              classNamePrefix="react-select"
-              noOptionsMessage={() => emptyMessage ?? "No options available"}
-            />
+          render={({ field: { onChange: setFieldValue, value }, fieldState: { error } }) => (
+            <>
+              <Select<SelectOption>
+                instanceId={name}
+                placeholder={placeholder}
+                options={options}
+                value={findSelectedOption(options, value)}
+                onChange={(option) => {
+                  setFieldValue(option ? String(option.value) : "");
+                  onChange(option);
+                }}
+                isSearchable
+                isLoading={isLoading}
+                isDisabled={isDisabled}
+                className="react-select-container"
+                classNamePrefix="react-select"
+                noOptionsMessage={() => emptyMessage ?? "No options available"}
+              />
+              {error?.message && <p className="mt-1 text-sm text-red-500">{error.message}</p>}
+            </>
           )}
         />
       </div>

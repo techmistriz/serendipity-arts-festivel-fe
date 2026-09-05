@@ -51,9 +51,21 @@ function RegisterContent() {
       email: "",
       fullName: "",
       gender: "",
+      country: "",
+      state: "",
+      city: "",
       std_code: "91",
       whatsapp: "",
       otp: "",
+      contact: "",
+      dates: [],
+      travel: "",
+      lodging: "",
+      accom: "",
+      accompanied: "",
+      interests: [],
+      visitedYears: [],
+      heard: "",
       newsletter: false,
       terms: false,
     },
@@ -101,6 +113,10 @@ function RegisterContent() {
     const params = new URLSearchParams(searchParams.toString());
     params.set("mode", newMode);
     router.replace(`/register?${params.toString()}`, { scroll: false });
+  };
+
+  const onInvalid = () => {
+    setGlobalError("Please correct the highlighted fields and try again.");
   };
 
   const onSubmit = async (data: FieldValues) => {
@@ -315,12 +331,12 @@ function RegisterContent() {
                 : "Your Art Pass"}
           </p>
           <p className="mt-3 display uppercase text-2xl md:text-3xl leading-[1] tracking-[-0.02em]">
-            Available on our app, closer to the festival.
+            Sent to your email. Available on the app too.
           </p>
           <p className="mt-4 text-sm text-muted-foreground headline">
             {isGuest
-              ? "We can’t wait to see you in Panjim, Goa, 13–20 December."
-              : "Each time you book a programme, it will be added to your single Art Pass, just show it at any venue in front of our zappers."}
+              ? `Your Art Pass has been emailed to you and will also be available to download on our Festival app. Every programme you book gets added to the same pass — just show it at any venue in front of our zappers.`
+              : ""}
           </p>
         </div>
         <Link
@@ -462,7 +478,11 @@ function RegisterContent() {
         </aside>
 
         {/* Form */}
-        <form className="md:col-span-8 space-y-10" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          noValidate
+          className="md:col-span-8 space-y-10"
+          onSubmit={handleSubmit(onSubmit, onInvalid)}
+        >
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
@@ -497,13 +517,8 @@ function RegisterContent() {
 
           <div className="space-y-3 pt-4">
             <label className="flex items-start gap-3 text-sm">
-              <input
-                type="checkbox"
-                {...register("terms")}
-                className="mt-1 accent-accent"
-                required
-              />
-              I accept and agree to all the{" "}
+              <input type="checkbox" {...register("terms")} className="mt-1 accent-accent" />I
+              accept and agree to all the{" "}
               <Link href="/terms" className="underline underline-offset-4 hover:text-accent">
                 Terms and Conditions
               </Link>

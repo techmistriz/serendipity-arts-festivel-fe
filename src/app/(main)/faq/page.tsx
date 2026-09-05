@@ -21,7 +21,7 @@ const FAQS: { q: string; a: string }[] = [
 
   {
     q: "How do I get my Art Pass?",
-    a: "Your Art Pass will be available to download on our Festival app closer to the Festival — we’ll email you the moment it’s ready. Every programme you book gets added to that same Art Pass automatically.",
+    a: "Your Art Pass is sent to you via email upon registration and will also be available to download on our Festival app. Every programme you book gets added to that same Art Pass automatically.",
   },
   {
     q: "How do I enter a venue?",

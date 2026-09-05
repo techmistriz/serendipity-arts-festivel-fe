@@ -101,7 +101,7 @@ export const GeneralForm = ({
   return (
     <>
       <Field label="Email ID*">
-        <input type="email" {...register("email")} className="input" required />
+        <input type="email" {...register("email")} className="input" />
 
         {errors.email && (
           <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.email)}</p>
@@ -123,7 +123,7 @@ export const GeneralForm = ({
       </Field>
 
       <Field label="Full Name*">
-        <input {...register("fullName")} className="input" required />
+        <input {...register("fullName")} className="input" />
         {errors.fullName && (
           <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.fullName)}</p>
         )}
@@ -177,7 +177,7 @@ export const GeneralForm = ({
         watch={watch} // Add this
       />
 
-      <Field label="Have you attended the Festival before?">
+      <Field label="Have you attended the Festival before?*">
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
           {PAST_YEARS.map((y) => (
             <label key={y} className="flex items-center gap-2 text-sm">
@@ -191,9 +191,12 @@ export const GeneralForm = ({
             </label>
           ))}
         </div>
+        {errors.visitedYears && (
+          <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.visitedYears)}</p>
+        )}
       </Field>
 
-      <Field label="Interests">
+      <Field label="Interests*">
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
           {INTERESTS.map((i) => (
             <label key={i} className="flex items-center gap-2 text-sm">
@@ -207,9 +210,12 @@ export const GeneralForm = ({
             </label>
           ))}
         </div>
+        {errors.interests && (
+          <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.interests)}</p>
+        )}
       </Field>
 
-      <Field label="How did you hear about us">
+      <Field label="How did you hear about us*">
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
           {HEARD.map((h) => (
             <label key={h} className="flex items-center gap-2 text-sm">
@@ -218,9 +224,12 @@ export const GeneralForm = ({
             </label>
           ))}
         </div>
+        {errors.heard && (
+          <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.heard)}</p>
+        )}
       </Field>
 
-      <Field label="WhatsApp Number">
+      <Field label="WhatsApp Number*">
         <div className="grid grid-cols-[110px_1fr] gap-3">
           <select {...register("std_code")} className="input">
             <option value="91">+91</option>
@@ -235,9 +244,12 @@ export const GeneralForm = ({
             {...register("whatsapp")}
           />
         </div>
+        {errors.whatsapp && (
+          <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.whatsapp)}</p>
+        )}
       </Field>
 
-      <Field label="OTP">
+      <Field label="OTP*">
         <div className="grid grid-cols-[1fr_auto] gap-3">
           <input inputMode="numeric" maxLength={6} className="input" {...register("otp")} />
           <button
@@ -249,6 +261,7 @@ export const GeneralForm = ({
             {isSendingOTP ? "Sending..." : otpSent ? "Resend OTP" : "Get OTP"}
           </button>
         </div>
+        {errors.otp && <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.otp)}</p>}
         {otpError && <p className="text-red-500 text-sm mt-1">{otpError}</p>}
         {otpSent && <p className="text-green-500 text-sm mt-1">OTP sent successfully!</p>}
       </Field>
@@ -273,14 +286,14 @@ export const SeaForm = ({
   return (
     <>
       <Field label="Email ID*">
-        <input type="email" {...register("email")} className="input" required />
+        <input type="email" {...register("email")} className="input" />
         {errors.email && (
           <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.email)}</p>
         )}
       </Field>
 
       <Field label="Full Name*">
-        <input {...register("fullName")} className="input" required />
+        <input {...register("fullName")} className="input" />
         {errors.fullName && (
           <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.fullName)}</p>
         )}
@@ -305,13 +318,12 @@ export const SeaForm = ({
 
       <Field label="WhatsApp Number*">
         <div className="grid grid-cols-[110px_1fr] gap-3">
-          <select {...register("std_code")} className="input" required>
+          <select {...register("std_code")} className="input">
             <option value="91">+91</option>
             <option value="1">+1</option>
             <option value="44">+44</option>
           </select>
           <input
-            required
             inputMode="numeric"
             maxLength={12}
             placeholder="WhatsApp number"
@@ -326,13 +338,7 @@ export const SeaForm = ({
 
       <Field label="OTP*">
         <div className="grid grid-cols-[1fr_auto] gap-3">
-          <input
-            required
-            inputMode="numeric"
-            maxLength={6}
-            className="input"
-            {...register("otp")}
-          />
+          <input inputMode="numeric" maxLength={6} className="input" {...register("otp")} />
           <button
             type="button"
             onClick={() => handleSendOTP(email, whatsapp, watch("std_code") || "91")}
@@ -389,14 +395,14 @@ export const GuestForm = ({
   return (
     <>
       <Field label="Email ID*">
-        <input type="email" {...register("email")} className="input" required />
+        <input type="email" {...register("email")} className="input" />
         {errors.email && (
           <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.email)}</p>
         )}
       </Field>
 
       <Field label="Full Name*">
-        <input {...register("fullName")} className="input" required />
+        <input {...register("fullName")} className="input" />
         {errors.fullName && (
           <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.fullName)}</p>
         )}
@@ -404,13 +410,12 @@ export const GuestForm = ({
 
       <Field label="Contact Number*">
         <div className="grid grid-cols-[140px_1fr] gap-3">
-          <select {...register("std_code")} className="input" required>
+          <select {...register("std_code")} className="input">
             <option value="91">India (+91)</option>
             <option value="1">USA (+1)</option>
             <option value="44">UK (+44)</option>
           </select>
           <input
-            required
             inputMode="numeric"
             maxLength={12}
             placeholder="Phone number"

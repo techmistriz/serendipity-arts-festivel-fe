@@ -31,7 +31,7 @@ const SECTIONS: Section[] = [
       },
       {
         title: "Issuance of Art Pass",
-        body: "Upon successful registration, a confirmation email will be sent. However, the Art Pass will be available to download on the app closer to the festival.",
+        body: "Upon successful registration, your Art Pass will be emailed to you and will also be available to download on the Festival app closer to the festival.",
       },
       {
         title: "Proof of Registration",
