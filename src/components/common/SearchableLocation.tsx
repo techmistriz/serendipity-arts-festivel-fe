@@ -1,259 +1,246 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Select from "react-select";
-import { Controller } from "react-hook-form";
-import { getCities, getCountries, getStates } from "@/src/services/location.service";
+import { useEffect, useState } from "react";
+import {
+  Controller,
+  type Control,
+  type FieldValues,
+  type UseFormSetValue,
+  type UseFormWatch,
+} from "react-hook-form";
+import Select, { type SingleValue } from "react-select";
 
-export default function SearchableLocation({
-  control,
-  setValue,
-  watch,
-}: any) {
-  const [countries, setCountries] = useState<any[]>([]);
-  const [states, setStates] = useState<any[]>([]);
-  const [cities, setCities] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState({
-    countries: false,
-    states: false,
-    cities: false,
-  });
+import {
+  getCities,
+  getCountries,
+  getStates,
+  type LocationOption,
+} from "@/services/location.service";
 
-  const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
-  const [selectedState, setSelectedState] = useState<number | null>(null);
+type SelectOption = { label: string; value: number };
 
-  // Watch the form values to sync with selectedCountry/State
-  const countryValue = watch?.("country");
-  const stateValue = watch?.("state");
+type SearchableLocationProps = {
+  control: Control<FieldValues>;
+  setValue: UseFormSetValue<FieldValues>;
+  watch: UseFormWatch<FieldValues>;
+};
 
-  // Sync selectedCountry with form value
+const toId = (value: unknown) => {
+  const parsed = typeof value === "number" ? value : Number.parseInt(String(value), 10);
+  return Number.isNaN(parsed) ? null : parsed;
+};
+
+const toOptions = (items: LocationOption[]): SelectOption[] =>
+  items.map((item) => ({ label: item.name, value: Number(item.id) }));
+
+const findSelectedOption = (options: SelectOption[], value: unknown) => {
+  const id = toId(value);
+  return id === null ? null : (options.find((option) => option.value === id) ?? null);
+};
+
+export default function SearchableLocation({ control, setValue, watch }: SearchableLocationProps) {
+  const [countries, setCountries] = useState<LocationOption[]>([]);
+  const [states, setStates] = useState<LocationOption[]>([]);
+  const [cities, setCities] = useState<LocationOption[]>([]);
+  const [statesForCountryId, setStatesForCountryId] = useState<number | null>(null);
+  const [citiesForStateId, setCitiesForStateId] = useState<number | null>(null);
+  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  const selectedCountry = toId(watch("country"));
+  const selectedState = toId(watch("state"));
+
   useEffect(() => {
-    if (countryValue) {
-      const countryId = typeof countryValue === 'string'
-        ? parseInt(countryValue)
-        : countryValue;
-      if (!isNaN(countryId) && countryId !== selectedCountry) {
-        setSelectedCountry(countryId);
-      }
-    }
-  }, [countryValue]);
+    let active = true;
 
-  // Sync selectedState with form value
-  useEffect(() => {
-    if (stateValue) {
-      const stateId = typeof stateValue === 'string'
-        ? parseInt(stateValue)
-        : stateValue;
-      if (!isNaN(stateId) && stateId !== selectedState) {
-        setSelectedState(stateId);
-      }
-    }
-  }, [stateValue]);
+    void getCountries()
+      .then((countryData) => {
+        if (!active) return;
+        setCountries(countryData);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error("Unable to load countries:", error);
+        setLocationError("Unable to load countries. Please refresh and try again.");
+      })
+      .finally(() => {
+        if (active) setIsCountriesLoading(false);
+      });
 
-  useEffect(() => {
-    loadData();
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const loadData = async () => {
-    // Load countries
-    setIsLoading(prev => ({ ...prev, countries: true }));
-    try {
-      const countryRes = await getCountries();
-      setCountries(Array.isArray(countryRes) ? countryRes : []);
-    } catch (e) {
-      console.error("Countries Error:", e);
-      setCountries([]);
-    } finally {
-      setIsLoading(prev => ({ ...prev, countries: false }));
+  useEffect(() => {
+    let active = true;
+
+    if (selectedCountry === null) {
+      return () => {
+        active = false;
+      };
     }
 
-    // Load states
-    setIsLoading(prev => ({ ...prev, states: true }));
-    try {
-      const stateRes = await getStates();
-      setStates(Array.isArray(stateRes) ? stateRes : []);
-    } catch (e) {
-      console.error("States Error:", e);
-      setStates([]);
-    } finally {
-      setIsLoading(prev => ({ ...prev, states: false }));
+    void getStates(selectedCountry)
+      .then((stateData) => {
+        if (!active) return;
+        setStates(stateData);
+        setStatesForCountryId(selectedCountry);
+        setLocationError(null);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error("Unable to load states:", error);
+        setStates([]);
+        setStatesForCountryId(selectedCountry);
+        setLocationError("Unable to load states. Please select the country again.");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    let active = true;
+
+    if (selectedState === null) {
+      return () => {
+        active = false;
+      };
     }
 
-    // Load cities
-    setIsLoading(prev => ({ ...prev, cities: true }));
-    try {
-      const cityRes = await getCities();
-      setCities(Array.isArray(cityRes) ? cityRes : []);
-    } catch (e) {
-      console.error("Cities Error:", e);
-      setCities([]);
-    } finally {
-      setIsLoading(prev => ({ ...prev, cities: false }));
-    }
-  };
+    void getCities(selectedState)
+      .then((cityData) => {
+        if (!active) return;
+        setCities(cityData);
+        setCitiesForStateId(selectedState);
+        setLocationError(null);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error("Unable to load cities:", error);
+        setCities([]);
+        setCitiesForStateId(selectedState);
+        setLocationError("Unable to load cities. Please select the state again.");
+      });
 
-  // Filter states based on selected country
-  const filteredStates = useMemo(() => {
-    if (!selectedCountry || !Array.isArray(states)) return [];
-    return states.filter(
-      (state: any) => state.country_id === selectedCountry
-    );
-  }, [states, selectedCountry]);
+    return () => {
+      active = false;
+    };
+  }, [selectedState]);
 
-  // Filter cities based on selected state
-  const filteredCities = useMemo(() => {
-    if (!selectedState || !Array.isArray(cities)) return [];
-    return cities.filter(
-      (city: any) => city.state_id === selectedState
-    );
-  }, [cities, selectedState]);
-
-  // Helper to format options
-  const formatOptions = (items: any[]) => {
-    return items.map((item: any) => ({
-      label: item.name,
-      value: item.id,
-    }));
-  };
-
-  // Helper to find selected option
-  const findSelectedOption = (options: any[], value: any) => {
-    if (!value) return null;
-    const val = typeof value === 'string' ? parseInt(value) : value;
-    return options.find((opt) => opt.value === val) || null;
-  };
-
-  // Clear dependent fields when parent changes
-  const handleCountryChange = (option: any) => {
-    const value = option?.value || null;
-    setSelectedCountry(value);
-    setSelectedState(null);
-    setValue("country", value ? String(value) : "");
+  const handleCountryChange = (option: SingleValue<SelectOption>) => {
+    setLocationError(null);
+    setValue("country", option ? String(option.value) : "");
     setValue("state", "");
     setValue("city", "");
   };
-
-  const handleStateChange = (option: any) => {
-    const value = option?.value || null;
-    setSelectedState(value);
-    setValue("state", value ? String(value) : "");
+  const handleStateChange = (option: SingleValue<SelectOption>) => {
+    setLocationError(null);
+    setValue("state", option ? String(option.value) : "");
     setValue("city", "");
   };
-
-  const handleCityChange = (option: any) => {
-    const value = option?.value || null;
-    setValue("city", value ? String(value) : "");
+  const handleCityChange = (option: SingleValue<SelectOption>) => {
+    setValue("city", option ? String(option.value) : "");
   };
 
+  const isStatesLoading = selectedCountry !== null && statesForCountryId !== selectedCountry;
+  const isCitiesLoading = selectedState !== null && citiesForStateId !== selectedState;
+  const stateOptions = statesForCountryId === selectedCountry ? toOptions(states) : [];
+  const cityOptions = citiesForStateId === selectedState ? toOptions(cities) : [];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {/* COUNTRY */}
-      <div>
-        <p className="label text-muted-foreground">Country*</p>
-        <div className="mt-2">
-          <Controller
-            control={control}
-            name="country"
-            render={({ field: { onChange, value } }) => {
-              const options = formatOptions(countries);
-              const selected = findSelectedOption(options, value);
-
-              return (
-                <Select
-                  instanceId="country"
-                  placeholder={isLoading.countries ? "Loading..." : "Search Country"}
-                  options={options}
-                  value={selected}
-                  onChange={(option) => {
-                    onChange(option?.value ? String(option.value) : "");
-                    handleCountryChange(option);
-                  }}
-                  isSearchable
-                  isLoading={isLoading.countries}
-                  isDisabled={isLoading.countries}
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                />
-              );
-            }}
-          />
-        </div>
+    <div>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <LocationField
+          control={control}
+          name="country"
+          label="Country*"
+          options={toOptions(countries)}
+          isLoading={isCountriesLoading}
+          placeholder={isCountriesLoading ? "Loading..." : "Search country"}
+          onChange={handleCountryChange}
+        />
+        <LocationField
+          control={control}
+          name="state"
+          label="State*"
+          options={stateOptions}
+          isLoading={isStatesLoading}
+          isDisabled={isStatesLoading || selectedCountry === null}
+          placeholder={selectedCountry === null ? "Select country first" : "Search state"}
+          emptyMessage={
+            selectedCountry === null ? "Please select a country first" : "No states available"
+          }
+          onChange={handleStateChange}
+        />
+        <LocationField
+          control={control}
+          name="city"
+          label="City*"
+          options={cityOptions}
+          isLoading={isCitiesLoading}
+          isDisabled={isCitiesLoading || selectedState === null}
+          placeholder={selectedState === null ? "Select state first" : "Search city"}
+          emptyMessage={
+            selectedState === null ? "Please select a state first" : "No cities available"
+          }
+          onChange={handleCityChange}
+        />
       </div>
+      {locationError && <p className="mt-2 text-sm text-red-500">{locationError}</p>}
+    </div>
+  );
+}
 
-      {/* STATE */}
-      <div>
-        <p className="label text-muted-foreground">State*</p>
-        <div className="mt-2">
-          <Controller
-            control={control}
-            name="state"
-            render={({ field: { onChange, value } }) => {
-              const options = formatOptions(filteredStates);
-              const selected = findSelectedOption(options, value);
-
-              return (
-                <Select
-                  instanceId="state"
-                  placeholder={!selectedCountry ? "Select country first" : "Search State"}
-                  options={options}
-                  value={selected}
-                  onChange={(option) => {
-                    onChange(option?.value ? String(option.value) : "");
-                    handleStateChange(option);
-                  }}
-                  isSearchable
-                  isDisabled={!selectedCountry || isLoading.states}
-                  isLoading={isLoading.states}
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                  noOptionsMessage={() =>
-                    !selectedCountry
-                      ? "Please select a country first"
-                      : "No states available"
-                  }
-                />
-              );
-            }}
-          />
-        </div>
-      </div>
-
-      {/* CITY */}
-      <div>
-        <p className="label text-muted-foreground">City*</p>
-        <div className="mt-2">
-          <Controller
-            control={control}
-            name="city"
-            render={({ field: { onChange, value } }) => {
-              const options = formatOptions(filteredCities);
-              const selected = findSelectedOption(options, value);
-
-              return (
-                <Select
-                  instanceId="city"
-                  placeholder={!selectedState ? "Select state first" : "Search City"}
-                  options={options}
-                  value={selected}
-                  onChange={(option) => {
-                    onChange(option?.value ? String(option.value) : "");
-                    handleCityChange(option);
-                  }}
-                  isSearchable
-                  isDisabled={!selectedState || isLoading.cities}
-                  isLoading={isLoading.cities}
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                  noOptionsMessage={() =>
-                    !selectedState
-                      ? "Please select a state first"
-                      : "No cities available"
-                  }
-                />
-              );
-            }}
-          />
-        </div>
+function LocationField({
+  control,
+  name,
+  label,
+  options,
+  isLoading,
+  isDisabled = false,
+  placeholder,
+  emptyMessage,
+  onChange,
+}: {
+  control: Control<FieldValues>;
+  name: string;
+  label: string;
+  options: SelectOption[];
+  isLoading: boolean;
+  isDisabled?: boolean;
+  placeholder: string;
+  emptyMessage?: string;
+  onChange: (option: SingleValue<SelectOption>) => void;
+}) {
+  return (
+    <div>
+      <p className="label text-muted-foreground">{label}</p>
+      <div className="mt-2">
+        <Controller
+          control={control}
+          name={name}
+          render={({ field: { onChange: setFieldValue, value } }) => (
+            <Select<SelectOption>
+              instanceId={name}
+              placeholder={placeholder}
+              options={options}
+              value={findSelectedOption(options, value)}
+              onChange={(option) => {
+                setFieldValue(option ? String(option.value) : "");
+                onChange(option);
+              }}
+              isSearchable
+              isLoading={isLoading}
+              isDisabled={isDisabled}
+              className="react-select-container"
+              classNamePrefix="react-select"
+              noOptionsMessage={() => emptyMessage ?? "No options available"}
+            />
+          )}
+        />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import api from "./axios";
+import API, { METHODS } from "@/network/API";
 
 export interface SearchCurator {
   id: number;
@@ -42,18 +42,12 @@ export interface SearchResponse {
   message: string;
 }
 
-export async function searchSiteApi(
-  keyword: string,
-): Promise<SearchResponse["data"]> {
-  const response = await api.get<SearchResponse>("/search", {
-    params: {
-      keyword,
-    },
-  });
+export async function searchSiteApi(keyword: string): Promise<SearchResponse["data"]> {
+  const response = await API<SearchResponse>("/search", METHODS.GET, { keyword });
 
-  if (!response.data.status) {
-    throw new Error(response.data.message || "Search failed");
+  if (!response.status) {
+    throw new Error(response.message || "Search failed");
   }
 
-  return response.data.data;
+  return response.data;
 }

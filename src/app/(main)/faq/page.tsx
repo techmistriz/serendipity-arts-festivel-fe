@@ -1,6 +1,13 @@
-import GlitchBar from "@/src/components/common/GlitchBar";
+import GlitchBar from "@/components/common/GlitchBar";
+import { createPageMetadata } from "@/lib/metadata";
 
-
+export const metadata = createPageMetadata({
+  title: "Frequently Asked Questions",
+  description:
+    "Find answers about registration, Art Passes, programme bookings, accessibility and visiting Serendipity Arts Festival 2026.",
+  pathname: "/faq",
+  keywords: ["festival FAQ", "Art Pass", "programme booking", "festival accessibility"],
+});
 
 const FAQS: { q: string; a: string }[] = [
   {
@@ -14,7 +21,7 @@ const FAQS: { q: string; a: string }[] = [
 
   {
     q: "How do I get my Art Pass?",
-    a: "Your Art Pass will be available to download on our Festival app closer to the Festival — we'll email you the moment it's ready. Every programme you book gets added to that same Art Pass automatically.",
+    a: "Your Art Pass will be available to download on our Festival app closer to the Festival — we’ll email you the moment it’s ready. Every programme you book gets added to that same Art Pass automatically.",
   },
   {
     q: "How do I enter a venue?",
@@ -26,11 +33,11 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Can I book multiple slots for the same programme?",
-    a: "Yes. Programmes that repeat across days show all available slots — pick as many as you'd like when you add to cart.",
+    a: "Yes. Programmes that repeat across days show all available slots — pick as many as you’d like when you add to cart.",
   },
   {
     q: "What if two programmes clash on my schedule?",
-    a: "We'll warn you at checkout if your bookings overlap. You can either drop one or keep both if you're willing to move between venues.",
+    a: "We’ll warn you at checkout if your bookings overlap. You can either drop one or keep both if you’re willing to move between venues.",
   },
   {
     q: "Is the Festival accessible?",
@@ -38,7 +45,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Can I volunteer at the Festival?",
-    a: "Absolutely. Volunteer registration for 2026 isn't open yet — when it opens, we'll announce it here and on our newsletter.",
+    a: "Absolutely. Volunteer registration for 2026 isn’t open yet — when it opens, we’ll announce it here and on our newsletter.",
   },
   {
     q: "What time should we reach the venue before a performance?",
@@ -86,14 +93,20 @@ const FAQS: { q: string; a: string }[] = [
   },
 ];
 
-
 export default function FAQ() {
   return (
     <div className="container-editorial pt-10 md:pt-20 pb-32 relative">
-      <GlitchBar seed={29} direction="v" variant="vibrate" speed={0.4} count={70} className="hidden md:block absolute left-0 top-20 bottom-32 w-1" />
+      <GlitchBar
+        seed={29}
+        direction="v"
+        variant="vibrate"
+        speed={0.4}
+        count={70}
+        className="hidden md:block absolute left-0 top-20 bottom-32 w-1"
+      />
       <h1 className="display uppercase text-[13vw] md:text-[9vw] leading-[0.9]">FAQ</h1>
       <p className="mt-6 max-w-2xl text-muted-foreground headline">
-        Everything you might want to know before you arrive. If we've missed something, write to us.
+        Everything you might want to know before you arrive. If we’ve missed something, write to us.
       </p>
 
       <ul className="mt-12 md:mt-16 rule-t">

@@ -1,8 +1,8 @@
 // import { PROGRAMMES } from "@/lib/data/programmes";
 // import { CURATORS } from "@/lib/data/programmes";
 
-import { CURATORS } from "../data/curators";
-import { PROGRAMMES } from "../data/programmes-data";
+import { CURATORS } from "@/data/curators";
+import { PROGRAMMES } from "@/data/programmes-data";
 
 export type SearchHit = {
   kind: "Page" | "Venue" | "Curator" | "Programme";
@@ -42,12 +42,7 @@ const VENUES: { name: string; subVenues: string[] }[] = [
   },
   {
     name: "Art Park",
-    subVenues: [
-      "Main Lawn",
-      "Culinary Pavilion",
-      "Workshop Tent",
-      "Shopping Village",
-    ],
+    subVenues: ["Main Lawn", "Culinary Pavilion", "Workshop Tent", "Shopping Village"],
   },
   {
     name: "Promenade",
@@ -96,12 +91,7 @@ const PROGRAMME_HITS: SearchHit[] = PROGRAMMES.map((p) => ({
   search: { p: p.id },
 }));
 
-const INDEX: SearchHit[] = [
-  ...PAGES,
-  ...VENUE_HITS,
-  ...CURATOR_HITS,
-  ...PROGRAMME_HITS,
-];
+const INDEX: SearchHit[] = [...PAGES, ...VENUE_HITS, ...CURATOR_HITS, ...PROGRAMME_HITS];
 
 export function searchSite(query: string, limit = 20): SearchHit[] {
   const q = query.trim().toLowerCase();

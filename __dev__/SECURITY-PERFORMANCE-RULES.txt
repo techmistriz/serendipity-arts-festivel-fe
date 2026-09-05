@@ -1,0 +1,75 @@
+Serendipity FRONTEND SECURITY + PERFORMANCE RULES
+
+1. Environment + Secret Safety
+- Never commit `.env`, API keys, payment keys, access tokens, test accounts, or private URLs.
+- Only variables prefixed with `NEXT_PUBLIC_` are sent to the browser. Treat every such value as public.
+- Keep `LARAVEL_API_URL` server-only. Do not rename it to a `NEXT_PUBLIC_*` variable.
+- Before production, set `NEXT_PUBLIC_CDN_URL` to the exact HTTPS Laravel/CDN media origin so the Content Security Policy can load product images.
+- Do not place secrets in `src/config`, client components, browser logs, error messages, or analytics payloads.
+- Use `.env.example` only for safe placeholders and public configuration examples.
+
+2. Authentication + Session Safety
+- The Laravel access token must stay in the existing HTTP-only cookie flow in `src/app/api/auth/[action]/route.ts`.
+- Never store the token in Redux, redux-persist, localStorage, sessionStorage, a URL, a cookie readable by JavaScript, or component state.
+- Do not call Laravel authentication endpoints directly from browser components. Use `src/services/auth.service.ts`, which calls the Next.js API proxy.
+- Do not persist the Redux `user` slice. Only the cart slice is allowed in the redux-persist whitelist.
+- On a 401/403 response, clear only the client user state and send the user to sign-in when the feature requires authentication.
+- Do not display raw backend errors, OTP values, tokens, or sensitive profile data to users.
+
+3. API + Input Rules
+- Put API calls in `src/services` or a Next.js route handler; never create Axios calls directly inside UI components.
+- Define or update TypeScript payload and response contracts in `src/types` before using a new API field.
+- Validate form data on the client for usability, but always assume Laravel is the real security boundary.
+- Use `getErrorMessage` for safe, user-facing API failures. Do not render `error.stack` or unknown response bodies.
+- Use `encodeURIComponent` for dynamic values added to URLs.
+- Do not trust price, stock, discount, quantity, or checkout totals from Redux/client state. Laravel must calculate and validate them.
+
+4. XSS + Browser Safety
+- Never use `dangerouslySetInnerHTML` unless the content is sanitized on the server and the reason is documented in the PR.
+- Do not execute remote scripts, copy Shopify scripts, or inject third-party code without approval.
+- Prefer React-rendered text. React escapes it by default.
+- Validate external links and image hosts before adding them to `next.config.ts`.
+- Use `rel="noopener noreferrer"` for links opened with `target="_blank"`.
+
+5. Rendering + Data Fetching Performance
+- Keep pages, layouts, and catalogue UI as Server Components by default.
+- Add `"use client"` only at the smallest interactive boundary. A client component pulls all its imports into the browser bundle.
+- Fetch server data in `src/services` and set an intentional Next.js cache/revalidation policy there.
+- Use `loading.tsx`, `error.tsx`, and meaningful empty states for every data-driven route.
+- Do not fetch the same resource in multiple components on one page. Fetch once, then pass typed data down.
+- Avoid client-side fetching for SEO-sensitive catalogue, collection, and product content.
+
+6. Images + Assets
+- Use `next/image` for stable product, banner, and editorial images once the final Laravel media domains are configured.
+- Specify a real image size or responsive `sizes` attribute to prevent layout shift.
+- Do not upload or commit unnecessarily large images, videos, generated build files, or source exports.
+- Keep remote image patterns in `next.config.ts` narrow: protocol, host, port, and path must be explicit.
+- Serve media from Laravel storage/CDN with optimized derivatives; do not resize original images in the browser.
+
+7. Redux + Client State
+- Follow `src/redux/{provider,store,rootReducer,hooks}.ts` and `src/redux/slices/*Slice.ts`.
+- Shared state belongs in a typed Redux slice; local, one-component state belongs in `useState`.
+- Keep Redux actions small and synchronous. Put HTTP work in services/hooks, then dispatch typed results.
+- The loading slice uses a counter. Every `startLoading` must have a matching `stopLoading` in `finally`.
+- Do not store server catalogue data globally unless there is a demonstrated cross-route need and cache plan.
+
+8. Dependency + Third-Party Discipline
+- Prefer existing dependencies and browser/platform APIs before adding a package.
+- Check bundle cost, maintenance, license, and security advisories before proposing a dependency.
+- Never add a package to solve a small utility problem without approval.
+- Run `npm audit` when dependencies change; report relevant findings instead of blindly running breaking auto-fixes.
+- Pin compatible versions through `package-lock.json`; use `npm ci` for reproducible installs.
+
+9. User Experience + Accessibility
+- Every async action must expose pending, success where useful, and safe error feedback.
+- Disable duplicate-submit buttons while requests are pending.
+- Use semantic headings, labels for inputs, text labels or `aria-label` for icon-only buttons, and keyboard-accessible controls.
+- Preserve focus after errors and do not rely on colour alone to communicate errors or stock status.
+- Test visible changes at mobile and desktop widths before review.
+
+10. Pre-Commit + Release Rules
+- Run `npm run check` before every commit; Husky enforces the same command.
+- Run `npm run build` before handing a feature to QA or merging a route/configuration change.
+- Do not bypass Husky except for a documented emergency, and never use it to bypass failing checks permanently.
+- Review `git diff` before committing; keep commits scoped and do not include unrelated formatting or generated files.
+- For auth, payment, cart, checkout, or customer-data changes, manually test error, expired-session, slow-network, and duplicate-click scenarios.

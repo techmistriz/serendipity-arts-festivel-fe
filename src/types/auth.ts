@@ -58,14 +58,84 @@ export interface SEARequest {
   is_old_user: 0 | 1;
 }
 
-export interface ApiResponse<T = any> {
-  status: any;
-  success: boolean;
-  message: string;
-  data: T;
+export interface LocationItem {
+  id: number;
+  name: string;
 }
 
-export interface ArchiveUserPayload {
+export interface AuthUser {
+  id: number;
+  name: string;
   email: string;
-  role_id: number;
+
+  std_code?: string;
+  contact?: string;
+
+  role_id?: number;
+  role?: {
+    id: number;
+    name: string;
+    role_code?: string;
+  };
+
+  referrer?: string;
+
+  gender: string;
+  age_group: string;
+
+  country_id: number | null;
+  country?: LocationItem | null;
+
+  state_id: number | null;
+  state?: LocationItem | null;
+
+  city_id: number | null;
+  city?: LocationItem | null;
+
+  custom_city: string | null;
+
+  interest: string[];
+  hearabout: string;
+
+  subscribe: number | boolean;
+
+  visited: string;
+  visited_year: string[];
+
+  is_old_user?: boolean | number;
+
+  organisation?: string | null;
+  job_title?: string | null;
+  media_type?: string | null;
+  website?: string | null;
+
+  dates?: string[];
+  travel?: string | null;
+  boarding?: string | null;
+  accompanied_anyone?: string | null;
+  accompanied_persons?: string | null;
+  additional_requests?: string | null;
+  accomodation_assistance_required?: string | null;
+
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface AuthSession {
+  user: AuthUser;
+  token: string;
+  [key: string]: unknown;
+}
+
+export interface AuthState {
+  session: AuthSession | null;
+  user: AuthUser | null;
+  accessToken: string | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
 }

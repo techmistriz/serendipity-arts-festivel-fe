@@ -1,17 +1,13 @@
-import { Metadata } from "next";
-import { Suspense } from "react";
-import VenuesClient from "./VenuesClient";
+import VenuesPageClient from "./VenuesPageClient";
+import { createPageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Venues — Serendipity Arts Festival 2026",
-  description:
-    "Heritage buildings and purpose-built festival spaces across Panjim.",
-};
+export const metadata = createPageMetadata({
+  title: "Venues",
+  description: "Explore heritage buildings and purpose-built festival spaces across Panjim, Goa.",
+  pathname: "/venues",
+  keywords: ["festival venues", "Panjim", "Goa venues", "heritage venues"],
+});
 
 export default function Page() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <VenuesClient />
-    </Suspense>
-  );
+  return <VenuesPageClient />;
 }

@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-
 import "./globals.css";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-
 import { Inter_Tight, Stack_Sans_Headline } from "next/font/google";
-
-import { AccessibilityWidget } from "../components/common/AccessibilityWidget";
-import ReduxProvider from "../store/provider";
-import { CartProvider } from "../lib/cart";
+import { AccessibilityWidget } from "@/components/common/AccessibilityWidget";
+import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
+import { siteConfig } from "@/config/site";
+import { ReduxProvider } from "@/redux/provider";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -23,8 +20,33 @@ const stackSansHeadline = Stack_Sans_Headline({
 });
 
 export const metadata: Metadata = {
-  title: "Serendipity Arts Festival",
-  description: "Official website of Serendipity Arts Festival",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  keywords: [
+    "Serendipity Arts Festival",
+    "SAF 2026",
+    "Goa arts festival",
+    "Panjim",
+    "India arts festival",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: siteConfig.url,
+  },
+  twitter: {
+    card: "summary",
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
 };
 
 export default function RootLayout({
@@ -37,19 +59,15 @@ export default function RootLayout({
       lang="en"
       className={`${interTight.variable} ${stackSansHeadline.variable} h-full antialiased`}
     >
-      <body className="min-h-screen flex flex-col">
+      <body
+        className="min-h-screen flex flex-col"
+        suppressHydrationWarning //Fix: Suppress hydration warnings for body attributes
+      >
         <ReduxProvider>
-          <CartProvider>
-            <Header />
-
-            <main className="flex-1">
-              {children}
-            </main>
-
-            <Footer />
-
-            <AccessibilityWidget />
-          </CartProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <AccessibilityWidget />
         </ReduxProvider>
       </body>
     </html>

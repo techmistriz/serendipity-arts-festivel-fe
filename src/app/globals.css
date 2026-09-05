@@ -12,17 +12,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display:
-    "Stack Sans Notch", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Stack Sans Notch", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-sans:
-    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-serif:
-    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
-  --font-hand:
-    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-hand: "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
 
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --radius-sm: 2px;
@@ -336,8 +332,7 @@
 }
 
 @utility headline {
-  font-family:
-    "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Stack Sans Headline", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: 0;
 }
@@ -493,8 +488,7 @@ html.a11y-hide-images svg:not(#saf-a11y-root svg) {
   visibility: hidden !important;
 }
 
-html.a11y-focus
-  :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+html.a11y-focus :is(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: 4px solid #ff00c8 !important;
   outline-offset: 3px !important;
 }
@@ -532,4 +526,73 @@ html.a11y-dyslexia button {
   border-bottom: 2px solid #ff00c8;
   pointer-events: none;
   z-index: 99;
+}
+
+/* ── Textured section bands ─────────────────────────────────────────── */
+
+.tex-band {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--tex-tint, transparent);
+}
+
+.tex-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image:
+    url("/punk/grain-texture.png"),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.06) 0 1px, transparent 1px 4px);
+
+  background-size:
+    420px 420px,
+    100% 100%;
+  background-repeat: repeat, repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+/* Grainy paper texture for torn-paper creatives */
+.paper-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-image:
+    url("/punk/grain-texture.png"), radial-gradient(rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0 1px, transparent 1px 3px);
+  background-size:
+    280px 280px,
+    3px 3px,
+    100% 100%;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+
+.schedule-marquee-track {
+  display: inline-flex;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Pause animation on hover to allow easy reading */
+.schedule-marquee-track.is-animating {
+  animation: schedule-marquee var(--marquee-duration, 16s) linear infinite;
+}
+
+.schedule-marquee-track.is-animating:hover {
+  animation-play-state: paused;
+}
+
+@keyframes schedule-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }

@@ -3,19 +3,70 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import GlitchBar from "./GlitchBar";
-import { dateLabel, timeLabel } from "@/src/data/programmes-data";
-import { RECOMMENDER_OPTIONS, recommendProgrammes } from "@/src/lib/recommender";
+import { RECOMMENDER_OPTIONS } from "@/data/recommender";
+import { recommendProgrammes } from "@/lib/recommender";
+import type { UIProgramme } from "@/types/programme";
 
 export function RecommendModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [picks, setPicks] = useState<string[]>([]);
   const [shown, setShown] = useState(false);
+  const [recs, setRecs] = useState<UIProgramme[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open || !shown || !picks.length) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadRecommendations = async () => {
+      setLoading(true);
+      setError(null);
+      setRecs([]);
+
+      try {
+        const programmes = await recommendProgrammes(picks, 8);
+
+        if (!cancelled) {
+          setRecs(programmes);
+        }
+      } catch (requestError) {
+        if (!cancelled) {
+          setRecs([]);
+          setError(
+            requestError instanceof Error ? requestError.message : "Unable to load programmes.",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadRecommendations();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, picks, shown]);
+
   if (!open) return null;
-  const recs = shown ? recommendProgrammes(picks, 8) : [];
+
   const toggle = (id: string) =>
     setPicks((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
+  const showRecommendations = () => {
+    setLoading(true);
+    setError(null);
+    setRecs([]);
+    setShown(true);
+  };
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-3 md:p-8">
@@ -27,7 +78,11 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
             <h2 className="display uppercase text-2xl md:text-4xl leading-[0.95]">
               Let us help you — recommend programmes
             </h2>
-            <button onClick={onClose} aria-label="Close" className="label border border-foreground px-3 py-1.5">
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="label border border-foreground px-3 py-1.5"
+            >
               ✕
             </button>
           </div>
@@ -45,8 +100,9 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                         type="button"
                         onClick={() => toggle(o.id)}
                         aria-pressed={on}
-                        className={`text-left p-3 border border-foreground transition-colors ${on ? "bg-foreground text-background" : "hover:bg-muted"
-                          }`}
+                        className={`text-left p-3 border border-foreground transition-colors ${
+                          on ? "bg-foreground text-background" : "hover:bg-muted"
+                        }`}
                       >
                         <span className="headline text-sm leading-snug">{o.label}</span>
                       </button>
@@ -55,7 +111,7 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                 </div>
               </div>
               <button
-                onClick={() => setShown(true)}
+                onClick={showRecommendations}
                 disabled={!picks.length}
                 className="headline font-semibold uppercase text-base bg-foreground text-background px-6 py-3 disabled:opacity-40"
               >
@@ -66,17 +122,41 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
             <div className="mt-6">
               <div className="flex flex-wrap items-baseline justify-between gap-3">
                 <p className="headline font-semibold uppercase text-xl md:text-2xl">
-                  {recs.length ? `Here's what we'd pick for you.` : "No matches yet — check back soon."}
+                  {loading
+                    ? "Finding programmes for you…"
+                    : error
+                      ? "We couldn’t load recommendations."
+                      : recs.length
+                        ? `Here’s what we’d pick for you.`
+                        : "No matches yet — check back soon."}
                 </p>
-                <button onClick={() => setShown(false)} className="label border border-foreground px-3 py-1.5">
+                <button
+                  onClick={() => setShown(false)}
+                  className="label border border-foreground px-3 py-1.5"
+                >
                   Change answers ↺
                 </button>
               </div>
-              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+              {error && <p className="mt-3 text-sm text-muted-foreground">{error}</p>}
+              <div
+                className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4"
+                aria-busy={loading}
+                aria-live="polite"
+              >
+                {loading &&
+                  Array.from({ length: 8 }).map((_, index) => (
+                    <div key={index} className="space-y-2 animate-pulse" aria-hidden="true">
+                      <div className="aspect-square bg-muted" />
+                      <div className="h-4 w-3/4 bg-muted" />
+                      <div className="h-3 w-1/2 bg-muted" />
+                    </div>
+                  ))}
                 {recs.map((p) => (
                   <Link
                     key={p.id}
-                    href={`/programmes?p=${p.id}`}
+                    href={
+                      p.slug ? `/programmes/${encodeURIComponent(p.slug)}` : `/programmes?p=${p.id}`
+                    }
                     onClick={onClose}
                     className="group block"
                   >
@@ -89,7 +169,11 @@ export function RecommendModal({ open, onClose }: { open: boolean; onClose: () =
                       className="w-full aspect-square object-cover border border-foreground"
                     />
                     <h3 className="mt-2 headline font-semibold text-sm leading-tight">{p.title}</h3>
-                    <p className="text-[11px] text-muted-foreground headline">{dateLabel(p)} · {timeLabel(p)}</p>
+                    <p className="text-[11px] text-muted-foreground headline">
+                      {p.slots[0]
+                        ? `Day ${p.slots[0].day} · ${p.slots[0].fromTime} - ${p.slots[0].toTime}`
+                        : "Schedule TBA"}
+                    </p>
                   </Link>
                 ))}
               </div>

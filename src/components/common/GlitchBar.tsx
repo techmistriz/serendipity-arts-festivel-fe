@@ -1,7 +1,4 @@
-"use client";
-
-import { useMemo } from "react";
-import { PALETTE } from "../../lib/glitch-palette";
+import { GLITCH_PALETTE } from "@/config/constants";
 
 function mulberry32(seed: number) {
   return function () {
@@ -24,6 +21,22 @@ type GlitchBarProps = {
   speed?: number;
 };
 
+type GlitchSegment = {
+  pos: number;
+  len: number;
+  color: string;
+};
+
+function createSegments(seed: number, count: number): GlitchSegment[] {
+  const rand = mulberry32(seed);
+
+  return Array.from({ length: count }, () => ({
+    pos: rand() * 100,
+    len: 1 + rand() * 6,
+    color: GLITCH_PALETTE[Math.floor(rand() * GLITCH_PALETTE.length)],
+  }));
+}
+
 export default function GlitchBar({
   seed = 5,
   direction = "h",
@@ -33,15 +46,7 @@ export default function GlitchBar({
   count = 80,
   speed = 6,
 }: GlitchBarProps) {
-  const segments = useMemo(() => {
-    const rand = mulberry32(seed);
-
-    return Array.from({ length: count }, () => ({
-      pos: rand() * 100,
-      len: 1 + rand() * 6,
-      color: PALETTE[Math.floor(rand() * PALETTE.length)],
-    }));
-  }, [seed, count]);
+  const segments = createSegments(seed, count);
 
   const isHorizontal = direction === "h";
 
@@ -63,21 +68,17 @@ export default function GlitchBar({
     variant === "vibrate"
       ? `${speed}s steps(5) infinite`
       : variant === "bulge"
-      ? `${speed}s ease-in-out infinite`
-      : `${speed}s linear infinite`;
+        ? `${speed}s ease-in-out infinite`
+        : `${speed}s linear infinite`;
 
   return (
-    <div
-      className={`relative overflow-hidden ${className}`}
-      aria-hidden="true"
-    >
+    <div className={`relative overflow-hidden ${className}`} aria-hidden="true">
       <div
         className="absolute inset-0 flex"
         style={{
           animation: `${animationName} ${animationTiming}`,
           flexDirection: isHorizontal ? "row" : "column",
-          transformOrigin:
-            variant === "bulge" ? "center center" : undefined,
+          transformOrigin: variant === "bulge" ? "center center" : undefined,
         }}
       >
         {[0, 1].map((copy) => (

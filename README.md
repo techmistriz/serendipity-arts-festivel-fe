@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Serendipity Arts Festival 2026
 
-## Getting Started
+The Next.js frontend for Serendipity Arts Festival. It uses the App Router, TypeScript, Tailwind CSS, Redux Toolkit, and the SAF backend API.
 
-First, run the development server:
+## Development
 
 ```bash
-npm run dev
-# or
+yarn
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a local environment file with the public backend URL when required:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Quality checks
 
-## Learn More
+```bash
+yarn format          # Format the project
+yarn lint            # Run ESLint
+yarn typecheck       # Run TypeScript without emitting files
+yarn run check       # Run formatting, linting, and type checks
+yarn build           # Build the production application
+```
 
-To learn more about Next.js, take a look at the following resources:
+Husky runs `yarn lint-staged` before each commit. Staged TypeScript and JavaScript files are linted and formatted; styles, JSON, Markdown, and YAML are formatted.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Source layout
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+src/
+├── app/          # Routes, layouts, and route-local client components
+├── components/   # UI organised by domain (auth, layout, maps, common, …)
+├── config/       # Site-wide configuration
+├── context/      # React context providers
+├── data/         # Static editorial data
+├── hooks/        # Reusable hooks
+├── lib/          # Framework/API integrations and helpers
+├── redux/        # Store, slices, typed hooks, and providers
+├── services/     # Backend endpoint modules
+├── types/        # Shared TypeScript contracts
+├── utils/        # Small pure utilities
+└── validations/  # Form validation schemas
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Use `@/…` for source imports and `@public/…` only for static asset imports from `public/`.
