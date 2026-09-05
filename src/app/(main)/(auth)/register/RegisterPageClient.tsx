@@ -315,12 +315,12 @@ function RegisterContent() {
                 : "Your Art Pass"}
           </p>
           <p className="mt-3 display uppercase text-2xl md:text-3xl leading-[1] tracking-[-0.02em]">
-            Available on our app, closer to the festival.
+            Sent to your email. Available on the app too.
           </p>
           <p className="mt-4 text-sm text-muted-foreground headline">
             {isGuest
-              ? "We can’t wait to see you in Panjim, Goa, 13–20 December."
-              : "Each time you book a programme, it will be added to your single Art Pass, just show it at any venue in front of our zappers."}
+              ? `Your Art Pass has been emailed to you and will also be available to download on our Festival app. Every programme you book gets added to the same pass — just show it at any venue in front of our zappers.`
+              : ""}
           </p>
         </div>
         <Link
