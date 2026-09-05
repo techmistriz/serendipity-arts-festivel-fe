@@ -29,10 +29,15 @@ export const generalSchema = z.object({
 
   whatsapp: z
     .string()
-    .min(10, "Valid WhatsApp number is required")
-    .max(15, "Invalid WhatsApp number"),
+    .trim()
+    .min(1, "WhatsApp number is required")
+    .regex(/^\d{10,15}$/, "Enter a valid WhatsApp number"),
 
-  otp: z.string().min(4, "OTP is required"),
+  otp: z
+    .string()
+    .trim()
+    .min(1, "OTP is required")
+    .regex(/^\d{4,6}$/, "Enter a valid OTP"),
 
   newsletter: z.boolean().optional(),
 
@@ -51,16 +56,25 @@ export const seaSchema = z.object({
   city: z.string().min(1, "City is required"),
   whatsapp: z
     .string()
-    .min(10, "Valid WhatsApp number is required")
-    .max(15, "Invalid WhatsApp number"),
-  otp: z.string().min(4, "OTP is required"),
+    .trim()
+    .min(1, "WhatsApp number is required")
+    .regex(/^\d{10,15}$/, "Enter a valid WhatsApp number"),
+  otp: z
+    .string()
+    .trim()
+    .min(1, "OTP is required")
+    .regex(/^\d{4,6}$/, "Enter a valid OTP"),
   newsletter: z.boolean().optional(),
   std_code: z.string().default("91"),
 });
 
 export const guestSchema = z.object({
   ...baseSchema,
-  contact: z.string().min(10, "Contact number is required"),
+  contact: z
+    .string()
+    .trim()
+    .min(1, "Contact number is required")
+    .regex(/^\d{10,15}$/, "Enter a valid contact number"),
   dates: z.array(z.string()).min(1, "Select at least one date"),
   travel: z.string().min(1, "Please select an option"),
   lodging: z.string().min(1, "Please select an option"),
