@@ -5,10 +5,28 @@ import { stripHtml } from "@/utils/html";
 
 import type { VenueListItem } from "../types";
 import { VenueImage } from "./VenueImage";
+import { AccessRow } from "./VenueAccess";
+// import type { Access } from "@/types/venue";
 
 type VenueCardProps = {
   venue: VenueListItem;
 };
+
+// TEMP: Static accessibility data for UI testing
+// const TEMP_ACCESS: Access[] = [
+//   {
+//     name: "Wheelchair Access",
+//     icon: "♿",
+//   },
+//   {
+//     name: "Audio Description",
+//     icon: "🔊",
+//   },
+//   {
+//     name: "Sign Language",
+//     icon: "🤟",
+//   },
+// ];
 
 export function VenueCard({ venue }: VenueCardProps) {
   return (
@@ -35,6 +53,17 @@ export function VenueCard({ venue }: VenueCardProps) {
         <p className="headline mt-2 line-clamp-2 text-sm text-muted-foreground">
           {stripHtml(venue.description)}
         </p>
+      )}
+
+      {/* TEMP: Static accessibility UI */}
+      {/* <div className="min-h-13">
+        <AccessRow items={TEMP_ACCESS} compact />
+      </div> */}
+
+      {venue.access && venue.access.length > 0 && (
+        <div className="min-h-13">
+          <AccessRow items={venue.access} compact />
+        </div>
       )}
 
       <span className="headline mt-3 inline-block border border-foreground px-3 py-1.5 text-[11px] tracking-[0.08em] uppercase transition-colors group-hover:bg-foreground group-hover:text-background">

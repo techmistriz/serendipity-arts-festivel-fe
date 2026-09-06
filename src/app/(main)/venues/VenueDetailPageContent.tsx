@@ -9,6 +9,7 @@ import { VenueImage } from "./_components/VenueImage";
 import { VenueProgrammes } from "./_components/VenueProgrammes";
 import { VenueSubVenues } from "./_components/VenueSubVenues";
 import type { VenueDetail } from "./types";
+import { AccessRow } from "./_components/VenueAccess";
 
 type VenueDetailPageContentProps = {
   venue: VenueDetail;
@@ -18,7 +19,7 @@ export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
   const directionsUrl = getSafeExternalUrl(venue.google_map_url);
 
   return (
-    <div className="container-editorial relative py-10 pb-24 md:pb-32">
+    <div className="container-editorial relative py-4 pb-24 md:pb-32">
       {/* Left glitch edge */}
       <GlitchBar
         seed={17}
@@ -39,7 +40,7 @@ export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
         className="pointer-events-none absolute top-0 right-0 bottom-0 w-1.5"
       />
 
-      <div className="pt-6 pb-16 md:pt-10">
+      <div className="pt-0 pb-16">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-rule pb-4">
           <p className="label">Venue</p>
@@ -74,6 +75,13 @@ export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
               html={venue.description}
               className="headline mt-4 max-w-prose space-y-4 text-base leading-relaxed md:text-lg [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
             />
+
+            {venue.access && venue.access.length > 0 && (
+              <div className="mt-8">
+                <p className="label text-muted-foreground mb-1">Accessibility &amp; amenities</p>
+                <AccessRow items={venue.access} compact />
+              </div>
+            )}
 
             <VenueSubVenues venues={venue.childs} />
 
