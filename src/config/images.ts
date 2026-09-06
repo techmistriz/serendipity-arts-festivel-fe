@@ -48,6 +48,7 @@ import sagLogo from "@public/images/partners/sag.png";
 import programmeOne from "@public/images/programmes/prog-1.jpg";
 import programmeTwo from "@public/images/programmes/prog-2.jpg";
 import programmeThree from "@public/images/programmes/prog-3.jpg";
+import fallbackAvatar from "@public/fallback.jpg";
 import testimonialGhosh from "@public/images/testimonials/ghosh.jpg";
 import testimonialKhanwalkar from "@public/images/testimonials/khanwalkar.jpg";
 import testimonialParrikar from "@public/images/testimonials/parrikar.jpg";
@@ -133,6 +134,7 @@ export const images = {
     samples: [programmeOne, programmeTwo, programmeThree],
   },
   testimonials: {
+    fallback: fallbackAvatar,
     ghosh: testimonialGhosh,
     khanwalkar: testimonialKhanwalkar,
     ojha: testimonialOjha,
