@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 
-import { homeImages } from "@/config/images";
+import { images, homeImages } from "@/config/images";
 import { resolveCdnMediaUrl } from "@/utils/media";
 
 import { HomePromoPanel } from "./HomePromoPanel";
@@ -109,7 +109,7 @@ export function TestimonialsSection() {
             <div className="md:col-span-3">
               {testimonialImage ? (
                 <Image
-                  src={testimonialImage}
+                  src={testimonialImage || images.testimonials.fallback}
                   alt={testimonial.name}
                   width={220}
                   height={220}
