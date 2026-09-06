@@ -1,11 +1,19 @@
 import type { ApiResponse } from "./api";
 
+export type Access = {
+  id: number;
+  name: string;
+  icon: string;
+  description: string;
+};
+
 export interface VenueListItem {
   id: number;
   slug: string;
   title: string;
   description: string | null;
   featured_image: string | null;
+  accessibility: Access[];
 }
 
 export interface VenueChild extends VenueListItem {
@@ -42,4 +50,5 @@ export interface VenueDetail extends VenueListItem {
 }
 
 export type Venue = VenueListItem;
+
 export type VenuesResponse = ApiResponse<VenueListItem[]>;

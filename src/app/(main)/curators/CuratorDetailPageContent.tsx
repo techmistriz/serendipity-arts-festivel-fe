@@ -19,7 +19,7 @@ export function CuratorDetailPageContent({ detail }: CuratorDetailPageContentPro
   const instagramUrl = getSafeExternalUrl(curator.instagram_link);
 
   return (
-    <div className="container-editorial relative py-10 pb-24 md:pt-16 md:pb-32">
+    <div className="container-editorial relative py-10 pb-24 md:pt-10 md:pb-32">
       <GlitchBar
         seed={13}
         direction="v"

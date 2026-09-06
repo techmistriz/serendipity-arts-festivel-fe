@@ -4,13 +4,20 @@ import type { Sponsors } from "@/types/sponsor";
 
 export function SponsorGrid({ sponsors }: { sponsors: Sponsors[] }) {
   return (
-    <div className="mt-8 border">
+    <div className="mt-8 border border-foreground">
       <div className="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible">
         {sponsors.map((sponsor, i) => (
           <div
             key={sponsor.name}
             className={`flex w-[46vw] min-h-[140px] shrink-0 snap-start flex-col justify-between px-4 py-5 md:w-auto md:min-h-[180px] md:px-6 md:py-6 ${
-              i !== sponsors.length - 1 ? "border-r" : ""
+              /* Add right border except for the last item on mobile */
+              i !== sponsors.length - 1 ? "border-r border-foreground" : ""
+            } ${
+              /* Remove right border on the 4th column to prevent doubling with the outer container */
+              (i + 1) % 4 === 0 ? "md:border-r-0" : ""
+            } ${
+              /* Add top border starting from row 2 */
+              i >= 4 ? "md:border-t md:border-foreground" : ""
             }`}
           >
             <div className="grid flex-1 place-items-center">

@@ -102,7 +102,11 @@ export function LogoGridLoadingSkeleton({
   label = "Loading partners",
 }: ContentGridSkeletonProps) {
   return (
-    <div className={cn("mt-8 border", className)} role="status" aria-live="polite">
+    <div
+      className={cn("mt-8 border border-foreground", className)}
+      role="status"
+      aria-live="polite"
+    >
       <LoadingAnnouncement label={label} />
 
       <div className="flex snap-x snap-mandatory overflow-hidden md:grid md:grid-cols-4">
@@ -110,7 +114,14 @@ export function LogoGridLoadingSkeleton({
           <div
             key={index}
             className={`flex w-[46vw] min-h-[140px] shrink-0 flex-col justify-between px-4 py-5 md:w-auto md:min-h-[180px] md:px-6 md:py-6 ${
-              index !== count - 1 ? "border-r" : ""
+              /* Add right border except on mobile last item */
+              index !== count - 1 ? "border-r border-foreground" : ""
+            } ${
+              /* Strip right border on 4th grid columns on desktop */
+              (index + 1) % 4 === 0 ? "md:border-r-0" : ""
+            } ${
+              /* Add top border from second row onwards */
+              index >= 4 ? "md:border-t md:border-foreground" : ""
             }`}
             aria-hidden="true"
           >

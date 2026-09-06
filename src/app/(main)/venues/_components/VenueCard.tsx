@@ -4,6 +4,7 @@ import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { stripHtml } from "@/utils/html";
 
 import type { VenueListItem } from "../types";
+import { AccessRow } from "./VenueAccess";
 import { VenueImage } from "./VenueImage";
 
 type VenueCardProps = {
@@ -35,6 +36,12 @@ export function VenueCard({ venue }: VenueCardProps) {
         <p className="headline mt-2 line-clamp-2 text-sm text-muted-foreground">
           {stripHtml(venue.description)}
         </p>
+      )}
+
+      {venue.accessibility?.length > 0 && (
+        <div className="min-h-13">
+          <AccessRow items={venue.accessibility} compact />
+        </div>
       )}
 
       <span className="headline mt-3 inline-block border border-foreground px-3 py-1.5 text-[11px] tracking-[0.08em] uppercase transition-colors group-hover:bg-foreground group-hover:text-background">
