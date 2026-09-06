@@ -40,7 +40,7 @@ export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
         className="pointer-events-none absolute top-0 right-0 bottom-0 w-1.5"
       />
 
-      <div className="pt-0 pb-16">
+      <div className="pt-0">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-rule pb-4">
           <p className="label">Venue</p>
