@@ -76,10 +76,9 @@ export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
               className="headline mt-4 max-w-prose space-y-4 text-base leading-relaxed md:text-lg [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l [&_blockquote]:border-rule [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
             />
 
-            {venue.access && venue.access.length > 0 && (
-              <div className="mt-8">
-                <p className="label text-muted-foreground mb-1">Accessibility &amp; amenities</p>
-                <AccessRow items={venue.access} compact />
+            {venue.accessibility?.length > 0 && (
+              <div className="min-h-13">
+                <AccessRow items={venue.accessibility} compact />
               </div>
             )}
 

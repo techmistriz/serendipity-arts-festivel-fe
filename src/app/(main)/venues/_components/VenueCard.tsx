@@ -4,29 +4,12 @@ import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { stripHtml } from "@/utils/html";
 
 import type { VenueListItem } from "../types";
-import { VenueImage } from "./VenueImage";
 import { AccessRow } from "./VenueAccess";
-// import type { Access } from "@/types/venue";
+import { VenueImage } from "./VenueImage";
 
 type VenueCardProps = {
   venue: VenueListItem;
 };
-
-// TEMP: Static accessibility data for UI testing
-// const TEMP_ACCESS: Access[] = [
-//   {
-//     name: "Wheelchair Access",
-//     icon: "♿",
-//   },
-//   {
-//     name: "Audio Description",
-//     icon: "🔊",
-//   },
-//   {
-//     name: "Sign Language",
-//     icon: "🤟",
-//   },
-// ];
 
 export function VenueCard({ venue }: VenueCardProps) {
   return (
@@ -55,14 +38,9 @@ export function VenueCard({ venue }: VenueCardProps) {
         </p>
       )}
 
-      {/* TEMP: Static accessibility UI */}
-      {/* <div className="min-h-13">
-        <AccessRow items={TEMP_ACCESS} compact />
-      </div> */}
-
-      {venue.access && venue.access.length > 0 && (
+      {venue.accessibility?.length > 0 && (
         <div className="min-h-13">
-          <AccessRow items={venue.access} compact />
+          <AccessRow items={venue.accessibility} compact />
         </div>
       )}
 
