@@ -70,6 +70,7 @@ export interface AuthUser {
 
   std_code?: string;
   contact?: string;
+  badge?: string | null;
 
   role_id?: number;
   role?: {

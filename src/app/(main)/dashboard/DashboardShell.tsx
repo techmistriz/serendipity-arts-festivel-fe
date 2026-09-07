@@ -16,6 +16,7 @@ const dashboardLinks = [
   { href: "/dashboard/wishlist", label: "Wishlist" },
   { href: "/dashboard/schedule", label: "Schedule" },
   { href: "/dashboard/profile", label: "Profile" },
+  { href: "/dashboard/art-pass", label: "Art Pass" },
 ] as const;
 
 export function DashboardShell({ children }: { children: ReactNode }) {
