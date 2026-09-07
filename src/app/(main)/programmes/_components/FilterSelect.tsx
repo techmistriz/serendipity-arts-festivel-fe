@@ -1,7 +1,12 @@
+type FilterOption = {
+  label: string;
+  value: string;
+};
+
 type FilterSelectProps = {
   label: string;
   value: string;
-  options: readonly string[];
+  options: readonly (string | FilterOption)[];
   onChange: (value: string) => void;
 };
 
@@ -23,11 +28,17 @@ export function FilterSelect({ label, value, options, onChange }: FilterSelectPr
         aria-label={label}
         className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
       >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
+        {options.map((option) => {
+          const optionValue = typeof option === "string" ? option : option.value;
+
+          const optionLabel = typeof option === "string" ? option : option.label;
+
+          return (
+            <option key={optionValue} value={optionValue}>
+              {optionLabel}
+            </option>
+          );
+        })}
       </select>
       <span aria-hidden className={`label ${isActive ? "text-accent" : "text-muted-foreground"}`}>
         ▾

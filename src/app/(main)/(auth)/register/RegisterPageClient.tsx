@@ -1,38 +1,48 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { useForm, useWatch, type FieldValues, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+
 import { mediaPaths } from "@/config/images";
-import { registerUser, registerVIP, registerSEA } from "@/services/register.service";
+import { registerSEA, registerUser, registerVIP } from "@/services/register.service";
 
-// Import schemas
-import { generalSchema, seaSchema, guestSchema, ROLE_IDS } from "@/components/auth/hooks/schemas";
+import { generalSchema, guestSchema, ROLE_IDS, seaSchema } from "@/components/auth/hooks/schemas";
 
-// Import form components
-import { GeneralForm, SeaForm, GuestForm } from "@/components/auth/FormFields";
+import { GeneralForm, GuestForm, SeaForm } from "@/components/auth/FormFields";
+
 import { useCheckArchiveUser } from "@/components/auth/hooks/useCheckArchiveUser";
 import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setSession } from "@/redux/slices/authSlice";
 
 function RegisterContent() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "";
-  const initialMode = (searchParams.get("mode") as "general" | "guest" | "sea") || "general";
 
-  //for general show only
-  // const initialMode = "general" as const;
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
-  const [mode, setMode] = useState<"general" | "guest" | "sea">(initialMode);
-  const [submitted, setSubmitted] = useState(false);
+  const [registrationCompleted, setRegistrationCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setGlobalError] = useState<string | null>(null);
-  const [registeredEmail, setRegisteredEmail] = useState("");
+
+  const initialMode = (searchParams.get("mode") as "general" | "guest" | "sea") || "general";
+
+  const [mode, setMode] = useState<"general" | "guest" | "sea">(initialMode);
+
+  // Redirect already authenticated users to dashboard.
+  // Don't redirect after successful registration because
+  // registration automatically authenticates the user.
+  useEffect(() => {
+    if (isAuthenticated && !registrationCompleted) {
+      router.replace("/dashboard");
+    }
+  }, [isAuthenticated, registrationCompleted, router]);
 
   const schema = mode === "sea" ? seaSchema : mode === "guest" ? guestSchema : generalSchema;
 
@@ -71,7 +81,12 @@ function RegisterContent() {
     },
   });
 
-  const email = String(useWatch({ control, name: "email" }) ?? "");
+  const email = String(
+    useWatch({
+      control,
+      name: "email",
+    }) ?? "",
+  );
 
   const isSea = mode === "sea";
   const isGuest = mode === "guest";
@@ -88,7 +103,6 @@ function RegisterContent() {
     setValue("email", archivedUser.email ?? "");
     setValue("fullName", archivedUser.name ?? "");
     setValue("gender", archivedUser.gender ?? "");
-
     setValue("std_code", archivedUser.std_code ?? "91");
 
     setValue("whatsapp", archivedUser.contact ? String(archivedUser.contact) : "");
@@ -99,20 +113,21 @@ function RegisterContent() {
 
     setValue("city", archivedUser.city_id ? String(archivedUser.city_id) : "");
 
-    // General registration fields
     setValue("age", archivedUser.age_group ?? "");
-
     setValue("visitedYears", archivedUser.visited_year ?? []);
-
     setValue("newsletter", archivedUser.subscribe === 1);
   }, [userExists, archivedUser, setValue]);
 
   const handleModeChange = (newMode: "general" | "guest" | "sea") => {
     setMode(newMode);
     setGlobalError(null);
+
     const params = new URLSearchParams(searchParams.toString());
     params.set("mode", newMode);
-    router.replace(`/register?${params.toString()}`, { scroll: false });
+
+    router.replace(`/register?${params.toString()}`, {
+      scroll: false,
+    });
   };
 
   const onInvalid = () => {
@@ -134,7 +149,7 @@ function RegisterContent() {
     setGlobalError(null);
 
     const subscribe: 0 | 1 = data.newsletter ? 1 : 0;
-    const isOldUser: 0 | 1 = userExists === true ? 1 : 0;
+    const isOldUser: 0 | 1 = userExists ? 1 : 0;
 
     try {
       let response;
@@ -180,8 +195,6 @@ function RegisterContent() {
           additional_requests: data.additionalRequests || "",
           accomodation_assistance_required: data.accom || "No",
 
-          // Existing archived user = 1
-          // New user = 0
           is_old_user: isOldUser,
           subscribe,
         };
@@ -213,72 +226,82 @@ function RegisterContent() {
           visited_year: data.visitedYears || [],
           custom_city: "",
 
-          // Existing archived user = 1
-          // New user = 0
           is_old_user: isOldUser,
-
           terms: data.terms,
         };
 
         response = await registerUser(generalData);
       }
 
-      if (response) {
-        const isSuccess = response.status === true || response.success === true;
-
-        if (isSuccess) {
-          setRegisteredEmail(data.email);
-
-          reset({
-            email: "",
-            fullName: "",
-            gender: "",
-            std_code: "91",
-            whatsapp: "",
-            otp: "",
-            newsletter: false,
-            terms: false,
-            dates: [],
-            interests: [],
-            visitedYears: [],
-          });
-
-          if (next) {
-            router.push(next);
-          } else {
-            setSubmitted(true);
-          }
-        } else {
-          const backendErrors = response.errors;
-
-          if (backendErrors && typeof backendErrors === "object" && !Array.isArray(backendErrors)) {
-            const messages = Object.values(backendErrors)
-              .flat()
-              .filter((message): message is string => typeof message === "string");
-
-            if (messages.length > 0) {
-              setGlobalError(messages.join(" "));
-            } else {
-              setGlobalError(
-                typeof response.message === "string" ? response.message : "Registration failed",
-              );
-            }
-          } else {
-            setGlobalError(
-              typeof response.message === "string" ? response.message : "Registration failed",
-            );
-          }
-        }
-      } else {
+      if (!response) {
         setGlobalError("Registration failed: Invalid response");
+        return;
+      }
+
+      const isSuccess = response.status === true || response.success === true;
+
+      if (isSuccess) {
+        const authData = response.data;
+
+        // Important:
+        // Set this BEFORE setSession() because setSession()
+        // changes isAuthenticated to true.
+        setRegistrationCompleted(true);
+
+        // Auto-login after registration
+        if (authData?.token && authData?.user) {
+          dispatch(
+            setSession({
+              token: authData.token,
+              user: authData.user,
+            }),
+          );
+        }
+
+        reset({
+          email: "",
+          fullName: "",
+          gender: "",
+          std_code: "91",
+          whatsapp: "",
+          otp: "",
+          newsletter: false,
+          terms: false,
+          dates: [],
+          interests: [],
+          visitedYears: [],
+        });
+
+        // Registration always goes to thank-you.
+        router.push(`/thankyou?email=${encodeURIComponent(data.email)}&mode=${mode}`);
+
+        return;
+      }
+
+      const backendErrors = response.errors;
+
+      if (backendErrors && typeof backendErrors === "object" && !Array.isArray(backendErrors)) {
+        const messages = Object.values(backendErrors)
+          .flat()
+          .filter((message): message is string => typeof message === "string");
+
+        setGlobalError(
+          messages.length > 0
+            ? messages.join(" ")
+            : typeof response.message === "string"
+              ? response.message
+              : "Registration failed",
+        );
+      } else {
+        setGlobalError(
+          typeof response.message === "string" ? response.message : "Registration failed",
+        );
       }
     } catch (err) {
       if (err instanceof AxiosError) {
         const responseData = err.response?.data;
-
         const backendErrors = responseData?.errors;
 
-        // Backend field-level errors
         if (backendErrors && typeof backendErrors === "object" && !Array.isArray(backendErrors)) {
           let hasFieldErrors = false;
 
@@ -293,14 +316,11 @@ function RegisterContent() {
             }
           });
 
-          // Don’t show global error when backend
-          // returned field-specific errors.
           if (hasFieldErrors) {
             return;
           }
         }
 
-        // General backend error
         if (typeof backendErrors === "string") {
           setGlobalError(backendErrors);
         } else {
@@ -313,41 +333,6 @@ function RegisterContent() {
       setIsLoading(false);
     }
   };
-
-  if (submitted) {
-    return (
-      <div className="container-editorial pt-16 md:pt-24 pb-40">
-        <h1 className="display uppercase text-[14vw] md:text-[10vw] leading-[0.9]">You’re in.</h1>
-        <p className="mt-8 max-w-xl text-muted-foreground">
-          A confirmation has been sent to{" "}
-          <span className="font-semibold text-foreground">{registeredEmail}</span>.
-        </p>
-        <div className="mt-8 max-w-xl border border-foreground p-6 md:p-8">
-          <p className="label text-accent">
-            {isSea
-              ? "Your SEA Delegate Pass"
-              : isGuest
-                ? "Your Special Guest Pass"
-                : "Your Art Pass"}
-          </p>
-          <p className="mt-3 display uppercase text-2xl md:text-3xl leading-[1] tracking-[-0.02em]">
-            Sent to your email. Available on the app too.
-          </p>
-          <p className="mt-4 text-sm text-muted-foreground headline">
-            {isGuest
-              ? `Your Art Pass has been emailed to you and will also be available to download on our Festival app. Every programme you book gets added to the same pass — just show it at any venue in front of our zappers.`
-              : ""}
-          </p>
-        </div>
-        <Link
-          href="/programmes"
-          className="mt-10 inline-block label border border-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-colors"
-        >
-          Browse programmes →
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="container-editorial pt-10 md:pt-16 pb-32">
@@ -376,7 +361,7 @@ function RegisterContent() {
 
       {/* Mode tabs */}
       <div className="mt-8 flex flex-wrap gap-2">
-        {/* {(["general", "guest", "sea"] as const).map((m) => (
+        {(["general", "guest", "sea"] as const).map((m) => (
           <button
             key={m}
             onClick={() => handleModeChange(m)}
@@ -388,11 +373,11 @@ function RegisterContent() {
           >
             {m === "general" ? "Visitor" : m === "guest" ? "Special Guest" : "SEA Delegate"}
           </button>
-        ))} */}
+        ))}
 
         {/* for general show only */}
 
-        {(["general"] as const).map((m) => (
+        {/* {(["general"] as const).map((m) => (
           <button
             key={m}
             onClick={() => handleModeChange(m)}
@@ -404,7 +389,7 @@ function RegisterContent() {
           >
             Visitor
           </button>
-        ))}
+        ))} */}
       </div>
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-12 gap-12">

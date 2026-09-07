@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Download } from "lucide-react";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -21,17 +22,21 @@ function ArtPassContent() {
   return (
     <div className="max-w-2xl">
       <p className="label text-muted-foreground">Your festival pass</p>
+
       <h2 className="mt-2 display text-3xl leading-none uppercase md:text-4xl">Art Pass</h2>
 
       {badgeUrl ? (
         <div className="mt-10">
-          <div className="border border-foreground bg-muted p-3 md:p-5">
-            <img
+          <div className="relative aspect-[3/4] w-full border border-foreground bg-muted p-3 md:p-5">
+            <Image
               src={badgeUrl}
               alt="Your Serendipity Arts Festival Art Pass"
-              className="mx-auto block max-h-[70vh] w-full object-contain"
+              fill
+              className="object-contain p-3 md:p-5"
+              sizes="(max-width: 768px) 100vw, 672px"
             />
           </div>
+
           <a
             href={badgeUrl}
             download

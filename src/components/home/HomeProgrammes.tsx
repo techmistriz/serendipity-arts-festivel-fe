@@ -9,6 +9,7 @@ import { images } from "@/config/images";
 
 import { GlitchBorder } from "../common/GlitchBorder";
 import { RecommendModal } from "../common/RecommendModal";
+import { formatProgrammeDates } from "@/utils/date";
 
 export default function Programmes() {
   const [recOpen, setRecOpen] = useState(false);
@@ -131,6 +132,7 @@ export default function Programmes() {
 
                     {programme.program_details?.[0]?.venue?.title && (
                       <p className="mt-1 text-[11px] md:text-xs text-muted-foreground headline">
+                        {formatProgrammeDates(programme.program_details)} ·{" "}
                         {programme.program_details[0].venue.title}
                       </p>
                     )}
