@@ -6,7 +6,7 @@ import type { UIProgramme } from "@/types/programme";
 import { useCart } from "@/hooks/use-cart";
 import { useProgrammes } from "@/hooks/useProgrammes";
 import { mapApiProgrammesToUi } from "@/lib/programme-adapter";
-import { PROGRAMME_DAYS, PROGRAMME_TAGS, PROGRAMMES_PER_PAGE } from "./constants";
+import { PROGRAMME_DAYS, PROGRAMMES_PER_PAGE } from "./constants";
 import { filterProgrammes, getPageItems } from "./helpers";
 import { FilterSelect } from "./_components/FilterSelect";
 import { HowToAttendCTA } from "./_components/HowToAttendCTA";
@@ -15,6 +15,7 @@ import { ProgrammesPagination } from "./_components/ProgrammesPagination";
 import { BookingSheet } from "./BookingSheet";
 import { useCategories } from "@/hooks/use-categories";
 import { useVenues } from "@/hooks/useVenues";
+import { useProgramTags } from "@/hooks/use-program-tags";
 
 type Intent = "about" | "cart";
 
@@ -59,6 +60,7 @@ export function ProgrammesListContent() {
 
   const { categories } = useCategories();
   const { venues } = useVenues();
+  const { programTags } = useProgramTags();
 
   const categoryFromUrl = useMemo(() => {
     if (!categorySlugFromUrl) return "All";
@@ -71,7 +73,16 @@ export function ProgrammesListContent() {
     [categories],
   );
 
-  const venueOptions = useMemo(() => ["All", ...venues.map((venue) => venue.title)], [venues]);
+  const venueOptions = useMemo(
+    () => [
+      { label: "All", value: "All" },
+      ...venues.map((venue) => ({
+        label: venue.title,
+        value: venue.slug,
+      })),
+    ],
+    [venues],
+  );
 
   // Filter state
   const [category, setCategory] = useState(categoryFromUrl);
@@ -102,6 +113,8 @@ export function ProgrammesListContent() {
     if (!apiProgrammes?.length) return [];
     return mapApiProgrammesToUi(apiProgrammes);
   }, [apiProgrammes]);
+
+  const tagOptions = useMemo(() => ["All", ...programTags.map((tag) => tag.name)], [programTags]);
 
   // Keep state in sync with browser navigation and shareable filter links.
   useEffect(() => {
@@ -479,11 +492,17 @@ export function ProgrammesListContent() {
           <FilterSelect
             label="Select Tag"
             value={tags[0] ?? "All"}
-            options={["All", ...PROGRAMME_TAGS]}
+            options={tagOptions}
             onChange={(value) => {
               const nextTags = value === "All" ? [] : [value];
+
               setTags(nextTags);
-              updateSearchParams({ tag: nextTags[0] ?? null, page: null, p: null });
+
+              updateSearchParams({
+                tag: nextTags[0] ?? null,
+                page: null,
+                p: null,
+              });
             }}
           />
         </div>
