@@ -6,7 +6,7 @@ import type { UIProgramme } from "@/types/programme";
 import { useCart } from "@/hooks/use-cart";
 import { useProgrammes } from "@/hooks/useProgrammes";
 import { mapApiProgrammesToUi } from "@/lib/programme-adapter";
-import { PROGRAMME_DAYS, PROGRAMME_TAGS, PROGRAMME_VENUES, PROGRAMMES_PER_PAGE } from "./constants";
+import { PROGRAMME_DAYS, PROGRAMME_TAGS, PROGRAMMES_PER_PAGE } from "./constants";
 import { filterProgrammes, getPageItems } from "./helpers";
 import { FilterSelect } from "./_components/FilterSelect";
 import { HowToAttendCTA } from "./_components/HowToAttendCTA";
@@ -14,6 +14,7 @@ import { ProgrammeCard } from "./_components/ProgrammeCard";
 import { ProgrammesPagination } from "./_components/ProgrammesPagination";
 import { BookingSheet } from "./BookingSheet";
 import { useCategories } from "@/hooks/use-categories";
+import { useVenues } from "@/hooks/useVenues";
 
 type Intent = "about" | "cart";
 
@@ -57,6 +58,7 @@ export function ProgrammesListContent() {
   const { programmes: apiProgrammes, loading, error } = useProgrammes({ limit: 1000 });
 
   const { categories } = useCategories();
+  const { venues } = useVenues();
 
   const categoryFromUrl = useMemo(() => {
     if (!categorySlugFromUrl) return "All";
@@ -68,6 +70,8 @@ export function ProgrammesListContent() {
     () => ["All", ...categories.map((category) => category.name)],
     [categories],
   );
+
+  const venueOptions = useMemo(() => ["All", ...venues.map((venue) => venue.title)], [venues]);
 
   // Filter state
   const [category, setCategory] = useState(categoryFromUrl);
@@ -466,7 +470,7 @@ export function ProgrammesListContent() {
           <FilterSelect
             label="Select Venue"
             value={venue}
-            options={["All", ...PROGRAMME_VENUES]}
+            options={venueOptions}
             onChange={(value) => {
               setVenue(value);
               updateSearchParams({ venue: value === "All" ? null : value, page: null, p: null });
