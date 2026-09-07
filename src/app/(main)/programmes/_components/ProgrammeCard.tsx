@@ -9,7 +9,7 @@ import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { imagePaths } from "@/config/images";
 // import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
-import { isProgrammeNew } from "@/utils/date";
+import { formatSlotDate, isProgrammeNew } from "@/utils/date";
 // import { priceStyle } from "@/lib/tag-colors";
 
 type ProgrammeCardProps = {
@@ -27,6 +27,8 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
   const { isSaved, toggleProgramme, loading: wishlistLoading } = useWishlist();
   const [imageError, setImageError] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+
+  console.log("programme data", programme);
 
   // Overflow state
   const scheduleRef = useRef<HTMLDivElement>(null);
@@ -201,7 +203,9 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
                     key={`slot-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
                     className="inline-block shrink-0 mr-4"
                   >
-                    {slot.day} Dec · {formatTime(slot.fromTime)} - {formatTime(slot.toTime)}
+                    {formatSlotDate(slot.eventDate)} · {formatTime(slot.fromTime)} -{" "}
+                    {formatTime(slot.toTime)}
+                    {programme.venue && ` · ${programme.venue}`}
                   </span>
                 ))}
 
@@ -211,7 +215,9 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
                       key={`dup-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
                       className="inline-block shrink-0 mr-4"
                     >
-                      {slot.day} Dec · {formatTime(slot.fromTime)} - {formatTime(slot.toTime)}
+                      {formatSlotDate(slot.eventDate)} · {formatTime(slot.fromTime)} -{" "}
+                      {formatTime(slot.toTime)}
+                      {programme.venue && ` · ${programme.venue}`}
                     </span>
                   ))}
 
@@ -222,12 +228,14 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
                       key={`dup2-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
                       className="inline-block shrink-0 mr-4"
                     >
-                      {slot.day} Dec · {formatTime(slot.fromTime)} - {formatTime(slot.toTime)}
+                      {formatSlotDate(slot.eventDate)} · {formatTime(slot.fromTime)} -{" "}
+                      {formatTime(slot.toTime)}
+                      {programme.venue && ` · ${programme.venue}`}
                     </span>
                   ))}
               </div>
             ) : (
-              <span>Schedule TBA</span>
+              <span>{programme.venue ? programme.venue : null}</span>
             )}
           </div>
 

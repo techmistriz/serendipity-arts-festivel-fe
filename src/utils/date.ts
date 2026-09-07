@@ -74,3 +74,29 @@ export const isProgrammeNew = (createdAt?: string | null, days = 7): boolean => 
 
   return diffInDays >= 0 && diffInDays <= days;
 };
+
+export function formatSlotDate(date?: string | null) {
+  if (!date) return "";
+
+  const [first, second, third] = date.split("-").map(Number);
+
+  let parsedDate: Date;
+
+  // DD-MM-YYYY
+  if (third && third > 1000) {
+    parsedDate = new Date(third, second - 1, first);
+  }
+  // YYYY-MM-DD
+  else if (first > 1000) {
+    parsedDate = new Date(first, second - 1, third);
+  } else {
+    return "";
+  }
+
+  if (Number.isNaN(parsedDate.getTime())) return "";
+
+  return parsedDate.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
+}

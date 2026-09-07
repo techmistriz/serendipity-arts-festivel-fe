@@ -239,6 +239,7 @@ export interface UIProgramme {
     detailId?: number;
     day: number;
     fromTime: string;
+    eventDate?: string | null;
     toTime: string;
   }[];
 

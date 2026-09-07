@@ -25,6 +25,7 @@ export function mapApiProgrammeToUi(
           {
             detailId: detail.id,
             day,
+            eventDate: detail.event_date,
             fromTime: formatTime(detail.from_time),
             toTime: formatTime(detail.to_time),
           },
