@@ -21,10 +21,16 @@ export const formatProgrammeDates = (details?: Array<{ event_date?: string | nul
     })
     .filter((date): date is Date => {
       return date !== null && !Number.isNaN(date.getTime());
-    })
-    .sort((a, b) => a.getTime() - b.getTime());
+    });
 
-  if (!dates.length) return "";
+  // Remove duplicate dates
+  const uniqueDates = Array.from(
+    new Map(
+      dates.map((date) => [`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`, date]),
+    ).values(),
+  ).sort((a, b) => a.getTime() - b.getTime());
+
+  if (!uniqueDates.length) return "";
 
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-GB", {
@@ -32,13 +38,13 @@ export const formatProgrammeDates = (details?: Array<{ event_date?: string | nul
       month: "short",
     });
 
-  // Single date
-  if (dates.length === 1) {
-    return formatDate(dates[0]);
+  // Single unique date
+  if (uniqueDates.length === 1) {
+    return formatDate(uniqueDates[0]);
   }
 
-  const first = dates[0];
-  const last = dates[dates.length - 1];
+  const first = uniqueDates[0];
+  const last = uniqueDates[uniqueDates.length - 1];
 
   // Same month → 14–15 Dec
   if (first.getMonth() === last.getMonth() && first.getFullYear() === last.getFullYear()) {
