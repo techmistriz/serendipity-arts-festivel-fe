@@ -36,7 +36,7 @@ export const generalSchema = z.object({
   otp: z
     .string()
     .trim()
-    .min(1, "OTP is required")
+    // .min(1, "OTP is required")
     .regex(/^\d{4,6}$/, "Enter a valid OTP"),
 
   newsletter: z.boolean().optional(),
@@ -62,7 +62,7 @@ export const seaSchema = z.object({
   otp: z
     .string()
     .trim()
-    .min(1, "OTP is required")
+    // .min(1, "OTP is required")
     .regex(/^\d{4,6}$/, "Enter a valid OTP"),
   newsletter: z.boolean().optional(),
   std_code: z.string().default("91"),
