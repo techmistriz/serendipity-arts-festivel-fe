@@ -14,7 +14,7 @@ export const siteConfig = {
     { label: "Venues", href: "/venues", comingSoon: false },
     { label: "About us", href: "/about", comingSoon: false },
     { label: "Register", href: "/register", comingSoon: false },
-    // { label: "FAQ", href: "/faq", comingSoon: false },
+    { label: "FAQ", href: "/faq", comingSoon: false },
     { label: "Contact", href: "/contact", comingSoon: false },
     // { label: "Privacy", href: "/privacy", comingSoon: false },
     // { label: "Terms & Conditions", href: "/terms", comingSoon: false },

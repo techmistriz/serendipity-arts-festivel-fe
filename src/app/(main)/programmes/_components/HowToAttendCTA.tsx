@@ -52,8 +52,10 @@ export function HowToAttendCTA({ className = "" }: HowToAttendCTAProps) {
               free programmes and paid ones can be booked together.
             </li>
             <li>
-              Your bookings are added to a single <span className="text-foreground">Art Pass</span>{" "}
-              on our app, available to download closer to the festival. Show it at any venue.
+              Upon successful registration, your <span className="text-foreground">Art Pass</span>{" "}
+              will be emailed to you and will also be available to download on the Festival app
+              closer to the festival. Show your Art Pass at the venue entry to get access to the
+              festival.
             </li>
           </ol>
         </ModalContent>
