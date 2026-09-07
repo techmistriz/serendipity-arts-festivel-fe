@@ -21,10 +21,16 @@ export const formatProgrammeDates = (details?: Array<{ event_date?: string | nul
     })
     .filter((date): date is Date => {
       return date !== null && !Number.isNaN(date.getTime());
-    })
-    .sort((a, b) => a.getTime() - b.getTime());
+    });
 
-  if (!dates.length) return "";
+  // Remove duplicate dates
+  const uniqueDates = Array.from(
+    new Map(
+      dates.map((date) => [`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`, date]),
+    ).values(),
+  ).sort((a, b) => a.getTime() - b.getTime());
+
+  if (!uniqueDates.length) return "";
 
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-GB", {
@@ -32,13 +38,13 @@ export const formatProgrammeDates = (details?: Array<{ event_date?: string | nul
       month: "short",
     });
 
-  // Single date
-  if (dates.length === 1) {
-    return formatDate(dates[0]);
+  // Single unique date
+  if (uniqueDates.length === 1) {
+    return formatDate(uniqueDates[0]);
   }
 
-  const first = dates[0];
-  const last = dates[dates.length - 1];
+  const first = uniqueDates[0];
+  const last = uniqueDates[uniqueDates.length - 1];
 
   // Same month → 14–15 Dec
   if (first.getMonth() === last.getMonth() && first.getFullYear() === last.getFullYear()) {
@@ -52,3 +58,45 @@ export const formatProgrammeDates = (details?: Array<{ event_date?: string | nul
   // Different month → 28 Nov–2 Dec
   return `${formatDate(first)}–${formatDate(last)}`;
 };
+
+export const isProgrammeNew = (createdAt?: string | null, days = 7): boolean => {
+  if (!createdAt) return false;
+
+  const createdDate = new Date(createdAt);
+
+  if (Number.isNaN(createdDate.getTime())) {
+    return false;
+  }
+
+  const now = new Date();
+  const diffInMs = now.getTime() - createdDate.getTime();
+  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+  return diffInDays >= 0 && diffInDays <= days;
+};
+
+export function formatSlotDate(date?: string | null) {
+  if (!date) return "";
+
+  const [first, second, third] = date.split("-").map(Number);
+
+  let parsedDate: Date;
+
+  // DD-MM-YYYY
+  if (third && third > 1000) {
+    parsedDate = new Date(third, second - 1, first);
+  }
+  // YYYY-MM-DD
+  else if (first > 1000) {
+    parsedDate = new Date(first, second - 1, third);
+  } else {
+    return "";
+  }
+
+  if (Number.isNaN(parsedDate.getTime())) return "";
+
+  return parsedDate.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
+}

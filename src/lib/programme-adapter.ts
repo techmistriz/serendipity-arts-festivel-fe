@@ -25,6 +25,7 @@ export function mapApiProgrammeToUi(
           {
             detailId: detail.id,
             day,
+            eventDate: detail.event_date,
             fromTime: formatTime(detail.from_time),
             toTime: formatTime(detail.to_time),
           },
@@ -54,6 +55,7 @@ export function mapApiProgrammeToUi(
     slug: apiProgramme.slug || "",
     category,
     curator,
+    createdAt: apiProgramme.created_at,
     discipline: apiProgramme.discipline
       ? {
           name: apiProgramme.discipline.name,
