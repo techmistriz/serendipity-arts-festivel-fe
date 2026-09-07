@@ -1,10 +1,10 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
 
 import { cn } from "@/utils/cn";
+import GlitchBar from "../common/GlitchBar";
 
 const Modal = DialogPrimitive.Root;
 const ModalTrigger = DialogPrimitive.Trigger;
@@ -17,7 +17,7 @@ const ModalOverlay = forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-foreground/70 backdrop-blur-[1px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-white/90 backdrop-blur-[6px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}
@@ -31,26 +31,30 @@ type ModalContentProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Content
 };
 
 const ModalContent = forwardRef<ComponentRef<typeof DialogPrimitive.Content>, ModalContentProps>(
-  ({ className, children, showCloseButton = true, ...props }, ref) => (
+  ({ className, children, ...props }, ref) => (
     <DialogPrimitive.Portal>
       <ModalOverlay />
+
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 gap-4 border border-foreground bg-background p-5 shadow-2xl outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:p-7",
+          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-hidden border border-rule bg-background outline-none",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           className,
         )}
         {...props}
       >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close
-            className="absolute right-3 top-3 inline-flex size-9 items-center justify-center border border-transparent text-foreground transition-colors hover:border-foreground hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring outline-none"
-            aria-label="Close dialog"
-          >
-            <X className="size-4" />
-          </DialogPrimitive.Close>
-        )}
+        <GlitchBar
+          seed={19}
+          direction="v"
+          speed={5}
+          count={60}
+          className="absolute bottom-0 left-0 top-0 w-1.5"
+        />
+
+        <div className="p-6 pl-8 md:p-10 md:pl-12">{children}</div>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
   ),
