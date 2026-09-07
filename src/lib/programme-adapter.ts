@@ -54,6 +54,7 @@ export function mapApiProgrammeToUi(
     slug: apiProgramme.slug || "",
     category,
     curator,
+    createdAt: apiProgramme.created_at,
     discipline: apiProgramme.discipline
       ? {
           name: apiProgramme.discipline.name,

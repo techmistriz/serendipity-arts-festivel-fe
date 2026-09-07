@@ -58,3 +58,19 @@ export const formatProgrammeDates = (details?: Array<{ event_date?: string | nul
   // Different month → 28 Nov–2 Dec
   return `${formatDate(first)}–${formatDate(last)}`;
 };
+
+export const isProgrammeNew = (createdAt?: string | null, days = 7): boolean => {
+  if (!createdAt) return false;
+
+  const createdDate = new Date(createdAt);
+
+  if (Number.isNaN(createdDate.getTime())) {
+    return false;
+  }
+
+  const now = new Date();
+  const diffInMs = now.getTime() - createdDate.getTime();
+  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+  return diffInDays >= 0 && diffInDays <= days;
+};

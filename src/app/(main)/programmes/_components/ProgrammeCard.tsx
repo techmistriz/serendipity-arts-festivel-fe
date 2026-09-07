@@ -9,6 +9,7 @@ import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { imagePaths } from "@/config/images";
 // import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
+import { isProgrammeNew } from "@/utils/date";
 // import { priceStyle } from "@/lib/tag-colors";
 
 type ProgrammeCardProps = {
@@ -164,7 +165,7 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
               blurDataURL={BLUR_DATA_URL}
             />
 
-            {programme.newlyAdded && (
+            {isProgrammeNew(programme.createdAt) && (
               <span
                 className="label absolute top-2 left-2 px-2 py-1"
                 style={{ background: "#CEDC29", color: "#0A0A0A" }}

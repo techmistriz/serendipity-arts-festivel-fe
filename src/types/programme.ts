@@ -224,6 +224,8 @@ export interface UIProgramme {
   slug: string;
   category: string;
 
+  createdAt?: string;
+
   discipline?: {
     name: string;
     font_color: string;
