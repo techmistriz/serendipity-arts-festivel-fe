@@ -6,29 +6,26 @@ import type { UIProgramme } from "@/types/programme";
 import { useCart } from "@/hooks/use-cart";
 import { useProgrammes } from "@/hooks/useProgrammes";
 import { mapApiProgrammesToUi } from "@/lib/programme-adapter";
-import {
-  CATEGORY_SLUGS,
-  CATEGORY_TO_SLUG,
-  PROGRAMME_CATEGORIES,
-  PROGRAMME_DAYS,
-  PROGRAMME_TAGS,
-  PROGRAMME_VENUES,
-  PROGRAMMES_PER_PAGE,
-} from "./constants";
+import { PROGRAMME_DAYS, PROGRAMME_TAGS, PROGRAMME_VENUES, PROGRAMMES_PER_PAGE } from "./constants";
 import { filterProgrammes, getPageItems } from "./helpers";
 import { FilterSelect } from "./_components/FilterSelect";
 import { HowToAttendCTA } from "./_components/HowToAttendCTA";
 import { ProgrammeCard } from "./_components/ProgrammeCard";
 import { ProgrammesPagination } from "./_components/ProgrammesPagination";
 import { BookingSheet } from "./BookingSheet";
+import { useCategories } from "@/hooks/use-categories";
 
 type Intent = "about" | "cart";
 
 type ProgrammeQueryUpdate = Record<string, string | null>;
 
-function getCategoryFromParam(value: string | null) {
-  return value ? (CATEGORY_SLUGS[value] ?? "All") : "All";
-}
+// function getCategoryFromParam(value: string | null, categories: { name: string; slug: string }[]) {
+//   if (!value) return "All";
+
+//   const category = categories.find((item) => item.slug === value);
+
+//   return category?.name ?? "All";
+// }
 
 function getDayFromParam(value: string | null) {
   const day = Number(value);
@@ -46,15 +43,31 @@ export function ProgrammesListContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialProgrammeId = searchParams.get("p");
-  const categoryFromUrl = getCategoryFromParam(searchParams.get("category"));
+  const categorySlugFromUrl = searchParams.get("category");
+
   const dayFromUrl = getDayFromParam(searchParams.get("day"));
   const venueFromUrl = searchParams.get("venue") || "All";
   const tagFromUrl = searchParams.get("tag");
   const tagsFromUrl = tagFromUrl ? [tagFromUrl] : [];
   const queryFromUrl = searchParams.get("q") || "";
   const requestedPage = getPageFromParam(searchParams.get("page"));
+
   const { isVip } = useCart();
+
   const { programmes: apiProgrammes, loading, error } = useProgrammes({ limit: 1000 });
+
+  const { categories } = useCategories();
+
+  const categoryFromUrl = useMemo(() => {
+    if (!categorySlugFromUrl) return "All";
+
+    return categories.find((category) => category.slug === categorySlugFromUrl)?.name ?? "All";
+  }, [categorySlugFromUrl, categories]);
+
+  const categoryOptions = useMemo(
+    () => ["All", ...categories.map((category) => category.name)],
+    [categories],
+  );
 
   // Filter state
   const [category, setCategory] = useState(categoryFromUrl);
@@ -67,6 +80,7 @@ export function ProgrammesListContent() {
   const [activeProgramme, setActiveProgramme] = useState<UIProgramme | null>(null);
   const [activeIntent, setActiveIntent] = useState<Intent>("about");
   const [isOpening, setIsOpening] = useState(false);
+
   const hasInitializedRef = useRef(false);
   const programmeParamRef = useRef(initialProgrammeId);
   const filterStateRef = useRef(
@@ -199,10 +213,16 @@ export function ProgrammesListContent() {
   const onCategoryChange = useCallback(
     (next: string) => {
       setCategory(next);
-      const slug = CATEGORY_TO_SLUG[next];
-      updateSearchParams({ category: slug ?? null, page: null, p: null });
+
+      const selectedCategory = categories.find((category) => category.name === next);
+
+      updateSearchParams({
+        category: selectedCategory?.slug ?? null,
+        page: null,
+        p: null,
+      });
     },
-    [setCategory, updateSearchParams],
+    [categories, updateSearchParams, setCategory],
   );
 
   const clearFilters = useCallback(() => {
@@ -440,7 +460,7 @@ export function ProgrammesListContent() {
           <FilterSelect
             label="Select Category"
             value={category}
-            options={PROGRAMME_CATEGORIES}
+            options={categoryOptions}
             onChange={onCategoryChange}
           />
           <FilterSelect
