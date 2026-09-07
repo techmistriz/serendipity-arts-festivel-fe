@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { archiveUser, type ArchivedUser } from "@/services/register.service";
+import { archiveUser } from "@/services/register.service";
+import type { ArchivedUser } from "@/types/auth";
 import type { ApiResponse } from "@/types/api";
 
 export const useCheckArchiveUser = (email: string | undefined, roleId: number) => {

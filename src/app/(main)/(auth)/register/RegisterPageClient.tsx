@@ -18,9 +18,21 @@ import { generalSchema, seaSchema, guestSchema, ROLE_IDS } from "@/components/au
 import { GeneralForm, SeaForm, GuestForm } from "@/components/auth/FormFields";
 import { useCheckArchiveUser } from "@/components/auth/hooks/useCheckArchiveUser";
 import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setSession } from "@/redux/slices/authSlice";
 
 function RegisterContent() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/dashboard");
+    }
+  }, [isAuthenticated, router]);
+
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "";
   const initialMode = (searchParams.get("mode") as "general" | "guest" | "sea") || "general";
@@ -36,6 +48,11 @@ function RegisterContent() {
 
   const schema = mode === "sea" ? seaSchema : mode === "guest" ? guestSchema : generalSchema;
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/dashboard");
+    }
+  }, [isAuthenticated, router]);
   const {
     register,
     handleSubmit,
@@ -227,6 +244,17 @@ function RegisterContent() {
         const isSuccess = response.status === true || response.success === true;
 
         if (isSuccess) {
+          const authData = response.data;
+
+          if (authData?.token && authData?.user) {
+            dispatch(
+              setSession({
+                token: authData.token,
+                user: authData.user,
+              }),
+            );
+          }
+
           setRegisteredEmail(data.email);
 
           reset({
@@ -243,6 +271,7 @@ function RegisterContent() {
             visitedYears: [],
           });
 
+          //  router.push("/dashboard");
           if (next) {
             router.push(next);
           } else {
@@ -376,7 +405,7 @@ function RegisterContent() {
 
       {/* Mode tabs */}
       <div className="mt-8 flex flex-wrap gap-2">
-        {/* {(["general", "guest", "sea"] as const).map((m) => (
+        {(["general", "guest", "sea"] as const).map((m) => (
           <button
             key={m}
             onClick={() => handleModeChange(m)}
@@ -388,11 +417,11 @@ function RegisterContent() {
           >
             {m === "general" ? "Visitor" : m === "guest" ? "Special Guest" : "SEA Delegate"}
           </button>
-        ))} */}
+        ))}
 
         {/* for general show only */}
 
-        {(["general"] as const).map((m) => (
+        {/* {(["general"] as const).map((m) => (
           <button
             key={m}
             onClick={() => handleModeChange(m)}
@@ -404,7 +433,7 @@ function RegisterContent() {
           >
             Visitor
           </button>
-        ))}
+        ))} */}
       </div>
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-12 gap-12">
