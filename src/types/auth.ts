@@ -73,6 +73,7 @@ export interface AuthUser {
   badge?: string | null;
 
   role_id?: number;
+
   role?: {
     id: number;
     name: string;
@@ -113,8 +114,10 @@ export interface AuthUser {
   dates?: string[];
   travel?: string | null;
   boarding?: string | null;
+
   accompanied_anyone?: string | null;
   accompanied_persons?: string | null;
+
   additional_requests?: string | null;
   accomodation_assistance_required?: string | null;
 
@@ -123,9 +126,33 @@ export interface AuthUser {
 }
 
 export interface AuthSession {
-  user: AuthUser;
   token: string;
-  [key: string]: unknown;
+  user: AuthUser;
+}
+
+export interface ArchivedUser {
+  id: number;
+  email: string;
+  role_id: number;
+
+  name?: string;
+  gender?: string;
+  std_code?: string;
+  contact?: string | number;
+
+  country_id?: number;
+  state_id?: number;
+  city_id?: number;
+
+  age_group?: string;
+  visited_year?: string[];
+
+  subscribe?: 0 | 1;
+}
+
+export interface ArchiveUserPayload {
+  email: string;
+  role_id: number;
 }
 
 export interface AuthState {
