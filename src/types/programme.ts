@@ -224,6 +224,8 @@ export interface UIProgramme {
   slug: string;
   category: string;
 
+  createdAt?: string;
+
   discipline?: {
     name: string;
     font_color: string;
@@ -237,6 +239,7 @@ export interface UIProgramme {
     detailId?: number;
     day: number;
     fromTime: string;
+    eventDate?: string | null;
     toTime: string;
   }[];
 
