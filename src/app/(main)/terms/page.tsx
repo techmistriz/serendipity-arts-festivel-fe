@@ -296,7 +296,7 @@ const SECTIONS: Section[] = [
 export default function Terms() {
   return (
     <div className="container-editorial pt-10 md:pt-24 pb-32">
-      <p className="label text-muted-foreground">Serendipity Arts Festival</p>
+      {/* <p className="label text-muted-foreground">Serendipity Arts Festival</p> */}
       <h1 className="display uppercase text-[13vw] md:text-[9vw] leading-[0.9] mt-2">
         Terms &<br />
         Conditions
