@@ -35,8 +35,6 @@ export const useOTP = () => {
         std_code: cleanStdCode,
       });
 
-      console.log("SEND OTP RESPONSE:", response);
-
       // SUCCESS
       if (response?.status === true) {
         setOtpSent(true);

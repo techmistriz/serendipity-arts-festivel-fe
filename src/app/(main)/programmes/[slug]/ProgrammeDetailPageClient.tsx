@@ -36,7 +36,8 @@ export function ProgrammeDetailPageClient({
         ? mapApiProgrammeToUi(
             apiProgramme,
             fullResponse?.data?.curators ?? [],
-            fullResponse?.data?.program_tags ?? [], // ← ADD THIS!
+            fullResponse?.data?.program_tags ?? [],
+            fullResponse?.data?.sponsors ?? [], // ← ADD THIS
           )
         : null,
     [apiProgramme, fullResponse],

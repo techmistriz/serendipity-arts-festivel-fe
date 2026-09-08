@@ -80,6 +80,16 @@ export interface ProgrammeArtist {
 export interface ProgrammeSponsor {
   id: number;
   name: string;
+  sponsor_type_id: number;
+  url: string | null;
+  logo: string | null;
+  ordering_number: number;
+  hide_logo: number;
+  linkedin_url: string | null;
+  twitter_url: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
+  description: string | null;
 }
 
 export interface Programme {
@@ -223,6 +233,8 @@ export interface UIProgramme {
   title: string;
   slug: string;
   category: string;
+
+  sponsors: ProgrammeSponsor[];
 
   createdAt?: string;
 

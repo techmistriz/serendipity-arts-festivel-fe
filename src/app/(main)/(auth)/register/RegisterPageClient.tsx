@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm, useWatch, type FieldValues, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -20,10 +20,13 @@ import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setSession } from "@/redux/slices/authSlice";
 
-function RegisterContent() {
+function RegisterContent({
+  initialMode: routeMode,
+}: {
+  initialMode?: "general" | "guest" | "sea";
+}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const searchParams = useSearchParams();
 
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
@@ -31,10 +34,12 @@ function RegisterContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setGlobalError] = useState<string | null>(null);
 
-  const initialMode = (searchParams.get("mode") as "general" | "guest" | "sea") || "general";
+  const initialMode = routeMode ?? "general";
 
-  const [mode, setMode] = useState<"general" | "guest" | "sea">(initialMode);
+  const [mode] = useState<"general" | "guest" | "sea">(initialMode);
 
+  const isSea = mode === "sea";
+  const isGuest = mode === "guest";
   // Redirect already authenticated users to dashboard.
   // Don't redirect after successful registration because
   // registration automatically authenticates the user.
@@ -88,9 +93,6 @@ function RegisterContent() {
     }) ?? "",
   );
 
-  const isSea = mode === "sea";
-  const isGuest = mode === "guest";
-
   const roleId = isSea ? ROLE_IDS.sea : isGuest ? ROLE_IDS.guest : ROLE_IDS.general;
 
   const { isChecking, userExists, archivedUser } = useCheckArchiveUser(email, roleId);
@@ -117,18 +119,6 @@ function RegisterContent() {
     setValue("visitedYears", archivedUser.visited_year ?? []);
     setValue("newsletter", archivedUser.subscribe === 1);
   }, [userExists, archivedUser, setValue]);
-
-  const handleModeChange = (newMode: "general" | "guest" | "sea") => {
-    setMode(newMode);
-    setGlobalError(null);
-
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("mode", newMode);
-
-    router.replace(`/register?${params.toString()}`, {
-      scroll: false,
-    });
-  };
 
   const onInvalid = () => {
     setGlobalError("Please correct the highlighted fields and try again.");
@@ -359,37 +349,14 @@ function RegisterContent() {
         </div>
       </div>
 
-      {/* Mode tabs */}
+      {/* Registration type */}
       <div className="mt-8 flex flex-wrap gap-2">
-        {(["general", "guest", "sea"] as const).map((m) => (
-          <button
-            key={m}
-            onClick={() => handleModeChange(m)}
-            className={`headline uppercase tracking-[0.06em] text-xs md:text-sm border-2 px-4 py-2 transition-colors ${
-              mode === m
-                ? "bg-foreground text-background border-foreground"
-                : "border-foreground hover:bg-foreground hover:text-background"
-            }`}
-          >
-            {m === "general" ? "Visitor" : m === "guest" ? "Special Guest" : "SEA Delegate"}
-          </button>
-        ))}
-
-        {/* for general show only */}
-
-        {/* {(["general"] as const).map((m) => (
-          <button
-            key={m}
-            onClick={() => handleModeChange(m)}
-            className={`headline uppercase tracking-[0.06em] text-xs md:text-sm border-2 px-4 py-2 transition-colors ${
-              mode === m
-                ? "bg-foreground text-background border-foreground"
-                : "border-foreground hover:bg-foreground hover:text-background"
-            }`}
-          >
-            Visitor
-          </button>
-        ))} */}
+        <button
+          type="button"
+          className="headline uppercase tracking-[0.06em] text-xs md:text-sm border-2 border-foreground bg-foreground text-background px-4 py-2"
+        >
+          {isSea ? "SEA Delegate" : isGuest ? "Special Guest" : "Visitor"}
+        </button>
       </div>
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-12 gap-12">
@@ -536,10 +503,10 @@ function RegisterContent() {
   );
 }
 
-export function RegisterPageClient() {
+export function RegisterPageClient({ mode }: { mode?: "general" | "guest" | "sea" }) {
   return (
     <Suspense fallback={<RouteLoadingOverlay label="Loading registration" />}>
-      <RegisterContent />
+      <RegisterContent initialMode={mode} />
     </Suspense>
   );
 }

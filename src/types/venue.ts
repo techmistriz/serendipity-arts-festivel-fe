@@ -29,6 +29,7 @@ export interface VenueProgramDetail {
   program: {
     id: number;
     name: string;
+    slug: string;
     category: {
       id: number;
       name: string;

@@ -17,8 +17,6 @@ export function ProfileDashboardPageClient() {
 function ProfileContent() {
   const { user } = useAuth();
 
-  // console.log("User detail:", user);
-
   return (
     <div className="max-w-2xl">
       <div className="flex items-start justify-between gap-6">
