@@ -611,13 +611,13 @@ export function BookingSheet({
         <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
           {/* Image */}
           <div className="md:col-span-6">
-            <div className="relative w-full aspect-square">
+            <div className="relative w-full aspect-[16/9]">
               <Image
                 src={programme.img || PLACEHOLDER_IMAGE}
                 alt={programme.title || "Programme"}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
+                className="w-full object-cover"
                 onError={handleImageError}
               />
             </div>
@@ -629,6 +629,16 @@ export function BookingSheet({
             <h2 className="mt-3 display uppercase text-3xl md:text-6xl leading-[0.95] tracking-[-0.02em]">
               {programme.title || "Untitled"}
             </h2>
+
+            <button
+              type="button"
+              onClick={() =>
+                addBoxRef.current?.scrollIntoView({ block: "center", behavior: "smooth" })
+              }
+              className="mt-5 headline font-semibold uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors"
+            >
+              Add to cart ↓
+            </button>
 
             {/* Details Grid */}
             <dl className="mt-6 md:mt-8 grid grid-cols-2 gap-y-3 text-sm rule-t rule-b py-4 headline">
