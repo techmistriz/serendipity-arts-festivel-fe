@@ -29,8 +29,6 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
   const [isToggling, setIsToggling] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  console.log("programme data", programme);
-
   // Overflow state
   const scheduleRef = useRef<HTMLDivElement>(null);
   const [hasOverflow, setHasOverflow] = useState(false);
