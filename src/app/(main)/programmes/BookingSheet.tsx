@@ -118,8 +118,9 @@ export function BookingSheet({
   const isPage = variant === "page";
   const programmeReturnPath = returnPath ?? `/programmes?p=${programme.id}`;
 
-  console.log("Tags in BookingSheet:", programme.tags);
-  console.log("Tags length:", programme.tags?.length);
+  // console.log("Programme in BookingSheet:", allProgrammes);
+  // console.log("Tags in BookingSheet:", programme.tags);
+  // console.log("Tags length:", programme.tags?.length);
 
   // State
   const [quantity, setQuantity] = useState(1);
@@ -707,6 +708,56 @@ export function BookingSheet({
                 {priceLabel}
               </span> */}
             </div>
+
+            {/* Sponsors */}
+            {programme.sponsors?.length > 0 && (
+              <section className="mt-6 border border-rule p-4 md:p-5">
+                <p className="label text-muted-foreground">Supported by</p>
+
+                <div
+                  className={`mt-4 flex items-center gap-x-8 gap-y-6 ${
+                    programme.sponsors.length > 3 ? "flex-nowrap overflow-x-auto pb-3" : "flex-wrap"
+                  }`}
+                  style={{
+                    scrollbarWidth: "auto",
+                  }}
+                >
+                  {programme.sponsors
+                    // .filter((sponsor) => !sponsor.hide_logo && sponsor.logo)
+                    // .slice(0, 8)
+                    .map((sponsor) => {
+                      const sponsorLogo = (
+                        <Image
+                          src={sponsor.logo!}
+                          alt={sponsor.name}
+                          title={sponsor.name}
+                          width={140}
+                          height={60}
+                          loading="lazy"
+                          className="h-10 md:h-12 w-auto max-w-[140px] object-contain shrink-0"
+                        />
+                      );
+
+                      return sponsor.url ? (
+                        <a
+                          key={sponsor.id}
+                          href={sponsor.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block shrink-0"
+                          aria-label={`Visit ${sponsor.name}`}
+                        >
+                          {sponsorLogo}
+                        </a>
+                      ) : (
+                        <div key={sponsor.id} className="block shrink-0">
+                          {sponsorLogo}
+                        </div>
+                      );
+                    })}
+                </div>
+              </section>
+            )}
 
             {/* Booking Section */}
             <section

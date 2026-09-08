@@ -5,6 +5,7 @@ import type {
   ProgrammePerson,
   ProgramTag,
   UIProgramme,
+  ProgrammeSponsor,
 } from "@/types/programme";
 
 // Map API programme to UI programme format
@@ -13,6 +14,7 @@ export function mapApiProgrammeToUi(
   apiProgramme: ApiProgramme,
   curators: ProgrammePerson[] = [],
   programTags?: ProgramTag[],
+  sponsors: ProgrammeSponsor[] = [],
 ): UIProgramme {
   const firstDetail = apiProgramme.program_details?.[0];
 
@@ -55,6 +57,7 @@ export function mapApiProgrammeToUi(
     slug: apiProgramme.slug || "",
     category,
     curator,
+    sponsors: sponsors,
     createdAt: apiProgramme.created_at,
     discipline: apiProgramme.discipline
       ? {
