@@ -728,43 +728,21 @@ export function BookingSheet({
                   className={`mt-4 flex items-center gap-x-8 gap-y-6 ${
                     programme.sponsors.length > 3 ? "flex-nowrap overflow-x-auto pb-3" : "flex-wrap"
                   }`}
-                  style={{
-                    scrollbarWidth: "auto",
-                  }}
+                  style={{ scrollbarWidth: "auto" }}
                 >
-                  {programme.sponsors
-                    // .filter((sponsor) => !sponsor.hide_logo && sponsor.logo)
-                    // .slice(0, 8)
-                    .map((sponsor) => {
-                      const sponsorLogo = (
-                        <Image
-                          src={sponsor.logo!}
-                          alt={sponsor.name}
-                          title={sponsor.name}
-                          width={140}
-                          height={60}
-                          loading="lazy"
-                          className="h-10 md:h-12 w-auto max-w-[140px] object-contain shrink-0"
-                        />
-                      );
-
-                      return sponsor.url ? (
-                        <a
-                          key={sponsor.id}
-                          href={sponsor.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block shrink-0"
-                          aria-label={`Visit ${sponsor.name}`}
-                        >
-                          {sponsorLogo}
-                        </a>
-                      ) : (
-                        <div key={sponsor.id} className="block shrink-0">
-                          {sponsorLogo}
-                        </div>
-                      );
-                    })}
+                  {programme.sponsors.map((sponsor) => (
+                    <div key={sponsor.id} className="block shrink-0">
+                      <Image
+                        src={sponsor.logo!}
+                        alt={sponsor.name}
+                        title={sponsor.name}
+                        width={140}
+                        height={60}
+                        loading="lazy"
+                        className="h-10 md:h-12 w-auto max-w-[140px] object-contain shrink-0"
+                      />
+                    </div>
+                  ))}
                 </div>
               </section>
             )}
