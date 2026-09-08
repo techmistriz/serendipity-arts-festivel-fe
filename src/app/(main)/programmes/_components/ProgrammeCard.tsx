@@ -24,9 +24,10 @@ const BLUR_DATA_URL =
 
 export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps) {
   // const { isVip } = useCart();
-  const { isSaved, toggleProgramme, loading: wishlistLoading } = useWishlist();
+  const { isSaved, toggleProgramme, loading: wishlistLoading, isAuthenticated } = useWishlist();
   const [imageError, setImageError] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   console.log("programme data", programme);
 
@@ -75,6 +76,17 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
     return () => resizeObserver.disconnect();
   }, [programme.slots]);
 
+  //wishlist toolip hide in 3s
+  useEffect(() => {
+    if (!showLoginPrompt) return;
+
+    const timer = setTimeout(() => {
+      setShowLoginPrompt(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [showLoginPrompt]);
+
   // Dynamic animation duration so longer lists maintain a uniform, readable speed
   const marqueeDuration = useMemo(() => {
     const count = programme.slots?.length || 0;
@@ -89,9 +101,16 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
   const handleWishlistToggle = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
+
+      if (!isAuthenticated) {
+        setShowLoginPrompt(true);
+        return;
+      }
+
       if (isToggling || wishlistLoading) return;
 
       setIsToggling(true);
+
       try {
         await toggleProgramme(programme.id);
       } catch (error) {
@@ -100,7 +119,7 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
         setIsToggling(false);
       }
     },
-    [isToggling, wishlistLoading, toggleProgramme, programme.id],
+    [isAuthenticated, isToggling, wishlistLoading, toggleProgramme, programme.id],
   );
 
   const handleAboutClick = useCallback(
@@ -144,6 +163,12 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
           strokeWidth={1.75}
         />
       </button>
+
+      {showLoginPrompt && (
+        <div className="absolute top-12 right-2 z-30 bg-foreground text-background text-[10px] md:text-xs label px-3 py-2 rounded shadow-lg max-w-[180px] text-left">
+          Register (if you haven&apos;t already) and log in to access this.
+        </div>
+      )}
 
       {/* Main Programme Button */}
       <button onClick={onAbout} className="w-full text-left">
