@@ -128,6 +128,7 @@ export function useWishlist() {
     wishlistProgrammes: programmes,
     loading,
     error,
+    isAuthenticated,
     isSaved,
     toggleProgramme,
     addProgramme,

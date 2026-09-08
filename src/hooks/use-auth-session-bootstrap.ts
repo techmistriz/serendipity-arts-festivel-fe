@@ -24,8 +24,6 @@ export function useAuthSessionBootstrap() {
       try {
         const response = await API<ApiResponse<AuthSession["user"]>>("/profile", METHODS.GET);
 
-        console.log("PROFILE RESPONSE:", response);
-
         if (!response.status || !response.data) {
           throw new Error(response.message || "Unable to restore your session.");
         }
