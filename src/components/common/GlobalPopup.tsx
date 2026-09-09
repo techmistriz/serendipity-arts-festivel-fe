@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 const POPUP_STORAGE_KEY = "global-popup-closed-at";
-const FIVE_MINUTES = 3 * 1000;
+const TWO_HOURS = 2 * 60 * 60 * 1000;
 
 export default function GlobalPopup() {
   const [isOpen, setIsOpen] = useState(() => {
@@ -21,7 +21,7 @@ export default function GlobalPopup() {
 
     const elapsed = Date.now() - Number(closedAt);
 
-    if (elapsed >= FIVE_MINUTES) {
+    if (elapsed >= TWO_HOURS) {
       localStorage.removeItem(POPUP_STORAGE_KEY);
       return true;
     }
@@ -39,7 +39,7 @@ export default function GlobalPopup() {
     }
 
     const elapsed = Date.now() - Number(closedAt);
-    const remainingTime = FIVE_MINUTES - elapsed;
+    const remainingTime = TWO_HOURS - elapsed;
 
     if (remainingTime <= 0) {
       localStorage.removeItem(POPUP_STORAGE_KEY);
@@ -70,7 +70,7 @@ export default function GlobalPopup() {
     timerRef.current = setTimeout(() => {
       localStorage.removeItem(POPUP_STORAGE_KEY);
       setIsOpen(true);
-    }, FIVE_MINUTES);
+    }, TWO_HOURS);
   };
 
   if (!isOpen) {
