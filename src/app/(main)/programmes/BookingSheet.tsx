@@ -725,21 +725,24 @@ export function BookingSheet({
                 <p className="label text-muted-foreground">Supported by</p>
 
                 <div
-                  className={`mt-4 flex items-center gap-x-8 gap-y-6 ${
+                  className={`mt-4 flex items-center gap-x-1 gap-y-4 ${
                     programme.sponsors.length > 3 ? "flex-nowrap overflow-x-auto pb-3" : "flex-wrap"
                   }`}
                   style={{ scrollbarWidth: "auto" }}
                 >
                   {programme.sponsors.map((sponsor) => (
-                    <div key={sponsor.id} className="block shrink-0">
+                    <div
+                      key={sponsor.id}
+                      className="flex h-16 w-36 shrink-0 items-center justify-center"
+                    >
                       <Image
                         src={sponsor.logo!}
                         alt={sponsor.name}
                         title={sponsor.name}
-                        width={140}
-                        height={60}
+                        width={180}
+                        height={80}
                         loading="lazy"
-                        className="h-10 md:h-12 w-auto max-w-[140px] object-contain shrink-0"
+                        className="h-14 w-auto max-w-36 object-contain md:h-16"
                       />
                     </div>
                   ))}

@@ -6,6 +6,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { siteConfig } from "@/config/site";
 import { ReduxProvider } from "@/redux/provider";
+import GlobalPopup from "@/components/common/GlobalPopup";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function RootLayout({
         <ReduxProvider>
           <Header />
           <main className="flex-1">{children}</main>
+          <GlobalPopup />
           <Footer />
           <AccessibilityWidget />
         </ReduxProvider>

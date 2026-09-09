@@ -290,6 +290,27 @@ function RegisterContent({
     } catch (err) {
       if (err instanceof AxiosError) {
         const responseData = err.response?.data;
+
+        // SEA & Special Guest APIs return validation errors inside `message`
+        if (
+          (isSea || isGuest) &&
+          responseData?.message &&
+          typeof responseData.message === "object" &&
+          !Array.isArray(responseData.message)
+        ) {
+          Object.entries(responseData.message).forEach(([field, messages]) => {
+            if (Array.isArray(messages) && messages.length > 0) {
+              setError(field, {
+                type: "server",
+                message: String(messages[0]),
+              });
+            }
+          });
+
+          return;
+        }
+
+        // Existing Visitor API error handling
         const backendErrors = responseData?.errors;
 
         if (backendErrors && typeof backendErrors === "object" && !Array.isArray(backendErrors)) {
@@ -311,8 +332,8 @@ function RegisterContent({
           }
         }
 
-        if (typeof backendErrors === "string") {
-          setGlobalError(backendErrors);
+        if (typeof responseData?.message === "string") {
+          setGlobalError(responseData.message);
         } else {
           setGlobalError("Registration failed. Please try again.");
         }
