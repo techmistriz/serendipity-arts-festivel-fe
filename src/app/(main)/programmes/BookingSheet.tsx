@@ -725,7 +725,7 @@ export function BookingSheet({
                 <p className="label text-muted-foreground">Supported by</p>
 
                 <div
-                  className={`mt-4 flex items-center gap-x-1 gap-y-4 ${
+                  className={`mt-4 flex items-center gap-x-0 gap-y-4 ${
                     programme.sponsors.length > 3 ? "flex-nowrap overflow-x-auto pb-3" : "flex-wrap"
                   }`}
                   style={{ scrollbarWidth: "auto" }}
@@ -733,16 +733,16 @@ export function BookingSheet({
                   {programme.sponsors.map((sponsor) => (
                     <div
                       key={sponsor.id}
-                      className="flex h-16 w-36 shrink-0 items-center justify-center"
+                      className="flex h-20 ml-3 w-44 shrink-0 items-center justify-center"
                     >
                       <Image
                         src={sponsor.logo!}
                         alt={sponsor.name}
                         title={sponsor.name}
-                        width={180}
-                        height={80}
+                        width={220}
+                        height={100}
                         loading="lazy"
-                        className="h-14 w-auto max-w-36 object-contain md:h-16"
+                        className="h-20 w-auto max-w-44 object-contain"
                       />
                     </div>
                   ))}
