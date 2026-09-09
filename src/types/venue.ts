@@ -16,10 +16,6 @@ export interface VenueListItem {
   accessibility: Access[];
 }
 
-export interface VenueChild extends VenueListItem {
-  google_map_url: string | null;
-}
-
 export interface VenueProgramDetail {
   id: number;
   program_id: number;
@@ -39,6 +35,11 @@ export interface VenueProgramDetail {
       name: string;
     }>;
   };
+}
+
+export interface VenueChild extends VenueListItem {
+  program_details: VenueProgramDetail[];
+  google_map_url: string | null;
 }
 
 export interface VenueDetail extends VenueListItem {

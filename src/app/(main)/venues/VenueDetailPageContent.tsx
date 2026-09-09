@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
 import { SanitizedRichText } from "@/components/common/SanitizedRichText";
@@ -8,15 +11,23 @@ import { getSafeExternalUrl } from "@/utils/url";
 import { VenueImage } from "./_components/VenueImage";
 import { VenueProgrammes } from "./_components/VenueProgrammes";
 import { VenueSubVenues } from "./_components/VenueSubVenues";
-import type { VenueDetail } from "./types";
 import { AccessRow } from "./_components/VenueAccess";
+import type { VenueDetail } from "./types";
 
 type VenueDetailPageContentProps = {
   venue: VenueDetail;
 };
 
 export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
+  // -1 = main venue
+  // 0, 1, 2... = selected sub-venue
+  const [selectedVenueIndex, setSelectedVenueIndex] = useState(-1);
+
   const directionsUrl = getSafeExternalUrl(venue.google_map_url);
+
+  const selectedSubVenue = selectedVenueIndex >= 0 ? venue.childs[selectedVenueIndex] : undefined;
+
+  const programmes = selectedSubVenue ? selectedSubVenue.program_details : venue.program_details;
 
   return (
     <div className="container-editorial relative py-4 pb-24 md:pb-32">
@@ -82,7 +93,11 @@ export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
               </div>
             )}
 
-            <VenueSubVenues venues={venue.childs} />
+            <VenueSubVenues
+              venues={venue.childs}
+              selectedVenueIndex={selectedVenueIndex}
+              onSelect={setSelectedVenueIndex}
+            />
 
             {directionsUrl && (
               <a
@@ -99,7 +114,7 @@ export function VenueDetailPageContent({ venue }: VenueDetailPageContentProps) {
       </div>
 
       {/* Programmes */}
-      <VenueProgrammes programs={venue.program_details} />
+      <VenueProgrammes programs={programmes} />
     </div>
   );
 }
