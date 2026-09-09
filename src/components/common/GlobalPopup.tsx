@@ -95,16 +95,23 @@ export default function GlobalPopup() {
           ✕
         </button>
 
-        {/* Full image */}
-        <Image
-          src={images.globalPopup.popupImg}
-          alt="Serendipity Arts Festival"
-          width={1600}
-          height={1000}
-          className="block h-auto w-full object-contain"
-          priority
-          sizes="(max-width: 1536px) 100vw, 1536px"
-        />
+        {/* Full image with redirect */}
+        <a
+          href="https://indiainvenice.com/events/upcoming"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block cursor-pointer"
+        >
+          <Image
+            src={images.globalPopup.popupImg}
+            alt="Serendipity Arts Festival"
+            width={1600}
+            height={1000}
+            className="block h-auto w-full object-contain"
+            priority
+            sizes="(max-width: 1536px) 100vw, 1536px"
+          />
+        </a>
       </div>
 
       <style jsx global>{`
