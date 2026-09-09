@@ -596,3 +596,15 @@ html.a11y-dyslexia button {
     transform: translateX(-50%);
   }
 }
+
+@keyframes popupSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-80px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

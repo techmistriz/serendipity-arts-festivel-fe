@@ -48,7 +48,7 @@ import sagLogo from "@public/images/partners/sag.png";
 import programmeOne from "@public/images/programmes/prog-1.jpg";
 import programmeTwo from "@public/images/programmes/prog-2.jpg";
 import programmeThree from "@public/images/programmes/prog-3.jpg";
-import fallbackAvatar from "@public/fallback.jpg";
+import fallbackAvatar from "@public/fallback/fallback.jpg";
 import testimonialGhosh from "@public/images/testimonials/ghosh.jpg";
 import testimonialKhanwalkar from "@public/images/testimonials/khanwalkar.jpg";
 import testimonialParrikar from "@public/images/testimonials/parrikar.jpg";
@@ -69,6 +69,7 @@ import volunteerFourteen from "@public/images/volunteer/vol-14.jpg";
 import volunteerFifteen from "@public/images/volunteer/vol-15.jpg";
 import volunteerSixteen from "@public/images/volunteer/vol-16.jpg";
 import volunteerSeventeen from "@public/images/volunteer/vol-17.jpg";
+import popupImg from "@public/globalPopup/IIV_PROG_BNR(1200X400).png";
 
 /** Application-owned static images. API media belongs with its API response, not this catalog. */
 export const images = {
@@ -154,6 +155,9 @@ export const images = {
     samples: [venueOne, venueTwo],
   },
   volunteer: [volunteerFourteen, volunteerFifteen, volunteerSixteen, volunteerSeventeen],
+  globalPopup: {
+    popupImg,
+  },
 } as const;
 
 /** Use string paths where an API field is expected instead of StaticImageData. */
