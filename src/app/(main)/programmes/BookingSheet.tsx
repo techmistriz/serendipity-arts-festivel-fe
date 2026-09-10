@@ -17,6 +17,7 @@ import { SanitizedRichText } from "@/components/common/SanitizedRichText";
 import { ProgrammeCard } from "./_components/ProgrammeCard";
 import { Modal } from "./Modal";
 import { ProgrammeDisclaimerModal } from "./ProgrammeDisclaimerModal";
+import { ScheduleMarquee } from "@/components/common/ScheduleMarquee";
 
 // ===== Constants =====
 const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
@@ -49,11 +50,6 @@ const getDateLabel = (programme: UIProgramme) => {
   if (uniqDays.length === 1) return `${uniqDays[0]} Dec`;
   if (uniqDays.length >= 6) return `${uniqDays[0]}–${uniqDays[uniqDays.length - 1]} Dec`;
   return `${uniqDays.join(", ")} Dec`;
-};
-
-const getTimeLabel = (programme: UIProgramme) => {
-  if (!programme.slots?.length) return "Time TBA";
-  return formatTimeRange(programme.slots[0]);
 };
 
 const findRelatedProgrammes = (
@@ -337,11 +333,6 @@ export function BookingSheet({
     [onOpen],
   );
 
-  // const priceLabel = useMemo(() => {
-  //   if (isVip) return "Guest";
-  //   return programme.price === 0 ? "Free" : `₹${programme.price || 0}`;
-  // }, [isVip, programme.price]);
-
   // ===== Render helpers =====
   const renderScheduleSelector = () => {
     if (!programme.slots?.length) {
@@ -542,11 +533,6 @@ export function BookingSheet({
           </button>
         </div>
 
-        {/* <div className="mt-5">
-          <label className="label text-muted-foreground">Discount code</label>
-          <input placeholder="Enter code (optional)" className="input mt-2 max-w-xs" />
-        </div> */}
-
         {programme.disclaimer && (
           <button
             onClick={() => setShowDisclaimer(true)}
@@ -656,7 +642,12 @@ export function BookingSheet({
               <dt className="label text-muted-foreground">Date</dt>
               <dd>{getDateLabel(programme)}</dd>
               <dt className="label text-muted-foreground">Time</dt>
-              <dd>{getTimeLabel(programme)}</dd>
+              <dd className="min-w-0">
+                <ScheduleMarquee
+                  slots={programme.slots}
+                  className="!text-[#090909] md:text-[14px] w-full"
+                />
+              </dd>
               <dt className="label text-muted-foreground">Venue</dt>
               <dd>{programme.venue || "Venue TBA"}</dd>
               <dt className="label text-muted-foreground">Price</dt>
@@ -710,13 +701,6 @@ export function BookingSheet({
                   {tag.name}
                 </span>
               ))}
-
-              {/* <span
-                className="label inline-block shrink-0 px-2 py-1"
-                style={priceStyle(priceLabel)}
-              >
-                {priceLabel}
-              </span> */}
             </div>
 
             {/* Sponsors */}
