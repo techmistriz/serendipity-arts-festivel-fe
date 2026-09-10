@@ -1,16 +1,15 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
 import type { UIProgramme } from "@/types/programme";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { imagePaths } from "@/config/images";
-// import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
-import { formatSlotDate, isProgrammeNew } from "@/utils/date";
-// import { priceStyle } from "@/lib/tag-colors";
+import { isProgrammeNew } from "@/utils/date";
+import { ScheduleMarquee } from "@/components/common/ScheduleMarquee";
 
 type ProgrammeCardProps = {
   programme: UIProgramme;
@@ -23,56 +22,18 @@ const BLUR_DATA_URL =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAA8A/9k=";
 
 export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps) {
-  // const { isVip } = useCart();
   const { isSaved, toggleProgramme, loading: wishlistLoading, isAuthenticated } = useWishlist();
   const [imageError, setImageError] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  // Overflow state
-  const scheduleRef = useRef<HTMLDivElement>(null);
-  const [hasOverflow, setHasOverflow] = useState(false);
-
   // Memoized values
   const isSavedProgramme = useMemo(() => isSaved(programme.id), [isSaved, programme.id]);
-  // const priceLabel = useMemo(() => {
-  //   if (isVip) return "Guest";
-  //   return programme.price === 0 ? "Free" : `₹${programme.price || 0}`;
-  // }, [isVip, programme.price]);
 
   const imageSrc = useMemo(
     () => (imageError ? PLACEHOLDER_IMAGE : programme.img || PLACEHOLDER_IMAGE),
     [imageError, programme.img],
   );
-
-  // Helper functions
-  const formatTime = useCallback((time: string) => {
-    if (!time) return "TBA";
-
-    const [h, m] = time.split(":").map(Number);
-    const period = h >= 12 ? "PM" : "AM";
-    const hh = h % 12 === 0 ? 12 : h % 12;
-
-    return `${hh}:${m.toString().padStart(2, "0")} ${period}`;
-  }, []);
-
-  // Detect overflow dynamically
-  useEffect(() => {
-    const element = scheduleRef.current;
-    if (!element) return;
-
-    const checkOverflow = () => {
-      // Check if total content width exceeds visible container width
-      setHasOverflow(element.scrollWidth > element.clientWidth);
-    };
-
-    checkOverflow();
-
-    const resizeObserver = new ResizeObserver(checkOverflow);
-    resizeObserver.observe(element);
-
-    return () => resizeObserver.disconnect();
-  }, [programme.slots]);
 
   //wishlist toolip hide in 3s
   useEffect(() => {
@@ -84,12 +45,6 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
 
     return () => clearTimeout(timer);
   }, [showLoginPrompt]);
-
-  // Dynamic animation duration so longer lists maintain a uniform, readable speed
-  const marqueeDuration = useMemo(() => {
-    const count = programme.slots?.length || 0;
-    return Math.max(25, count * 8); // minimum 12s duration
-  }, [programme.slots]);
 
   // Event handlers
   const handleImageError = useCallback(() => {
@@ -211,56 +166,7 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
           </h3>
 
           {/* Schedule Section */}
-          <div
-            ref={scheduleRef}
-            className="headline mt-1 overflow-hidden whitespace-nowrap text-[11px] text-muted-foreground md:text-xs"
-          >
-            {programme.slots?.length ? (
-              <div
-                className={`schedule-marquee-track ${hasOverflow ? "is-animating" : ""}`}
-                style={{ "--marquee-duration": `${marqueeDuration}s` } as React.CSSProperties}
-              >
-                {/* Primary set of slots */}
-                {programme.slots.map((slot, index) => (
-                  <span
-                    key={`slot-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
-                    className="inline-block shrink-0 mr-4"
-                  >
-                    {formatSlotDate(slot.eventDate)} · {formatTime(slot.fromTime)} -{" "}
-                    {formatTime(slot.toTime)}
-                    {programme.venue && ` · ${programme.venue}`}
-                  </span>
-                ))}
-
-                {hasOverflow &&
-                  programme.slots.map((slot, index) => (
-                    <span
-                      key={`dup-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
-                      className="inline-block shrink-0 mr-4"
-                    >
-                      {formatSlotDate(slot.eventDate)} · {formatTime(slot.fromTime)} -{" "}
-                      {formatTime(slot.toTime)}
-                      {programme.venue && ` · ${programme.venue}`}
-                    </span>
-                  ))}
-
-                {/* Duplicated set for seamless loop when overflow is detected */}
-                {hasOverflow &&
-                  programme.slots.map((slot, index) => (
-                    <span
-                      key={`dup2-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
-                      className="inline-block shrink-0 mr-4"
-                    >
-                      {formatSlotDate(slot.eventDate)} · {formatTime(slot.fromTime)} -{" "}
-                      {formatTime(slot.toTime)}
-                      {programme.venue && ` · ${programme.venue}`}
-                    </span>
-                  ))}
-              </div>
-            ) : (
-              <span>{programme.venue ? programme.venue : null}</span>
-            )}
-          </div>
+          <ScheduleMarquee slots={programme.slots} venue={programme.venue} className="mt-1 " />
 
           <div className="mt-2 flex flex-wrap gap-1.5">
             {programme.tags?.map((tag) => (
@@ -275,13 +181,6 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
                 {tag.name}
               </span>
             ))}
-
-            {/* <span
-              className="label px-1.5 py-0.5 text-[9px] leading-tight md:text-[10px]"
-              style={priceStyle(priceLabel)}
-            >
-              {priceLabel}
-            </span> */}
           </div>
         </div>
       </button>
