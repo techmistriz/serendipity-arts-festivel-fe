@@ -54,11 +54,20 @@ export default function Footer() {
               />
             </div>
 
-            <p className="display mb-6 text-2xl uppercase leading-[1.05] md:text-3xl">
-              Subscribe to The Serendipity Dispatch, our monthly newsletter.
+            <p className="display uppercase text-2xl md:text-3xl leading-[1.05] mb-6">
+              Subscribe to the Serendipity Arts Substack.
             </p>
 
-            <NewsletterForm />
+            <a
+              href="https://serendipityarts.substack.com/?r=8at1wk&utm_campaign=subscribe-page-share-screen&utm_medium=web"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-3 border-b border-foreground pb-2 label hover:text-accent transition-colors max-w-md"
+            >
+              Subscribe on Substack <span className="text-lg">&rarr;</span>
+            </a>
+
+            {/* <NewsletterForm /> */}
           </div>
 
           {/* Navigation */}
