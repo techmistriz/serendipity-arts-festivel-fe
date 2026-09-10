@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import GlitchBar from "@/components/common/GlitchBar";
-import { NewsletterForm } from "@/components/layout/NewsletterForm";
+// import { NewsletterForm } from "@/components/layout/NewsletterForm";
 import { footerImages } from "@/config/images";
 import { siteConfig } from "@/config/site";
 
