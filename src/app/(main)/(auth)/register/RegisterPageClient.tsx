@@ -430,8 +430,7 @@ function RegisterContent({
                 Your Art Pass, free.
               </p>
               <p className="mt-5 text-sm text-muted-foreground max-w-sm">
-                Registration is free and open to all. The Art Pass will be available to download
-                closer to the festival on our app.
+                Registration is free and open to all.
               </p>
               <p className="mt-4 text-sm text-muted-foreground max-w-sm">
                 Select programmes with limited seating are ticketed — you’ll be able to book them
