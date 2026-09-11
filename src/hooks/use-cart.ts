@@ -71,6 +71,29 @@ export function useCart() {
     }
   }, [dispatch, isAuthenticated, refresh]);
 
+  //auto refetch data
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const handleFocus = () => {
+      void syncCart(dispatch).catch(() => undefined);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        void syncCart(dispatch).catch(() => undefined);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [dispatch, isAuthenticated]);
+
   const add = useCallback(
     async (input: CartItemInput) => {
       if (!isAuthenticated) {
