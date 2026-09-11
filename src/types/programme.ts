@@ -26,6 +26,7 @@ export interface Venue {
 }
 
 export interface SubVenue {
+  title: string;
   id: number;
   name: string;
 }
@@ -228,14 +229,12 @@ export interface UITag {
 }
 
 export interface UIProgramme {
-  // program_tags: any;
   id: string | number;
   title: string;
   slug: string;
   category: string;
 
   sponsors: ProgrammeSponsor[];
-
   createdAt?: string;
 
   discipline?: {
@@ -253,16 +252,27 @@ export interface UIProgramme {
     fromTime: string;
     eventDate?: string | null;
     toTime: string;
+
+    venue?: {
+      id: number;
+      title: string;
+    } | null;
+
+    subVenue?: {
+      id: number;
+      title: string;
+    } | null;
   }[];
 
+  // Fallback venue for the programme
   venue: string;
+
   price: number;
   img: string;
   blurb: string;
   longBlurb: string;
   disclaimer?: string;
 
-  // API ke complete program tags
   tags: ProgramTag[];
 
   isBookingAllowed: boolean;
