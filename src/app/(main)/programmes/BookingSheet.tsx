@@ -114,7 +114,8 @@ export function BookingSheet({
   const isPage = variant === "page";
   const programmeReturnPath = returnPath ?? `/programmes?p=${programme.id}`;
 
-  // console.log("Programme in BookingSheet:", allProgrammes);
+  // console.log("AllProgramme in BookingSheet:", allProgrammes);
+  // console.log("Programme in BookingSheet:", programme);
   // console.log("Tags in BookingSheet:", programme.tags);
   // console.log("Tags length:", programme.tags?.length);
 
@@ -648,8 +649,22 @@ export function BookingSheet({
                   className="!text-[#090909] md:text-[14px] w-full"
                 />
               </dd>
+              {/* <dt className="label text-muted-foreground">Venue</dt>
+              <dd>
+                {[programme.slots?.[0]?.subVenue?.title, programme.venue]
+                  .filter(Boolean)
+                  .join(", ") || "Venue TBA"}
+              </dd> */}
+
               <dt className="label text-muted-foreground">Venue</dt>
-              <dd>{programme.venue || "Venue TBA"}</dd>
+              <dd>
+                {[chosenSlot?.subVenue?.title, chosenSlot?.venue?.title]
+                  .filter(Boolean)
+                  .join(", ") ||
+                  programme.venue ||
+                  "Venue TBA"}
+              </dd>
+
               <dt className="label text-muted-foreground">Price</dt>
               <dd>
                 {effectivePrice === 0

@@ -30,6 +30,20 @@ export function mapApiProgrammeToUi(
             eventDate: detail.event_date,
             fromTime: formatTime(detail.from_time),
             toTime: formatTime(detail.to_time),
+
+            venue: detail.venue
+              ? {
+                  id: detail.venue.id,
+                  title: detail.venue.title || detail.venue.name || "",
+                }
+              : null,
+
+            subVenue: detail.sub_venue
+              ? {
+                  id: detail.sub_venue.id,
+                  title: detail.sub_venue.title || detail.sub_venue.name || "",
+                }
+              : null,
           },
         ];
   });
