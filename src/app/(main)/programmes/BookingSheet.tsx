@@ -598,13 +598,13 @@ export function BookingSheet({
         <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
           {/* Image */}
           <div className="md:col-span-6">
-            <div className="relative w-full aspect-[16/9]">
+            <div className="relative w-full aspect-square">
               <Image
                 src={programme.img || PLACEHOLDER_IMAGE}
                 alt={programme.title || "Programme"}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="w-full object-cover"
+                className="object-contain -translate-y-27"
                 onError={handleImageError}
               />
             </div>
