@@ -10,6 +10,7 @@ export const ROLE_IDS = {
 export const baseSchema = {
   email: z.string().min(1, "Email is required").email("Invalid email"),
   fullName: z.string().min(3, "Full name is required"),
+  gender: z.string().min(1, "Please select your gender"),
   std_code: z.string().default("91"),
   terms: z.literal(true, {
     message: "Accept Terms & Conditions",
