@@ -408,6 +408,28 @@ export const GuestForm = ({
         )}
       </Field>
 
+      <Field label="Gender">
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+          {["Man", "Woman", "Transgender", "Non-Binary/Non-Conforming", "Prefer Not To Say"].map(
+            (gender) => (
+              <label key={gender} className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  {...register("gender")}
+                  value={gender}
+                  className="accent-accent"
+                />
+                {gender}
+              </label>
+            ),
+          )}
+        </div>
+
+        {errors.gender && (
+          <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.gender)}</p>
+        )}
+      </Field>
+
       <Field label="Contact Number*">
         <div className="grid grid-cols-[140px_1fr] gap-3">
           <select {...register("std_code")} className="input">

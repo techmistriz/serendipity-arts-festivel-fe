@@ -174,6 +174,7 @@ function RegisterContent({
           role_id: ROLE_IDS.guest,
           name: data.fullName,
           email: data.email,
+          gender: data.gender || "Prefer Not To Say",
           contact: data.contact,
           std_code: data.std_code || "91",
 
