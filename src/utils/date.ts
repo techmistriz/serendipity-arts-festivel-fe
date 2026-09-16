@@ -100,3 +100,22 @@ export function formatSlotDate(date?: string | null) {
     month: "short",
   });
 }
+
+export function isProgrammeDroppingSoon(
+  droppingSoonDate?: string | null,
+  currentDate: Date = new Date(),
+): boolean {
+  if (!droppingSoonDate) return false;
+
+  const [day, month, year] = droppingSoonDate.split("/").map(Number);
+
+  if (!day || !month || !year) return false;
+
+  const droppingDate = new Date(year, month - 1, day);
+  droppingDate.setHours(0, 0, 0, 0);
+
+  const today = new Date(currentDate);
+  today.setHours(0, 0, 0, 0);
+
+  return droppingDate > today;
+}
