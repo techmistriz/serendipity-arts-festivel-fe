@@ -14,8 +14,6 @@ type NotifyMeModalProps = {
     id?: string | number;
     name?: string;
     email?: string;
-    phone?: string;
-    contact?: string;
   } | null;
 };
 
@@ -28,7 +26,6 @@ export function NotifyMeModal({
 }: NotifyMeModalProps) {
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [contact, setContact] = useState(user?.phone || user?.contact || "");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -52,18 +49,12 @@ export function NotifyMeModal({
       return;
     }
 
-    if (!contact.trim()) {
-      setError("Please enter your phone number.");
-      return;
-    }
-
     try {
       setLoading(true);
 
       const response = await sendNotifyMe({
         name: name.trim(),
         email: email.trim(),
-        contact: contact.trim(),
         user_id: user?.id || "",
         program_id: programmeId,
       });
@@ -174,18 +165,6 @@ export function NotifyMeModal({
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full border border-foreground bg-transparent px-3 py-2 text-sm outline-none"
                   placeholder="you@example.com"
-                />
-              </div>
-
-              <div>
-                <label className="label mb-1 block text-xs">Phone</label>
-
-                <input
-                  type="tel"
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
-                  className="w-full border border-foreground bg-transparent px-3 py-2 text-sm outline-none"
-                  placeholder="Phone number"
                 />
               </div>
 
