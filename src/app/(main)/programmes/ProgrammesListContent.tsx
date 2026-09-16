@@ -16,6 +16,7 @@ import { BookingSheet } from "./BookingSheet";
 import { useCategories } from "@/hooks/use-categories";
 import { useVenues } from "@/hooks/useVenues";
 import { useProgramTags } from "@/hooks/use-program-tags";
+import { ProgrammeDrop } from "./_components/ProgrammeDrop";
 
 type Intent = "about" | "cart";
 
@@ -535,6 +536,7 @@ export function ProgrammesListContent() {
           allProgrammes={programmes}
         />
       )}
+      <ProgrammeDrop />
     </div>
   );
 }
