@@ -17,7 +17,11 @@ import {
   type LocationOption,
 } from "@/services/location.service";
 
-type SelectOption = { label: string; value: number };
+type SelectOption = {
+  label: string;
+  value: number;
+  std_code?: string;
+};
 
 type SearchableLocationProps = {
   control: Control<FieldValues>;
@@ -31,7 +35,11 @@ const toId = (value: unknown) => {
 };
 
 const toOptions = (items: LocationOption[]): SelectOption[] =>
-  items.map((item) => ({ label: item.name, value: Number(item.id) }));
+  items.map((item) => ({
+    label: item.name,
+    value: Number(item.id),
+    std_code: item.std_code,
+  }));
 
 const findSelectedOption = (options: SelectOption[], value: unknown) => {
   const id = toId(value);
@@ -132,10 +140,12 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
 
   const handleCountryChange = (option: SingleValue<SelectOption>) => {
     setLocationError(null);
+
     setValue("country", option ? String(option.value) : "");
     setValue("state", "");
     setValue("city", "");
   };
+
   const handleStateChange = (option: SingleValue<SelectOption>) => {
     setLocationError(null);
     setValue("state", option ? String(option.value) : "");

@@ -10,7 +10,13 @@ import { useSponsors } from "@/hooks/useSponsors";
 import { SponsorGrid } from "./_components/SponsorGrid";
 
 export function PartnersPageClient() {
-  const { sponsors, loading, error } = useSponsors(8);
+  const { groupedSponsors, loading, error } = useSponsors({
+    groupBySponsorType: true,
+  });
+
+  const sponsorGroups = groupedSponsors
+    ? Object.entries(groupedSponsors).filter(([, sponsors]) => sponsors.length > 0)
+    : [];
 
   return (
     <div className="container-editorial relative pb-32 pt-10 md:pt-20">
@@ -20,30 +26,38 @@ export function PartnersPageClient() {
         variant="vibrate"
         speed={0.4}
         count={70}
-        className="absolute left-0 top-20 bottom-32 hidden w-1 md:block"
+        className="absolute bottom-32 left-0 top-20 hidden w-1 md:block"
       />
 
       <h1 className="display uppercase text-[13vw] leading-[0.9] md:text-[9vw]">Partners</h1>
 
-      <h2 className="mt-16 md:mt-24 display uppercase text-2xl md:text-4xl leading-[1] rule-b pb-4">
-        Supported by
-      </h2>
-
       {loading ? (
-        <LogoGridLoadingSkeleton label="Loading partners" />
+        <div className="mt-16 md:mt-24">
+          <LogoGridLoadingSkeleton label="Loading partners" />
+        </div>
       ) : error ? (
-        <p role="alert" className="headline mt-8 text-sm text-muted-foreground">
+        <p role="alert" className="headline mt-16 text-sm text-muted-foreground md:mt-24">
           Partners are currently unavailable. Please try again later.
         </p>
-      ) : sponsors.length === 0 ? (
-        <p className="headline mt-8 text-sm text-muted-foreground">
+      ) : sponsorGroups.length === 0 ? (
+        <p className="headline mt-16 text-sm text-muted-foreground md:mt-24">
           Partner information is coming soon.
         </p>
       ) : (
-        <SponsorGrid sponsors={sponsors} />
+        <div className="mt-16 md:mt-24">
+          {sponsorGroups.map(([sponsorType, sponsors]) => (
+            <section key={sponsorType} className="mb-16 md:mb-24">
+              <h2 className="display uppercase text-2xl leading-[1] rule-b pb-4 md:text-4xl">
+                {sponsorType}
+              </h2>
+
+              <SponsorGrid sponsors={sponsors} />
+            </section>
+          ))}
+        </div>
       )}
 
-      <h2 className="mt-16 md:mt-24 display uppercase text-2xl md:text-4xl leading-[1] rule-b pb-4">
+      <h2 className="mt-16 display uppercase text-2xl leading-[1] rule-b pb-4 md:mt-24 md:text-4xl">
         Presented by
       </h2>
 

@@ -1,11 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Sponsors } from "@/types/sponsor";
+
+import type { GroupedSponsors, Sponsors } from "@/types/sponsor";
 import { getSponsors } from "@/services/sponsors";
 
-export function useSponsors(limit = 5) {
+type UseSponsorsOptions = {
+  limit?: number;
+  groupBySponsorType?: boolean;
+};
+
+export function useSponsors({ limit, groupBySponsorType = false }: UseSponsorsOptions = {}) {
   const [sponsors, setSponsors] = useState<Sponsors[]>([]);
+  const [groupedSponsors, setGroupedSponsors] = useState<GroupedSponsors>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,9 +22,15 @@ export function useSponsors(limit = 5) {
         setLoading(true);
         setError(null);
 
-        const data = await getSponsors(limit);
+        const data = await getSponsors(limit, groupBySponsorType);
 
-        setSponsors(data);
+        if (groupBySponsorType) {
+          setGroupedSponsors(data as GroupedSponsors);
+          setSponsors([]);
+        } else {
+          setSponsors(data as Sponsors[]);
+          setGroupedSponsors({});
+        }
       } catch (error) {
         setError(error instanceof Error ? error.message : "Failed to fetch sponsors");
       } finally {
@@ -26,10 +39,11 @@ export function useSponsors(limit = 5) {
     };
 
     fetchSponsors();
-  }, [limit]);
+  }, [limit, groupBySponsorType]);
 
   return {
     sponsors,
+    groupedSponsors,
     loading,
     error,
   };
