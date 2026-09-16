@@ -4,6 +4,7 @@ import type { ApiResponse } from "@/types/api";
 export interface LocationOption {
   id: number;
   name: string;
+  std_code?: string;
   country_id?: number;
   state_id?: number;
 }

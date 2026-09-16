@@ -175,6 +175,11 @@ function RegisterContent({
           name: data.fullName,
           email: data.email,
           gender: data.gender || "Prefer Not To Say",
+
+          country_id: Number(data.country),
+          state_id: Number(data.state),
+          city_id: Number(data.city),
+
           contact: data.contact,
           std_code: data.std_code || "91",
 
@@ -431,12 +436,13 @@ function RegisterContent({
                 Your Art Pass, free.
               </p>
               <p className="mt-5 text-sm text-muted-foreground max-w-sm">
-                Registration is free and open to all.
+                Registration is free and open to all. If you registered for last year’s festival,
+                you will need to register again for 2026.
               </p>
               <p className="mt-4 text-sm text-muted-foreground max-w-sm">
                 Select programmes with limited seating are ticketed and can be booked once you’ve
-                registered. All your confirmed bookings will be added to the same Art Pass, which
-                you can use to access the festival and your booked programmes.
+                registered. All confirmed bookings will be added to the same Art Pass, which you can
+                use to access the festival and your booked programmes.
               </p>
             </>
           )}
@@ -483,6 +489,7 @@ function RegisterContent({
           {mode === "guest" && (
             <GuestForm
               register={register}
+              control={control}
               formState={{ errors }}
               watch={watch}
               setValue={setValue}
