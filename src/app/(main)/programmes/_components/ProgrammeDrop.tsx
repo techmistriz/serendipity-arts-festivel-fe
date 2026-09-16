@@ -158,7 +158,7 @@ export function ProgrammeDrop() {
                   alt={`${programme.name || "Programme"} programme preview`}
                   fill
                   sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-                  className="scale-[1.02] object-cover blur-xs transition-transform duration-700 group-hover:scale-[1.04]"
+                  className="scale-[1.02] object-cover blur-lg transition-transform duration-700 group-hover:scale-[1.04]"
                 />
 
                 <div className="absolute inset-0 bg-foreground/10" />
@@ -235,7 +235,6 @@ export function ProgrammeDrop() {
                   id: user?.id,
                   name: user?.name,
                   email: user?.email,
-                  contact: user?.contact,
                 }
               : null
           }

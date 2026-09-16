@@ -22,7 +22,6 @@ function toSearchResults(data: SearchResponse["data"]): SearchResult[] {
     ...data.programs.map((programme) => ({
       kind: "Programme" as const,
       title: programme.name,
-      subtitle: "Programme",
       href: "/programmes",
     })),
     ...data.curators.map((curator) => ({

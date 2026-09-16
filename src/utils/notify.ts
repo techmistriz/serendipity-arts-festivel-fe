@@ -3,7 +3,6 @@ export type NotifyMeData = {
   user_id: number;
   name: string;
   email: string;
-  contact: string;
   status: number;
   updated_at: string;
   created_at: string;
@@ -13,7 +12,6 @@ export type NotifyMeData = {
 export type NotifyMePayload = {
   name: string;
   email: string;
-  contact: string;
   user_id?: string | number | "";
   program_id: string | number;
 };
