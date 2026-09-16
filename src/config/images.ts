@@ -71,6 +71,11 @@ import volunteerSixteen from "@public/images/volunteer/vol-16.jpg";
 import volunteerSeventeen from "@public/images/volunteer/vol-17.jpg";
 import popupImg from "@public/globalPopup/IIV_PROG_BNR(1200X400).png";
 
+import daysImage from "@public/drop/drop-days.jpg";
+import hoursImage from "@public/drop/drop-hours.jpg";
+import minutesImage from "@public/drop/drop-minutes.jpg";
+import secondsImage from "@public/drop/drop-seconds.jpg";
+
 /** Application-owned static images. API media belongs with its API response, not this catalog. */
 export const images = {
   about: {
@@ -133,6 +138,12 @@ export const images = {
   programmes: {
     fallback: programmeOne,
     samples: [programmeOne, programmeTwo, programmeThree],
+  },
+  dropping_soon: {
+    daysImage: daysImage,
+    hoursImage: hoursImage,
+    minutesImage: minutesImage,
+    secondsImage: secondsImage,
   },
   testimonials: {
     fallback: fallbackAvatar,

@@ -73,6 +73,7 @@ export function mapApiProgrammeToUi(
     curator,
     sponsors: sponsors,
     createdAt: apiProgramme.created_at,
+    droppingSoonDate: apiProgramme.dropping_soon_date ?? null,
     discipline: apiProgramme.discipline
       ? {
           name: apiProgramme.discipline.name,

@@ -39,6 +39,7 @@ export type Programme = {
   newlyAdded?: boolean;
   includes?: IncludedItem[];
   addOns?: AddOn[];
+  dropping_soon_date?: string | null;
 };
 
 const IMAGES = [...images.programmes.samples, ...images.curators.samples, ...images.venues.samples];

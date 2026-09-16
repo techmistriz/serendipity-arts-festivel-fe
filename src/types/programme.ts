@@ -94,6 +94,7 @@ export interface ProgrammeSponsor {
 }
 
 export interface Programme {
+  dropping_soon_date?: string | null;
   id: number;
   booking_type: string | null;
   program_type: string;
@@ -276,6 +277,7 @@ export interface UIProgramme {
   tags: ProgramTag[];
 
   isBookingAllowed: boolean;
+  droppingSoonDate?: string | null;
   newlyAdded?: boolean;
 
   includes?: {
