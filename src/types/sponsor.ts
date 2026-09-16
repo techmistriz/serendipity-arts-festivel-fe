@@ -22,8 +22,13 @@ export interface Sponsors {
   deleted_at: string | null;
   webhook_status: number;
   webhook_response: string | null;
+  created_by: number | null;
+  updated_by: number | null;
+  deleted_by: number | null;
   sponsor_type: SponsorType;
 }
+
+export type GroupedSponsors = Record<string, Sponsors[]>;
 
 export interface SponsorsResponse {
   status: boolean;

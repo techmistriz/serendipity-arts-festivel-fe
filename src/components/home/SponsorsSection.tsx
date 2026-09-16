@@ -7,7 +7,9 @@ import { LogoGridLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { useSponsors } from "@/hooks/useSponsors";
 
 export function SponsorsSection() {
-  const { sponsors, loading, error } = useSponsors(8);
+  const { sponsors, loading, error } = useSponsors({
+    limit: 8,
+  });
 
   return (
     <section className="container-editorial mt-20 md:mt-32">
@@ -26,15 +28,10 @@ export function SponsorsSection() {
           <div className="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible">
             {sponsors.map((sponsor, i) => (
               <div
-                key={sponsor.name}
+                key={sponsor.id}
                 className={`flex w-[46vw] shrink-0 snap-start flex-col px-4 py-5 md:w-auto md:px-6 md:py-6 ${
-                  /* Add right border except on mobile last item AND except every 4th item on desktop grid */
                   i !== sponsors.length - 1 ? "border-r border-foreground" : ""
-                } ${
-                  /* Remove right border on desktop every 4th item (column 4) to prevent double border with outer box */
-                  (i + 1) % 4 === 0 ? "md:border-r-0" : ""
-                } ${
-                  /* Add top border for row 2 onwards */
+                } ${(i + 1) % 4 === 0 ? "md:border-r-0" : ""} ${
                   i >= 4 ? "md:border-t md:border-foreground" : ""
                 }`}
               >
