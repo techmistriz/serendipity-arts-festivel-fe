@@ -14,13 +14,16 @@ import type {
 import { Field, YesNo } from "./FieldComponents";
 import { useOTP } from "./hooks/useOTP";
 import SearchableLocation from "../common/SearchableLocation";
+import CountryCodeSelect from "../common/CountryCodeSelect";
 
 type RegistrationFieldsProps = {
   register: UseFormRegister<FieldValues>;
-  control?: Control<FieldValues>;
+  control: Control<FieldValues>;
   watch: UseFormWatch<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
-  formState: { errors: FieldErrors<FieldValues> };
+  formState: {
+    errors: FieldErrors<FieldValues>;
+  };
 };
 
 function getErrorMessage(error: unknown): string | undefined {
@@ -172,7 +175,7 @@ export const GeneralForm = ({
       </Field>
 
       <SearchableLocation
-        control={control!}
+        control={control}
         setValue={setValue}
         watch={watch} // Add this
       />
@@ -231,11 +234,7 @@ export const GeneralForm = ({
 
       <Field label="WhatsApp Number*">
         <div className="grid grid-cols-[110px_1fr] gap-3">
-          <select {...register("std_code")} className="input">
-            <option value="91">+91</option>
-            <option value="1">+1</option>
-            <option value="44">+44</option>
-          </select>
+          <CountryCodeSelect register={register} setValue={setValue} />
           <input
             inputMode="numeric"
             maxLength={10}
@@ -311,18 +310,14 @@ export const SeaForm = ({
       </Field>
 
       <SearchableLocation
-        control={control!}
+        control={control}
         setValue={setValue}
         watch={watch} // Add this
       />
 
       <Field label="WhatsApp Number*">
         <div className="grid grid-cols-[110px_1fr] gap-3">
-          <select {...register("std_code")} className="input">
-            <option value="91">+91</option>
-            <option value="1">+1</option>
-            <option value="44">+44</option>
-          </select>
+          <CountryCodeSelect register={register} setValue={setValue} />
           <input
             inputMode="numeric"
             maxLength={12}
@@ -430,13 +425,11 @@ export const GuestForm = ({
         )}
       </Field>
 
+      {/* <SearchableLocation control={control} setValue={setValue} watch={watch} /> */}
+
       <Field label="Contact Number*">
         <div className="grid grid-cols-[140px_1fr] gap-3">
-          <select {...register("std_code")} className="input">
-            <option value="91">India (+91)</option>
-            <option value="1">USA (+1)</option>
-            <option value="44">UK (+44)</option>
-          </select>
+          <CountryCodeSelect register={register} setValue={setValue} showCountryName />
           <input
             inputMode="numeric"
             maxLength={12}
