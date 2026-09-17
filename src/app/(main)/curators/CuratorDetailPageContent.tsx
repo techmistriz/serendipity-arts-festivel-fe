@@ -55,11 +55,11 @@ export function CuratorDetailPageContent({ detail }: CuratorDetailPageContentPro
             {curator.name}
           </h1>
 
-          {curator.short_description && (
+          {/* {curator.short_description && (
             <p className="headline mt-6 max-w-prose text-base leading-relaxed md:text-lg">
               {curator.short_description}
             </p>
-          )}
+          )} */}
 
           <SanitizedRichText
             html={curator.bio}
