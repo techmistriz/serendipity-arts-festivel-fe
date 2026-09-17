@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter_Tight, Stack_Sans_Headline } from "next/font/google";
 import { AccessibilityWidget } from "@/components/common/AccessibilityWidget";
-import Footer from "@/components/layout/footer";
-import Header from "@/components/layout/header";
 import { siteConfig } from "@/config/site";
 import { ReduxProvider } from "@/redux/provider";
 import GlobalPopup from "@/components/common/GlobalPopup";
+import SiteChrome from "@/components/layout/SiteChrome";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -65,10 +64,8 @@ export default function RootLayout({
         suppressHydrationWarning //Fix: Suppress hydration warnings for body attributes
       >
         <ReduxProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
+          <SiteChrome>{children}</SiteChrome>
           <GlobalPopup />
-          <Footer />
           <AccessibilityWidget />
         </ReduxProvider>
       </body>
