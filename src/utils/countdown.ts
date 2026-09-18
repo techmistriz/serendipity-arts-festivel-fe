@@ -2,10 +2,30 @@ import { useEffect, useState } from "react";
 
 export const pad = (value: number) => value.toString().padStart(2, "0");
 
-export function useCountdown(target: Date) {
-  const [left, setLeft] = useState<number | null>(null);
+export const parseDropDate = (dateString: string | null | undefined): Date | null => {
+  if (!dateString) return null;
+
+  const [day, month, year] = dateString.split("/").map(Number);
+
+  if (!day || !month || !year) return null;
+
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
+};
+
+export function useCountdown(dateString: string | null | undefined) {
+  const [left, setLeft] = useState<number | null>(() => {
+    const target = parseDropDate(dateString);
+
+    if (!target) return null;
+
+    return Math.max(0, target.getTime() - Date.now());
+  });
 
   useEffect(() => {
+    const target = parseDropDate(dateString);
+
+    if (!target) return;
+
     const tick = () => {
       setLeft(Math.max(0, target.getTime() - Date.now()));
     };
@@ -15,11 +35,9 @@ export function useCountdown(target: Date) {
     const intervalId = window.setInterval(tick, 1000);
 
     return () => window.clearInterval(intervalId);
-  }, [target]);
+  }, [dateString]);
 
-  if (left === null) {
-    return null;
-  }
+  if (left === null) return null;
 
   return {
     d: Math.floor(left / 86400000),

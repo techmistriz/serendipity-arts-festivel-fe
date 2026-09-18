@@ -5,12 +5,11 @@ import { Bell, Lock } from "lucide-react";
 import Image, { type StaticImageData } from "next/image";
 
 import type { Programme } from "@/types/programme";
-import { getProgrammes } from "@/services/programme.service";
+import { getDroppingProgrammes } from "@/services/programme.service";
 import { GlitchBorder } from "@/components/common/GlitchBorder";
 import { NotifyMeModal } from "./NotifyMeModal";
 import { imagePaths, images } from "@/config/images";
 import { useAuth } from "@/hooks/use-auth";
-import { DROP_AT } from "@/lib/drop-data";
 import { pad, useCountdown } from "@/utils/countdown";
 
 const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
@@ -41,12 +40,13 @@ function Unit({ value, label, image }: { value: string; label: string; image: St
 
 export function ProgrammeDrop() {
   const [programmes, setProgrammes] = useState<Programme[]>([]);
+  const [nearestDroppingSoonDate, setNearestDroppingSoonDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedProgramme, setSelectedProgramme] = useState<Programme | null>(null);
 
   const { user, isAuthenticated } = useAuth();
 
-  const t = useCountdown(DROP_AT);
+  const t = useCountdown(nearestDroppingSoonDate);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,12 +55,13 @@ export function ProgrammeDrop() {
       try {
         setLoading(true);
 
-        const data = await getProgrammes(undefined, undefined, {
-          is_dropping_type: 1,
-        });
+        const response = await getDroppingProgrammes();
+
+        console.log("programDropdata", response);
 
         if (!cancelled) {
-          setProgrammes(data);
+          setProgrammes(response.programmes);
+          setNearestDroppingSoonDate(response.nearestDroppingSoonDate);
         }
       } catch (error) {
         console.error("[ProgrammeDrop] Failed to fetch dropping programmes:", error);
@@ -183,6 +184,24 @@ export function ProgrammeDrop() {
               </h3>
 
               <div className="mt-2 flex flex-wrap gap-1.5">
+                {programme.discipline && (
+                  <span
+                    className="label px-1.5 py-0.5 text-[9px] md:text-[10px]"
+                    style={{
+                      background: programme.discipline.background_color,
+                      color: programme.discipline.font_color,
+                    }}
+                  >
+                    {programme.discipline.name}
+                  </span>
+                )}
+
+                <span className="label bg-foreground px-1.5 py-0.5 text-[9px] text-background md:text-[10px]">
+                  Dropping soon
+                </span>
+              </div>
+
+              {/* <div className="mt-2 flex flex-wrap gap-1.5">
                 {programme.program_tags?.slice(0, 1).map((tag) => (
                   <span
                     key={tag.id}
@@ -199,7 +218,7 @@ export function ProgrammeDrop() {
                 <span className="label bg-foreground px-1.5 py-0.5 text-[9px] text-background md:text-[10px]">
                   Dropping soon
                 </span>
-              </div>
+              </div> */}
 
               {/* {programme.dropping_soon_date && (
                 <p className="label mt-2 text-[10px] text-muted-foreground">
