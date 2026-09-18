@@ -9,5 +9,5 @@ export const metadata = createPageMetadata({
 });
 
 export default function RegisterPage() {
-  return <RegisterPageClient />;
+  return <RegisterPageClient mode="general" referrer="web" />;
 }
