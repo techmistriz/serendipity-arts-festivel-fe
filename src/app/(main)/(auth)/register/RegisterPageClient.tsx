@@ -22,8 +22,10 @@ import { setSession } from "@/redux/slices/authSlice";
 
 function RegisterContent({
   initialMode: routeMode,
+  referrer = "web",
 }: {
   initialMode?: "general" | "guest" | "sea";
+  referrer?: "web" | "app";
 }) {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -211,7 +213,7 @@ function RegisterContent({
           contact: data.whatsapp || "",
           otp: data.otp || "",
 
-          referrer: "web",
+          referrer,
           interest: data.interests || [],
           hearabout: data.heard || "Other",
 
@@ -532,10 +534,16 @@ function RegisterContent({
   );
 }
 
-export function RegisterPageClient({ mode }: { mode?: "general" | "guest" | "sea" }) {
+export function RegisterPageClient({
+  mode,
+  referrer = "web",
+}: {
+  mode?: "general" | "guest" | "sea";
+  referrer?: "web" | "app";
+}) {
   return (
     <Suspense fallback={<RouteLoadingOverlay label="Loading registration" />}>
-      <RegisterContent initialMode={mode} />
+      <RegisterContent initialMode={mode} referrer={referrer} />
     </Suspense>
   );
 }

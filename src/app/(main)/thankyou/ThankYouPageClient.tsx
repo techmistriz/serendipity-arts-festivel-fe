@@ -39,13 +39,23 @@ export function ThankYouPageClient() {
           app.
         </p>
       </div>
+      <div className="flex flex-wrap gap-4 md:gap-6">
+        <Link
+          href="/programmes"
+          className="mt-10 inline-block label border border-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-colors"
+        >
+          Browse programmes →
+        </Link>
 
-      <Link
-        href="/programmes"
-        className="mt-10 inline-block label border border-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-colors"
-      >
-        Browse programmes →
-      </Link>
+        <a
+          href="https://applinks.evnts.info/3b9aca55"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-10 inline-block label border border-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-colors"
+        >
+          Open App →
+        </a>
+      </div>
     </main>
   );
 }
