@@ -4,7 +4,7 @@ import { Inter_Tight, Stack_Sans_Headline } from "next/font/google";
 import { AccessibilityWidget } from "@/components/common/AccessibilityWidget";
 import { siteConfig } from "@/config/site";
 import { ReduxProvider } from "@/redux/provider";
-import GlobalPopup from "@/components/common/GlobalPopup";
+// import GlobalPopup from "@/components/common/GlobalPopup";
 import SiteChrome from "@/components/layout/SiteChrome";
 
 const interTight = Inter_Tight({
@@ -65,7 +65,7 @@ export default function RootLayout({
       >
         <ReduxProvider>
           <SiteChrome>{children}</SiteChrome>
-          <GlobalPopup />
+          {/* <GlobalPopup /> */}
           <AccessibilityWidget />
         </ReduxProvider>
       </body>
