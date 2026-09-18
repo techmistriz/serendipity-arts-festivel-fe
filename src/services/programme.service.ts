@@ -63,6 +63,33 @@ export async function getProgrammes(
   }
 }
 
+// --------------------------------------------------------------
+
+export interface DroppingProgrammesResponse {
+  programmes: Programme[];
+  nearestDroppingSoonDate: string | null;
+}
+
+export async function getDroppingProgrammes(): Promise<DroppingProgrammesResponse> {
+  try {
+    const response = await API<ProgrammesListResponse>("/programmes", METHODS.GET, {
+      is_dropping_type: 1,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message || "Failed to fetch dropping programmes");
+    }
+
+    return {
+      programmes: response.data?.data ?? [],
+      nearestDroppingSoonDate: response.meta?.nearest_dropping_soon_date ?? null,
+    };
+  } catch (error) {
+    console.error("[API] Error fetching dropping programmes:", error);
+    throw error;
+  }
+}
+
 //Fetch program details by slug
 
 export async function getProgrammeBySlug(slug: string): Promise<Programme> {
