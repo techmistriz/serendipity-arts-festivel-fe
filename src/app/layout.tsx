@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import { ReduxProvider } from "@/redux/provider";
 // import GlobalPopup from "@/components/common/GlobalPopup";
 import SiteChrome from "@/components/layout/SiteChrome";
+import { Suspense } from "react";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -64,7 +65,9 @@ export default function RootLayout({
         suppressHydrationWarning //Fix: Suppress hydration warnings for body attributes
       >
         <ReduxProvider>
-          <SiteChrome>{children}</SiteChrome>
+          <Suspense fallback={null}>
+            <SiteChrome>{children}</SiteChrome>
+          </Suspense>
           {/* <GlobalPopup /> */}
           <AccessibilityWidget />
         </ReduxProvider>

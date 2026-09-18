@@ -1,22 +1,22 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
-  const hideHeaderFooter = pathname === "/app-registration-link";
+  const searchParams = useSearchParams();
+  const isHideHeader = searchParams.get("is_hide_header") === "1";
+  const isHideFooter = searchParams.get("is_hide_footer") === "1";
 
   return (
     <>
-      {!hideHeaderFooter && <Header />}
+      {!isHideHeader && <Header />}
 
       <main className="flex-1">{children}</main>
 
-      {!hideHeaderFooter && <Footer />}
+      {!isHideFooter && <Footer />}
     </>
   );
 }
