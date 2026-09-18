@@ -57,8 +57,6 @@ export function ProgrammeDrop() {
 
         const response = await getDroppingProgrammes();
 
-        console.log("programDropdata", response);
-
         if (!cancelled) {
           setProgrammes(response.programmes);
           setNearestDroppingSoonDate(response.nearestDroppingSoonDate);
