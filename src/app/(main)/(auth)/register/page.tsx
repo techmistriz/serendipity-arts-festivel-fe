@@ -18,11 +18,7 @@ export default async function RegisterPage({
   }>;
 }) {
   const params = await searchParams;
-
-  const isApp =
-    params.is_app === "1" && params.is_hide_header === "1" && params.is_hide_footer === "1";
-
-  const referrer: "web" | "app" = isApp ? "app" : "web";
+  const referrer = params.is_app === "1" ? "app" : "web";
 
   return <RegisterPageClient mode="general" referrer={referrer} />;
 }
