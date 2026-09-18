@@ -59,8 +59,6 @@ export function NotifyMeModal({
         program_id: programmeId,
       });
 
-      console.log("[Notify Me] API response:", response);
-
       setSuccessMessage(
         response?.message || "You have been successfully added to the notification list.",
       );

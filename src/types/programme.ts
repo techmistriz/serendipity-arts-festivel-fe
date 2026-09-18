@@ -186,6 +186,7 @@ export interface ProgrammesListResponse {
       total: number;
       last_page: number;
     };
+    nearest_dropping_soon_date?: string | null;
   };
 
   message: string;
