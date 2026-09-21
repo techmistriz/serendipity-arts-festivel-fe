@@ -15,6 +15,7 @@ import { Field, YesNo } from "./FieldComponents";
 import { useOTP } from "./hooks/useOTP";
 import SearchableLocation from "../common/SearchableLocation";
 import CountryCodeSelect from "../common/CountryCodeSelect";
+import { useDisciplines } from "@/hooks/useDisciplines";
 
 type RegistrationFieldsProps = {
   register: UseFormRegister<FieldValues>;
@@ -40,6 +41,7 @@ export const GeneralForm = ({
   formState: { errors },
 }: RegistrationFieldsProps) => {
   const [age, setAge] = useState("");
+  const { disciplines, isLoading: isLoadingDisciplines } = useDisciplines();
 
   const { handleSendOTP, isSendingOTP, otpError, otpSent } = useOTP();
 
@@ -77,20 +79,7 @@ export const GeneralForm = ({
     "2025",
     "First time",
   ];
-  const INTERESTS = [
-    "Visual Arts",
-    "Craft",
-    "Dance",
-    "Music",
-    "Theatre",
-    "Photography",
-    "Culinary Arts",
-    "Children’s Programmes",
-    "Performance Art",
-    "Accessibility",
-    "Public Art",
-    "All",
-  ];
+
   const HEARD = [
     "Newspaper",
     "Social Media",
@@ -200,19 +189,25 @@ export const GeneralForm = ({
       </Field>
 
       <Field label="Interests*">
-        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
-          {INTERESTS.map((i) => (
-            <label key={i} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                value={i}
-                {...register("interests")}
-                className="accent-accent"
-              />
-              {i}
-            </label>
-          ))}
-        </div>
+        {isLoadingDisciplines ? (
+          <p className="text-sm text-muted-foreground mt-3">Loading interests...</p>
+        ) : (
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+            {disciplines.map((discipline) => (
+              <label key={discipline.id} className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  value={discipline.id}
+                  {...register("interests")}
+                  className="accent-accent"
+                />
+
+                {discipline.name}
+              </label>
+            ))}
+          </div>
+        )}
+
         {errors.interests && (
           <p className="text-red-500 text-sm mt-1">{getErrorMessage(errors.interests)}</p>
         )}
