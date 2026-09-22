@@ -40,8 +40,8 @@ export function CuratorCard({ curator }: CuratorCardProps) {
         </p>
       )} */}
 
-      <span className="headline mt-auto inline-block self-start border border-foreground px-3 py-1.5 pt-3 text-[11px] tracking-[0.08em] uppercase transition-colors group-hover:bg-foreground group-hover:text-background">
-        More info +
+      <span className="headline mt-auto inline-block self-start border border-foreground px-3 py-1.5 pt-2 text-[11px] tracking-[0.08em] uppercase transition-colors group-hover:bg-foreground group-hover:text-background">
+        Info +
       </span>
     </Link>
   );
