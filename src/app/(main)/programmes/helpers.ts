@@ -21,14 +21,19 @@ export function filterProgrammes(
       // Day filter
       if (filters.day !== null) {
         const hasSlotOnDay = programme.slots?.some((slot) => slot.day === filters.day);
+
         if (!hasSlotOnDay) {
           return false;
         }
       }
 
-      // Venue filter
-      if (filters.venue !== "All" && programme.venue !== filters.venue) {
-        return false;
+      // Venue filter - filter by venue ID
+      if (filters.venue !== "All") {
+        const hasVenue = programme.slots?.some((slot) => slot.venue?.slug === filters.venue);
+
+        if (!hasVenue) {
+          return false;
+        }
       }
 
       // Tags filter
@@ -36,6 +41,7 @@ export function filterProgrammes(
         const hasAllTags = filters.tags.every((tag) =>
           programme.tags?.some((programmeTag) => programmeTag.name === tag),
         );
+
         if (!hasAllTags) {
           return false;
         }
@@ -71,6 +77,7 @@ export function getPageItems<T>(items: T[], page: number, pageSize: number): T[]
   }
 
   const start = (page - 1) * pageSize;
+
   return items.slice(start, start + pageSize);
 }
 
@@ -81,6 +88,7 @@ export function getUniqueVenues(programmes: UIProgramme[]): string[] {
   }
 
   const venues = new Set<string>();
+
   programmes.forEach((p) => {
     if (p.venue) {
       venues.add(p.venue);
@@ -97,6 +105,7 @@ export function getUniqueTags(programmes: UIProgramme[]): string[] {
   }
 
   const tags = new Set<string>();
+
   programmes.forEach((p) => {
     if (p.tags && Array.isArray(p.tags)) {
       p.tags.forEach((tag) => tags.add(tag.name));
@@ -113,6 +122,7 @@ export function getUniqueCategories(programmes: UIProgramme[]): string[] {
   }
 
   const categories = new Set<string>();
+
   programmes.forEach((p) => {
     if (p.category) {
       categories.add(p.category);
