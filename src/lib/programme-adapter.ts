@@ -9,12 +9,18 @@ import type {
 } from "@/types/programme";
 
 // Map API programme to UI programme format
+type VenueLookup = {
+  id: number;
+  title: string;
+  slug: string;
+};
 
 export function mapApiProgrammeToUi(
   apiProgramme: ApiProgramme,
   curators: ProgrammePerson[] = [],
   programTags?: ProgramTag[],
   sponsors: ProgrammeSponsor[] = [],
+  venues: VenueLookup[] = [],
 ): UIProgramme {
   const firstDetail = apiProgramme.program_details?.[0];
 
@@ -35,6 +41,7 @@ export function mapApiProgrammeToUi(
               ? {
                   id: detail.venue.id,
                   title: detail.venue.title || detail.venue.name || "",
+                  slug: venues.find((venue) => venue.id === detail.venue?.id)?.slug ?? "",
                 }
               : null,
 
@@ -105,8 +112,11 @@ export function mapApiProgrammeToUi(
 export function mapApiProgrammesToUi(
   apiProgrammes: Programme[],
   curators?: ProgrammePerson[],
+  venues: VenueLookup[] = [],
 ): UIProgramme[] {
-  return apiProgrammes.map((programme) => mapApiProgrammeToUi(programme, curators));
+  return apiProgrammes.map((programme) =>
+    mapApiProgrammeToUi(programme, curators, undefined, [], venues),
+  );
 }
 
 // Extract day from date string (DD-MM-YYYY / DD-MM-YYYY)

@@ -74,6 +74,13 @@ export function ProgrammesListContent() {
     [categories],
   );
 
+  // Filter state
+  const [category, setCategory] = useState(categoryFromUrl);
+  const [day, setDay] = useState<number | null>(dayFromUrl);
+  const [venue, setVenue] = useState(venueFromUrl);
+  const [tags, setTags] = useState<string[]>(tagsFromUrl);
+  const [query, setQuery] = useState(queryFromUrl);
+
   const venueOptions = useMemo(
     () => [
       { label: "All", value: "All" },
@@ -84,13 +91,6 @@ export function ProgrammesListContent() {
     ],
     [venues],
   );
-
-  // Filter state
-  const [category, setCategory] = useState(categoryFromUrl);
-  const [day, setDay] = useState<number | null>(dayFromUrl);
-  const [venue, setVenue] = useState(venueFromUrl);
-  const [tags, setTags] = useState<string[]>(tagsFromUrl);
-  const [query, setQuery] = useState(queryFromUrl);
 
   // Legacy modal state remains available for existing ?p=<id> links.
   const [activeProgramme, setActiveProgramme] = useState<UIProgramme | null>(null);
@@ -112,8 +112,9 @@ export function ProgrammesListContent() {
   // Convert API programmes to UI format
   const programmes = useMemo<UIProgramme[]>(() => {
     if (!apiProgrammes?.length) return [];
-    return mapApiProgrammesToUi(apiProgrammes);
-  }, [apiProgrammes]);
+
+    return mapApiProgrammesToUi(apiProgrammes, undefined, venues);
+  }, [apiProgrammes, venues]);
 
   const tagOptions = useMemo(() => ["All", ...programTags.map((tag) => tag.name)], [programTags]);
 
@@ -174,7 +175,14 @@ export function ProgrammesListContent() {
   // Filter programmes
   const filtered = useMemo(() => {
     if (!programmes.length) return [];
-    return filterProgrammes(programmes, { category, day, venue, tags, query });
+
+    return filterProgrammes(programmes, {
+      category,
+      day,
+      venue,
+      tags,
+      query,
+    });
   }, [programmes, category, day, venue, tags, query]);
 
   // Pagination

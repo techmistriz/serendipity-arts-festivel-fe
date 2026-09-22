@@ -13,6 +13,15 @@ type FilterSelectProps = {
 export function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
   const isActive = value !== "All";
 
+  const selectedOption = options.find((option) => {
+    const optionValue = typeof option === "string" ? option : option.value;
+
+    return optionValue === value;
+  });
+
+  const selectedLabel =
+    typeof selectedOption === "string" ? selectedOption : (selectedOption?.label ?? value);
+
   return (
     <label
       className={`relative flex cursor-pointer items-center justify-between gap-2 border px-3 py-2 md:px-4 md:py-3 ${
@@ -20,7 +29,7 @@ export function FilterSelect({ label, value, options, onChange }: FilterSelectPr
       }`}
     >
       <span className={`label ${isActive ? "text-accent" : "text-foreground"}`}>
-        {isActive ? value : label}
+        {isActive ? selectedLabel : label}
       </span>
       <select
         value={value}

@@ -23,6 +23,7 @@ export interface Venue {
   id: number;
   name: string;
   title?: string;
+  slug: string;
 }
 
 export interface SubVenue {
@@ -258,6 +259,7 @@ export interface UIProgramme {
     venue?: {
       id: number;
       title: string;
+      slug: string;
     } | null;
 
     subVenue?: {
