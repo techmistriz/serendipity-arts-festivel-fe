@@ -336,6 +336,10 @@ export function BookingSheet({
 
   // ===== Render helpers =====
   const renderScheduleSelector = () => {
+    if (!programme.isBookingAllowed || !selectedDetailId) {
+      return null;
+    }
+
     if (!programme.slots?.length) {
       return (
         <div className="mb-6 border border-foreground p-4">
@@ -350,6 +354,7 @@ export function BookingSheet({
     return (
       <>
         <label className="label text-muted-foreground">Select a date & time</label>
+
         <div className="mt-3 mb-6 flex flex-wrap gap-2">
           {programme.slots.map((slot, index) => (
             <button
@@ -508,7 +513,7 @@ export function BookingSheet({
     if (!programme.isBookingAllowed || !selectedDetailId) {
       return (
         <p className="headline text-sm text-muted-foreground">
-          Booking is not available for this programme right now.
+          Booking is not available for this programme.
         </p>
       );
     }
