@@ -1,25 +1,3 @@
-export const CATEGORY_SLUGS: Record<string, string> = {
-  exhibition: "Exhibition",
-  performance: "Performance",
-  workshop: "Workshop",
-  talk: "Talk",
-  "film-screening": "Film Screening",
-};
-
-export const CATEGORY_TO_SLUG: Record<string, string> = Object.fromEntries(
-  Object.entries(CATEGORY_SLUGS).map(([slug, category]) => [category, slug]),
-);
-
-// Static categories (these should match the API categories)
-export const PROGRAMME_CATEGORIES = [
-  "All",
-  "Exhibition",
-  "Performance",
-  "Workshop",
-  "Talk",
-  "Film Screening",
-] as const;
-
 // Static days (these should match the festival dates)
 export const PROGRAMME_DAYS = [13, 14, 15, 16, 17, 18, 19, 20];
 
