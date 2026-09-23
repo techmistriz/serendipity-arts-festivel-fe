@@ -27,7 +27,7 @@ function ArtPassContent() {
 
       {badgeUrl ? (
         <div className="mt-10">
-          <div className="relative aspect-[3/4] w-full border border-foreground bg-muted p-3 md:p-5">
+          <div className="relative aspect-[3/4] w-full max-w-md border border-foreground bg-muted p-3 md:p-5">
             <Image
               src={badgeUrl}
               alt="Your Serendipity Arts Festival Art Pass"
