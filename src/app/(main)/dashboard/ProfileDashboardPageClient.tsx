@@ -24,10 +24,9 @@ function ProfileContent() {
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   const handleDeleteAccount = async () => {
-    setShowDeleteModal(false);
-
     const result = await deleteAccount();
 
+    setShowDeleteModal(false);
     setAlertMessage(result.message);
   };
 
@@ -77,10 +76,10 @@ function ProfileContent() {
           <button
             type="button"
             onClick={() => setShowDeleteModal(true)}
-            disabled={isDeleting}
+            // disabled={isDeleting}
             className="label inline-block border border-foreground px-5 py-3 transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isDeleting ? "Deleting..." : "Delete my information →"}
+            Delete my information →
           </button>
         </div>
       </div>
