@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         destination: "/terms",
         permanent: true,
       },
+      {
+        source: "/vip/register",
+        destination: "/register/special-guest",
+        permanent: true,
+      },
     ];
   },
   async headers() {
