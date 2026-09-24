@@ -438,7 +438,7 @@ function RegisterContent({
                 Your Art Pass, free.
               </p>
               <p className="mt-5 text-sm text-muted-foreground max-w-sm">
-                Registration is free and open to all. If you registered for last year’s festival,
+                Registration is free and open to all. If you previously registered for the festival,
                 you will need to register again for 2026.
               </p>
               <p className="mt-4 text-sm text-muted-foreground max-w-sm">
