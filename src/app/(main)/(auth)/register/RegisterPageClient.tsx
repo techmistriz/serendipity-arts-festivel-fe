@@ -71,6 +71,7 @@ function RegisterContent({
       country: "",
       state: "",
       city: "",
+      custom_city: "",
       std_code: "91",
       whatsapp: "",
       otp: "",
@@ -116,6 +117,7 @@ function RegisterContent({
     setValue("state", archivedUser.state_id ? String(archivedUser.state_id) : "");
 
     setValue("city", archivedUser.city_id ? String(archivedUser.city_id) : "");
+    setValue("custom_city", archivedUser.custom_city ?? "");
 
     setValue("age", archivedUser.age_group ?? "");
     setValue("visitedYears", archivedUser.visited_year ?? []);
@@ -156,6 +158,7 @@ function RegisterContent({
           country_id: Number(data.country),
           state_id: Number(data.state),
           city_id: Number(data.city),
+          custom_city: data.custom_city || "",
 
           std_code: data.std_code || "91",
           contact: data.whatsapp,
@@ -222,7 +225,7 @@ function RegisterContent({
           age_group: data.age || "",
           visited: data.visitedYears?.length ? "Yes" : "No",
           visited_year: data.visitedYears || [],
-          custom_city: "",
+          custom_city: data.custom_city || "",
 
           is_old_user: isOldUser,
           terms: data.terms,
@@ -260,6 +263,10 @@ function RegisterContent({
           email: "",
           fullName: "",
           gender: "",
+          country: "",
+          state: "",
+          city: "",
+          custom_city: "",
           std_code: "91",
           whatsapp: "",
           otp: "",
