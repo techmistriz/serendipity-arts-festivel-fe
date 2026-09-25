@@ -131,6 +131,7 @@ export interface AuthSession {
 }
 
 export interface ArchivedUser {
+  custom_city: string;
   id: number;
   email: string;
   role_id: number;

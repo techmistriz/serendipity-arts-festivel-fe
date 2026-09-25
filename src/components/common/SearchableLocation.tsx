@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import {
   Controller,
+  useFormState,
   type Control,
   type FieldValues,
+  type UseFormRegister,
   type UseFormSetValue,
   type UseFormWatch,
 } from "react-hook-form";
@@ -24,6 +26,7 @@ type SelectOption = {
 };
 
 type SearchableLocationProps = {
+  register: UseFormRegister<FieldValues>;
   control: Control<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
   watch: UseFormWatch<FieldValues>;
@@ -46,7 +49,17 @@ const findSelectedOption = (options: SelectOption[], value: unknown) => {
   return id === null ? null : (options.find((option) => option.value === id) ?? null);
 };
 
-export default function SearchableLocation({ control, setValue, watch }: SearchableLocationProps) {
+const OTHER_CITY_OPTION: SelectOption = {
+  label: "Other",
+  value: -1,
+};
+
+export default function SearchableLocation({
+  register,
+  control,
+  setValue,
+  watch,
+}: SearchableLocationProps) {
   const [countries, setCountries] = useState<LocationOption[]>([]);
   const [states, setStates] = useState<LocationOption[]>([]);
   const [cities, setCities] = useState<LocationOption[]>([]);
@@ -57,6 +70,17 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
 
   const selectedCountry = toId(watch("country"));
   const selectedState = toId(watch("state"));
+  const customCity = String(watch("custom_city") ?? "");
+
+  const [isCustomCity, setIsCustomCity] = useState(Boolean(customCity));
+  const { errors } = useFormState({ control });
+
+  useEffect(() => {
+    if (customCity && !isCustomCity) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsCustomCity(true);
+    }
+  }, [customCity, isCustomCity]);
 
   useEffect(() => {
     let active = true;
@@ -68,6 +92,7 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
       })
       .catch((error: unknown) => {
         if (!active) return;
+
         console.error("Unable to load countries:", error);
         setLocationError("Unable to load countries. Please refresh and try again.");
       })
@@ -92,12 +117,14 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
     void getStates(selectedCountry)
       .then((stateData) => {
         if (!active) return;
+
         setStates(stateData);
         setStatesForCountryId(selectedCountry);
         setLocationError(null);
       })
       .catch((error: unknown) => {
         if (!active) return;
+
         console.error("Unable to load states:", error);
         setStates([]);
         setStatesForCountryId(selectedCountry);
@@ -121,12 +148,14 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
     void getCities(selectedState)
       .then((cityData) => {
         if (!active) return;
+
         setCities(cityData);
         setCitiesForStateId(selectedState);
         setLocationError(null);
       })
       .catch((error: unknown) => {
         if (!active) return;
+
         console.error("Unable to load cities:", error);
         setCities([]);
         setCitiesForStateId(selectedState);
@@ -144,21 +173,42 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
     setValue("country", option ? String(option.value) : "");
     setValue("state", "");
     setValue("city", "");
+    setValue("custom_city", "");
+
+    setIsCustomCity(false);
   };
 
   const handleStateChange = (option: SingleValue<SelectOption>) => {
     setLocationError(null);
+
     setValue("state", option ? String(option.value) : "");
     setValue("city", "");
+    setValue("custom_city", "");
+
+    setIsCustomCity(false);
   };
+
   const handleCityChange = (option: SingleValue<SelectOption>) => {
+    if (option?.value === OTHER_CITY_OPTION.value) {
+      setValue("city", "");
+      setValue("custom_city", "");
+      setIsCustomCity(true);
+      return;
+    }
+
     setValue("city", option ? String(option.value) : "");
+    setValue("custom_city", "");
+    setIsCustomCity(false);
   };
 
   const isStatesLoading = selectedCountry !== null && statesForCountryId !== selectedCountry;
+
   const isCitiesLoading = selectedState !== null && citiesForStateId !== selectedState;
+
   const stateOptions = statesForCountryId === selectedCountry ? toOptions(states) : [];
-  const cityOptions = citiesForStateId === selectedState ? toOptions(cities) : [];
+
+  const cityOptions =
+    citiesForStateId === selectedState ? [...toOptions(cities), OTHER_CITY_OPTION] : [];
 
   return (
     <div>
@@ -172,6 +222,7 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
           placeholder={isCountriesLoading ? "Loading..." : "Search country"}
           onChange={handleCountryChange}
         />
+
         <LocationField
           control={control}
           name="state"
@@ -185,20 +236,45 @@ export default function SearchableLocation({ control, setValue, watch }: Searcha
           }
           onChange={handleStateChange}
         />
-        <LocationField
-          control={control}
-          name="city"
-          label="City*"
-          options={cityOptions}
-          isLoading={isCitiesLoading}
-          isDisabled={isCitiesLoading || selectedState === null}
-          placeholder={selectedState === null ? "Select state first" : "Search city"}
-          emptyMessage={
-            selectedState === null ? "Please select a state first" : "No cities available"
-          }
-          onChange={handleCityChange}
-        />
+
+        <div>
+          {!isCustomCity && (
+            <LocationField
+              control={control}
+              name="city"
+              label="City*"
+              options={cityOptions}
+              isLoading={isCitiesLoading}
+              isDisabled={isCitiesLoading || selectedState === null}
+              placeholder={selectedState === null ? "Select state first" : "Search city"}
+              emptyMessage={
+                selectedState === null ? "Please select a state first" : "No cities available"
+              }
+              onChange={handleCityChange}
+            />
+          )}
+
+          {isCustomCity && (
+            <div>
+              <p className="label text-muted-foreground">Custom City*</p>
+
+              <div className="mt-2">
+                <input
+                  type="text"
+                  placeholder="Enter your city"
+                  {...register("custom_city")}
+                  className="w-full border border-border bg-transparent px-4 py-3 text-sm outline-none focus:border-foreground"
+                />
+
+                {errors.custom_city?.message && (
+                  <p className="mt-1 text-sm text-red-500">{String(errors.custom_city.message)}</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
       {locationError && <p className="mt-2 text-sm text-red-500">{locationError}</p>}
     </div>
   );
@@ -228,6 +304,7 @@ function LocationField({
   return (
     <div>
       <p className="label text-muted-foreground">{label}</p>
+
       <div className="mt-2">
         <Controller
           control={control}
@@ -250,6 +327,7 @@ function LocationField({
                 classNamePrefix="react-select"
                 noOptionsMessage={() => emptyMessage ?? "No options available"}
               />
+
               {error?.message && <p className="mt-1 text-sm text-red-500">{error.message}</p>}
             </>
           )}

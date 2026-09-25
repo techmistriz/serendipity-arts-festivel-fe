@@ -18,10 +18,10 @@ import CountryCodeSelect from "../common/CountryCodeSelect";
 import { useDisciplines } from "@/hooks/useDisciplines";
 
 type RegistrationFieldsProps = {
-  register: UseFormRegister<FieldValues>;
   control: Control<FieldValues>;
-  watch: UseFormWatch<FieldValues>;
+  register: UseFormRegister<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
+  watch: UseFormWatch<FieldValues>;
   formState: {
     errors: FieldErrors<FieldValues>;
   };
@@ -163,11 +163,7 @@ export const GeneralForm = ({
         )}
       </Field>
 
-      <SearchableLocation
-        control={control}
-        setValue={setValue}
-        watch={watch} // Add this
-      />
+      <SearchableLocation register={register} control={control} setValue={setValue} watch={watch} />
 
       <Field label="Have you attended the Festival before?*">
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
@@ -304,11 +300,7 @@ export const SeaForm = ({
         </div>
       </Field>
 
-      <SearchableLocation
-        control={control}
-        setValue={setValue}
-        watch={watch} // Add this
-      />
+      <SearchableLocation register={register} control={control} setValue={setValue} watch={watch} />
 
       <Field label="WhatsApp Number*">
         <div className="grid grid-cols-[110px_1fr] gap-3">
