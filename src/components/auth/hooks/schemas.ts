@@ -17,57 +17,78 @@ export const baseSchema = {
   }),
 };
 
-export const generalSchema = z.object({
-  ...baseSchema,
+export const generalSchema = z
+  .object({
+    ...baseSchema,
 
-  gender: z.string().min(1, "Gender is required"),
+    gender: z.string().min(1, "Gender is required"),
+    age: z.string().min(1, "Age is required"),
+    country: z.string().min(1, "Country is required"),
+    state: z.string().min(1, "State is required"),
 
-  age: z.string().min(1, "Age is required"),
+    city: z.string().optional(),
+    custom_city: z.string().trim().optional(),
 
-  country: z.string().min(1, "Country is required"), // Make required
-  state: z.string().min(1, "State is required"), // Make required
-  city: z.string().min(1, "City is required"), // Make required
+    whatsapp: z
+      .string()
+      .trim()
+      .min(1, "WhatsApp number is required")
+      .regex(/^\d{10,15}$/, "Enter a valid WhatsApp number"),
 
-  whatsapp: z
-    .string()
-    .trim()
-    .min(1, "WhatsApp number is required")
-    .regex(/^\d{10,15}$/, "Enter a valid WhatsApp number"),
+    otp: z
+      .string()
+      .trim()
+      .regex(/^\d{4,6}$/, "Enter a valid OTP"),
 
-  otp: z
-    .string()
-    .trim()
-    // .min(1, "OTP is required")
-    .regex(/^\d{4,6}$/, "Enter a valid OTP"),
+    newsletter: z.boolean().optional(),
+    heard: z.string().min(1, "Please select how you heard about us"),
+    interests: z.array(z.string()).min(1, "Select at least one interest"),
+    visitedYears: z.array(z.string()).min(1, "Select at least one previous visit year"),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.city && !data.custom_city) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["custom_city"],
+        message: "Please select a city or enter your city",
+      });
+    }
+  });
 
-  newsletter: z.boolean().optional(),
+export const seaSchema = z
+  .object({
+    ...baseSchema,
 
-  heard: z.string().min(1, "Please select how you heard about us"),
+    gender: z.string().optional(),
+    country: z.string().min(1, "Country is required"),
+    state: z.string().min(1, "State is required"),
 
-  interests: z.array(z.string()).min(1, "Select at least one interest"),
+    city: z.string().optional(),
+    custom_city: z.string().trim().optional(),
 
-  visitedYears: z.array(z.string()).min(1, "Select at least one previous visit year"),
-});
+    whatsapp: z
+      .string()
+      .trim()
+      .min(1, "WhatsApp number is required")
+      .regex(/^\d{10,15}$/, "Enter a valid WhatsApp number"),
 
-export const seaSchema = z.object({
-  ...baseSchema,
-  gender: z.string().optional(),
-  country: z.string().min(1, "Country is required"),
-  state: z.string().min(1, "State is required"),
-  city: z.string().min(1, "City is required"),
-  whatsapp: z
-    .string()
-    .trim()
-    .min(1, "WhatsApp number is required")
-    .regex(/^\d{10,15}$/, "Enter a valid WhatsApp number"),
-  otp: z
-    .string()
-    .trim()
-    // .min(1, "OTP is required")
-    .regex(/^\d{4,6}$/, "Enter a valid OTP"),
-  newsletter: z.boolean().optional(),
-  std_code: z.string().default("91"),
-});
+    otp: z
+      .string()
+      .trim()
+      .regex(/^\d{4,6}$/, "Enter a valid OTP"),
+
+    newsletter: z.boolean().optional(),
+    std_code: z.string().default("91"),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.city && !data.custom_city) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["custom_city"],
+        message: "Please select a city or enter your city",
+      });
+    }
+  });
 
 export const guestSchema = z.object({
   ...baseSchema,
