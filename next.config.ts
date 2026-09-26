@@ -50,6 +50,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn7.godcstatic.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn-saf-reg.godcstatic.com",
+      },
     ],
   },
 };
