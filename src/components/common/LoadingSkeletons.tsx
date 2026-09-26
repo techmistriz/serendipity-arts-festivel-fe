@@ -96,6 +96,38 @@ export function VenueGridLoadingSkeleton({
   );
 }
 
+export function VibeGridLoadingSkeleton({
+  className,
+  count = 6,
+  label = "Loading vibes",
+}: ContentGridSkeletonProps) {
+  return (
+    <div className={cn("mt-10", className)} role="status" aria-live="polite">
+      <LoadingAnnouncement label={label} />
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: count }).map((_, index) => (
+          <div key={index} className="border border-foreground" aria-hidden="true">
+            <Skeleton className="aspect-[4/3] w-full border-b border-foreground" />
+
+            <div className="flex flex-col gap-3 p-5">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-7 w-3/4" />
+
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+
+              <Skeleton className="mt-2 h-9 w-32" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function LogoGridLoadingSkeleton({
   className,
   count = 8,
