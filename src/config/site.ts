@@ -12,6 +12,7 @@ export const siteConfig = {
     { label: "Programmes", href: "/programmes", comingSoon: false },
     { label: "Curators", href: "/curators", comingSoon: false },
     { label: "Venues", href: "/venues", comingSoon: false },
+    { label: "Vibes", href: "/vibes", comingSoon: false },
     { label: "About us", href: "/about", comingSoon: false },
     { label: "Register", href: "/register", comingSoon: false },
     { label: "FAQ", href: "/faq", comingSoon: false },
