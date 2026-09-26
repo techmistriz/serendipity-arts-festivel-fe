@@ -53,6 +53,9 @@ function RegisterContent({
 
   const schema = mode === "sea" ? seaSchema : mode === "guest" ? guestSchema : generalSchema;
 
+  const getCityId = (city: unknown) => {
+    return city === "-1" || !city ? 0 : Number(city);
+  };
   const {
     register,
     handleSubmit,
@@ -157,7 +160,7 @@ function RegisterContent({
 
           country_id: Number(data.country),
           state_id: Number(data.state),
-          city_id: Number(data.city),
+          city_id: getCityId(data.city),
           custom_city: data.custom_city || "",
 
           std_code: data.std_code || "91",
@@ -210,7 +213,7 @@ function RegisterContent({
 
           country_id: parseInt(data.country) || 0,
           state_id: parseInt(data.state) || 0,
-          city_id: parseInt(data.city) || 0,
+          city_id: getCityId(data.city),
 
           std_code: data.std_code || "91",
           contact: data.whatsapp || "",

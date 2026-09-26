@@ -190,7 +190,7 @@ export default function SearchableLocation({
 
   const handleCityChange = (option: SingleValue<SelectOption>) => {
     if (option?.value === OTHER_CITY_OPTION.value) {
-      setValue("city", "");
+      setValue("city", String(OTHER_CITY_OPTION.value));
       setValue("custom_city", "");
       setIsCustomCity(true);
       return;
@@ -219,7 +219,7 @@ export default function SearchableLocation({
           label="Country*"
           options={toOptions(countries)}
           isLoading={isCountriesLoading}
-          placeholder={isCountriesLoading ? "Loading..." : "Search country"}
+          placeholder={isCountriesLoading ? "Loading..." : "Select Country"}
           onChange={handleCountryChange}
         />
 
@@ -230,50 +230,46 @@ export default function SearchableLocation({
           options={stateOptions}
           isLoading={isStatesLoading}
           isDisabled={isStatesLoading || selectedCountry === null}
-          placeholder={selectedCountry === null ? "Select country first" : "Search state"}
+          placeholder={selectedCountry === null ? "Select State" : "Select State"}
           emptyMessage={
             selectedCountry === null ? "Please select a country first" : "No states available"
           }
           onChange={handleStateChange}
         />
 
-        <div>
-          {!isCustomCity && (
-            <LocationField
-              control={control}
-              name="city"
-              label="City*"
-              options={cityOptions}
-              isLoading={isCitiesLoading}
-              isDisabled={isCitiesLoading || selectedState === null}
-              placeholder={selectedState === null ? "Select state first" : "Search city"}
-              emptyMessage={
-                selectedState === null ? "Please select a state first" : "No cities available"
-              }
-              onChange={handleCityChange}
-            />
-          )}
-
-          {isCustomCity && (
-            <div>
-              <p className="label text-muted-foreground">Custom City*</p>
-
-              <div className="mt-2">
-                <input
-                  type="text"
-                  placeholder="Enter your city"
-                  {...register("custom_city")}
-                  className="w-full border border-border bg-transparent px-4 py-3 text-sm outline-none focus:border-foreground"
-                />
-
-                {errors.custom_city?.message && (
-                  <p className="mt-1 text-sm text-red-500">{String(errors.custom_city.message)}</p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+        <LocationField
+          control={control}
+          name="city"
+          label="City*"
+          options={cityOptions}
+          isLoading={isCitiesLoading}
+          isDisabled={isCitiesLoading || selectedState === null}
+          placeholder={selectedState === null ? "Select City" : "Select City"}
+          emptyMessage={
+            selectedState === null ? "Please select a state first" : "No cities available"
+          }
+          onChange={handleCityChange}
+        />
       </div>
+
+      {isCustomCity && (
+        <div className="mt-4 w-full">
+          <p className="label text-muted-foreground">Your City*</p>
+
+          <div className="mt-2">
+            <input
+              type="text"
+              placeholder="Enter your city"
+              {...register("custom_city")}
+              className="w-full border border-border bg-transparent px-4 py-3 text-sm outline-none focus:border-foreground"
+            />
+
+            {errors.custom_city?.message && (
+              <p className="mt-1 text-sm text-red-500">{String(errors.custom_city.message)}</p>
+            )}
+          </div>
+        </div>
+      )}
 
       {locationError && <p className="mt-2 text-sm text-red-500">{locationError}</p>}
     </div>
@@ -326,6 +322,85 @@ function LocationField({
                 className="react-select-container"
                 classNamePrefix="react-select"
                 noOptionsMessage={() => emptyMessage ?? "No options available"}
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    minHeight: "48px",
+                    height: "48px",
+                    width: "100%",
+                    borderRadius: "0",
+                    border: "1px solid black",
+                    backgroundColor: "transparent",
+                    boxShadow: "none",
+                    padding: "0 8px",
+
+                    "&:hover": {
+                      borderColor: "black",
+                    },
+
+                    ...(state.isFocused && {
+                      borderColor: "black",
+                      boxShadow: "none",
+                    }),
+                  }),
+
+                  valueContainer: (base) => ({
+                    ...base,
+                    padding: "0 8px",
+                    height: "46px",
+                  }),
+
+                  singleValue: (base) => ({
+                    ...base,
+                    fontSize: "14px",
+                    color: "black",
+                  }),
+
+                  placeholder: (base) => ({
+                    ...base,
+                    fontSize: "14px",
+                    color: "black",
+                  }),
+
+                  input: (base) => ({
+                    ...base,
+                    margin: 0,
+                    padding: 0,
+                    fontSize: "14px",
+                    color: "black",
+                  }),
+
+                  indicatorsContainer: (base) => ({
+                    ...base,
+                    height: "46px",
+                  }),
+
+                  indicatorSeparator: () => ({
+                    display: "none",
+                  }),
+
+                  dropdownIndicator: (base) => ({
+                    ...base,
+                    padding: "0 8px",
+                    color: "black",
+                    "&:hover": {
+                      color: "black",
+                    },
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    borderRadius: "0",
+                    marginTop: "4px",
+                  }),
+
+                  option: (base, state) => ({
+                    ...base,
+                    fontSize: "14px",
+                    color: state.isSelected || state.isFocused ? "white" : "black",
+                    backgroundColor: state.isSelected || state.isFocused ? "#2563eb" : "white",
+                    cursor: "pointer",
+                  }),
+                }}
               />
 
               {error?.message && <p className="mt-1 text-sm text-red-500">{error.message}</p>}
