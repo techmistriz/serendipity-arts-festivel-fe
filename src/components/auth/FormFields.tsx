@@ -351,6 +351,7 @@ export const GuestForm = ({
   register,
   formState: { errors },
   setValue,
+  watch,
 }: RegistrationFieldsProps) => {
   const GUEST_DATES = [
     "13 December",
@@ -464,13 +465,15 @@ export const GuestForm = ({
       <YesNo label="Accommodation Assistance Required*" name="accom" register={register} />
       <YesNo label="Will you be accompanied by anyone?*" name="accompanied" register={register} />
 
-      <Field label="If yes, please specify names of accompanying persons">
-        <input
-          className="input"
-          {...register("accompaniedPersons")}
-          placeholder="Names of accompanying persons"
-        />
-      </Field>
+      {watch("accompanied") === "Yes" && (
+        <Field label="If yes, please specify names of accompanying persons">
+          <input
+            className="input"
+            {...register("accompaniedPersons")}
+            placeholder="Names of accompanying persons"
+          />
+        </Field>
+      )}
 
       <Field label="Additional Requests or Preferences">
         <textarea rows={3} className="input" {...register("additionalRequests")} />
