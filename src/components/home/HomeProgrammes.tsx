@@ -44,9 +44,9 @@ export default function Programmes() {
             <div className="absolute inset-0 bg-foreground/55" aria-hidden="true" />
 
             <div className="relative z-10 px-7 py-8 md:px-9 md:py-10">
-              <p className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em] text-white">
+              <h3 className="notch font-semibold uppercase text-xl md:text-2xl leading-[1] tracking-[-0.01em] text-white">
                 Let us help you — recommend programmes
-              </p>
+              </h3>
 
               <button
                 type="button"
