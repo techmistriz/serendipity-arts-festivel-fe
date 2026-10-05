@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 // import { ScrollGlitchRain } from "@/components/common/ScrollGlitchRain";
 import { CuratorsSection } from "@/components/home/CuratorsSection";
 import { HomeHero } from "@/components/home/HomeHero";
@@ -10,6 +11,15 @@ import { SponsorsSection } from "@/components/home/SponsorsSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { VenuesSection } from "@/components/home/VenuesSection";
 // import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
+
+export const metadata: Metadata = {
+  title: "Serendipity Arts Festival 2026 | 13-20 December | Panjim, Goa",
+  description:
+    "The 11th Serendipity Arts Festival returns to Goa from 13-20 Dec 2026 with performances, exhibitions & more! Don't miss India's largest arts fest!",
+  alternates: {
+    canonical: "https://www.serendipityartsfestival.com/",
+  },
+};
 
 export default function Home() {
   return (
