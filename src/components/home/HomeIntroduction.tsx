@@ -18,9 +18,9 @@ export function HomeIntroduction() {
         />
         <div className="absolute inset-0 bg-black/40" aria-hidden />
         <div className="relative flex min-h-[320px] items-center justify-center px-6 py-14 text-center md:min-h-[420px] md:px-10 md:py-20 lg:min-h-[520px]">
-          <p className="display max-w-[18ch] text-[8vw] leading-[0.95] tracking-[-0.02em] text-white uppercase md:text-[4vw]">
+          <h1 className="display max-w-[18ch] text-[8vw] leading-[0.95] tracking-[-0.02em] text-white uppercase md:text-[4vw]">
             8 days of exhibitions, performances, workshops and more never seen before.
-          </p>
+          </h1>
         </div>
       </div>
     </section>
