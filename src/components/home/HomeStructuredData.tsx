@@ -5,15 +5,15 @@ const structuredData = JSON.stringify({
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://www.serendipityartsfestival.com/#organization",
+      "@id": "https://serendipityartsfestival.com/#organization",
       name: "Serendipity Arts",
-      url: "https://www.serendipityartsfestival.com/",
+      url: "https://serendipityartsfestival.com/",
       description:
         "Serendipity Arts is a not-for-profit collaborative platform based in New Delhi, India, fostering empathy, curiosity and cross-cultural dialogue by supporting emerging artists across South Asia.",
       logo: {
         "@type": "ImageObject",
-        "@id": "https://www.serendipityartsfestival.com/#logo",
-        url: "https://www.serendipityartsfestival.com/_next/static/media/festival-logo.530c97d6.webp",
+        "@id": "https://serendipityartsfestival.com/#logo",
+        url: "https://serendipityartsfestival.com/_next/static/media/festival-logo.530c97d6.webp",
       },
       address: {
         "@type": "PostalAddress",
@@ -26,29 +26,29 @@ const structuredData = JSON.stringify({
     },
     {
       "@type": "WebSite",
-      "@id": "https://www.serendipityartsfestival.com/#website",
-      url: "https://www.serendipityartsfestival.com/",
+      "@id": "https://serendipityartsfestival.com/#website",
+      url: "https://serendipityartsfestival.com/",
       name: "Serendipity Arts Festival",
       publisher: {
-        "@id": "https://www.serendipityartsfestival.com/#organization",
+        "@id": "https://serendipityartsfestival.com/#organization",
       },
       inLanguage: "en-IN",
     },
     {
       "@type": "WebPage",
-      "@id": "https://www.serendipityartsfestival.com/#webpage",
-      url: "https://www.serendipityartsfestival.com/",
+      "@id": "https://serendipityartsfestival.com/#webpage",
+      url: "https://serendipityartsfestival.com/",
       name: "Serendipity Arts Festival",
       description:
         "Serendipity Arts Festival is a multidisciplinary arts festival bringing together visual arts, performing arts, craft, culinary arts, music, dance, theatre, photography, film and more in Panjim, Goa.",
       isPartOf: {
-        "@id": "https://www.serendipityartsfestival.com/#website",
+        "@id": "https://serendipityartsfestival.com/#website",
       },
       about: {
-        "@id": "https://www.serendipityartsfestival.com/#organization",
+        "@id": "https://serendipityartsfestival.com/#organization",
       },
       primaryImageOfPage: {
-        "@id": "https://www.serendipityartsfestival.com/#logo",
+        "@id": "https://serendipityartsfestival.com/#logo",
       },
       inLanguage: "en-IN",
     },
