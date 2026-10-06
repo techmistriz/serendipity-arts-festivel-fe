@@ -7,6 +7,7 @@ import { ReduxProvider } from "@/redux/provider";
 // import GlobalPopup from "@/components/common/GlobalPopup";
 import SiteChrome from "@/components/layout/SiteChrome";
 import { Suspense } from "react";
+import { MetaPixel } from "@/components/MetaPixel";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -64,6 +65,7 @@ export default function RootLayout({
         className="min-h-screen flex flex-col"
         suppressHydrationWarning //Fix: Suppress hydration warnings for body attributes
       >
+        <MetaPixel />
         <ReduxProvider>
           <Suspense fallback={null}>
             <SiteChrome>{children}</SiteChrome>
