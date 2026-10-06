@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "The 11th Serendipity Arts Festival returns to Goa from 13-20 Dec 2026 with performances, exhibitions & more! Don't miss India's largest arts fest!",
   alternates: {
-    canonical: "https://serendipityartsfestival.com/",
+    canonical: "https://www.serendipityartsfestival.com/",
   },
 };
 
