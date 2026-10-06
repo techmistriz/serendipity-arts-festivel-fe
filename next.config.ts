@@ -4,6 +4,18 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   async redirects() {
     return [
+      // Force www
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "serendipityartsfestival.com",
+          },
+        ],
+        destination: "https://www.serendipityartsfestival.com/:path*",
+        permanent: true,
+      },
       {
         source: "/terms-and-conditions",
         destination: "/terms",
