@@ -8,6 +8,7 @@ import { ReduxProvider } from "@/redux/provider";
 import SiteChrome from "@/components/layout/SiteChrome";
 import { Suspense } from "react";
 import { MetaPixel } from "@/components/MetaPixel";
+import { MetaPixelPageTracking } from "@/components/MetaPixelPageTracking";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function RootLayout({
         suppressHydrationWarning //Fix: Suppress hydration warnings for body attributes
       >
         <MetaPixel />
+        <MetaPixelPageTracking />
         <ReduxProvider>
           <Suspense fallback={null}>
             <SiteChrome>{children}</SiteChrome>

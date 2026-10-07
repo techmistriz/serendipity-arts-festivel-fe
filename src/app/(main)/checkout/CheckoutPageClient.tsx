@@ -71,6 +71,10 @@ export function CheckoutPageClient() {
   const checkout = async () => {
     if (!user) return;
 
+    if (typeof window !== "undefined" && typeof window.fbq === "function") {
+      window.fbq("track", "InitiateCheckout");
+    }
+
     setCheckoutError(null);
     setIsCheckingOut(true);
     let orderId: number | null = null;
@@ -103,6 +107,13 @@ export function CheckoutPageClient() {
         razorpayPaymentId: payment.razorpay_payment_id,
         razorpaySignature: payment.razorpay_signature,
       });
+
+      if (typeof window !== "undefined" && typeof window.fbq === "function") {
+        window.fbq("track", "Purchase", {
+          value: total,
+          currency: "INR",
+        });
+      }
 
       await refresh(true);
       setShowSuccess(true);
