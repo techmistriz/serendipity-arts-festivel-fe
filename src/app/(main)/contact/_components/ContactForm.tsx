@@ -29,7 +29,13 @@ export function ContactForm({ onSuccess }: { onSuccess: () => void }) {
     try {
       setIsSubmitting(true);
       setError(null);
+
       await sendContactMessage(data);
+
+      if (typeof window !== "undefined" && typeof window.fbq === "function") {
+        window.fbq("track", "Lead");
+      }
+
       reset();
       onSuccess();
     } catch (submissionError: unknown) {

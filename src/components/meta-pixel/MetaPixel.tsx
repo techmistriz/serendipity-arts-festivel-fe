@@ -1,6 +1,6 @@
 import Script from "next/script";
 
-const PIXEL_IDS = ["805772058874009", "773772088830349", "644226055110020"];
+const PIXEL_ID = "644226055110020";
 
 export function MetaPixel() {
   return (
@@ -24,24 +24,20 @@ export function MetaPixel() {
           }(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
 
-          ${PIXEL_IDS.map((pixelId) => `fbq('init', '${pixelId}');`).join("\n")}
-
+          fbq('init', '${PIXEL_ID}');
           fbq('track', 'PageView');
         `}
       </Script>
 
       <noscript>
-        {PIXEL_IDS.map((pixelId) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={pixelId}
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
-            alt=""
-          />
-        ))}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          height="1"
+          width="1"
+          style={{ display: "none" }}
+          src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+          alt=""
+        />
       </noscript>
     </>
   );

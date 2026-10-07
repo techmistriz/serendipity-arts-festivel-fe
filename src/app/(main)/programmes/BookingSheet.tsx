@@ -302,6 +302,11 @@ export function BookingSheet({
     try {
       setCartError(null);
       const item = await doAddToCart(true);
+
+      if (typeof window !== "undefined" && typeof window.fbq === "function") {
+        window.fbq("track", "AddToCart");
+      }
+
       handleClose();
       router.push(`/cart/added?id=${encodeURIComponent(item.id)}`);
     } catch (error) {
@@ -318,6 +323,11 @@ export function BookingSheet({
     try {
       setCartError(null);
       const item = await doAddToCart(false);
+
+      if (typeof window !== "undefined" && typeof window.fbq === "function") {
+        window.fbq("track", "AddToCart");
+      }
+
       handleClose();
       router.push(`/cart/added?id=${encodeURIComponent(item.id)}`);
     } catch (error) {

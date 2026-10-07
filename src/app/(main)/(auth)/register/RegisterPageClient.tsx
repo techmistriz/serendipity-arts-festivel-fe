@@ -247,6 +247,10 @@ function RegisterContent({
       if (isSuccess) {
         const authData = response.data;
 
+        if (typeof window !== "undefined" && typeof window.fbq === "function") {
+          window.fbq("track", "CompleteRegistration");
+        }
+
         // Important:
         // Set this BEFORE setSession() because setSession()
         // changes isAuthenticated to true.
