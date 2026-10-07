@@ -7,8 +7,8 @@ import { ReduxProvider } from "@/redux/provider";
 // import GlobalPopup from "@/components/common/GlobalPopup";
 import SiteChrome from "@/components/layout/SiteChrome";
 import { Suspense } from "react";
-import { MetaPixel } from "@/components/MetaPixel";
-import { MetaPixelPageTracking } from "@/components/MetaPixelPageTracking";
+import { MetaPixel } from "@/components/meta-pixel/MetaPixel";
+import { MetaPixelPageTracking } from "@/components/meta-pixel/MetaPixelPageTracking";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
