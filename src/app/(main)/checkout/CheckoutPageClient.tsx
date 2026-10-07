@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 
 import { BookingSuccess } from "@/components/common/BookingSuccess";
 import { PageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
@@ -32,6 +32,12 @@ export function CheckoutPageClient() {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && typeof window.fbq === "function") {
+      window.fbq("track", "InitiateCheckout");
+    }
+  }, []);
 
   const payableSubtotal = isComplimentary ? 0 : subtotal;
   const orderSubtotal = appliedCoupon?.subtotal ?? payableSubtotal;
@@ -71,10 +77,6 @@ export function CheckoutPageClient() {
   const checkout = async () => {
     if (!user) return;
 
-    if (typeof window !== "undefined" && typeof window.fbq === "function") {
-      window.fbq("track", "InitiateCheckout");
-    }
-
     setCheckoutError(null);
     setIsCheckingOut(true);
     let orderId: number | null = null;
@@ -89,6 +91,13 @@ export function CheckoutPageClient() {
       orderId = checkoutResult.order.id;
 
       if (!checkoutResult.paymentGateway) {
+        if (typeof window !== "undefined" && typeof window.fbq === "function") {
+          window.fbq("track", "Purchase", {
+            value: 0,
+            currency: "INR",
+          });
+        }
+
         await refresh(true);
         setShowSuccess(true);
         return;
