@@ -110,7 +110,7 @@ export function BookingSheet({
 }: BookingSheetProps) {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
-  const { add, items, bookings, isVip, loading: cartLoading } = useCart();
+  const { add, isVip, loading: cartLoading } = useCart();
   const isPage = variant === "page";
   const programmeReturnPath = returnPath ?? `/programmes?p=${programme.id}`;
 
@@ -215,20 +215,20 @@ export function BookingSheet({
     e.currentTarget.src = PLACEHOLDER_IMAGE;
   }, []);
 
-  const findClash = useCallback(() => {
-    if (programme.category === "Exhibition") return null;
-    if (!chosenSlot || !selectedDetailId) return null;
-    if (items.some((item) => item.programmeDetailId === selectedDetailId)) return null;
+  // const findClash = useCallback(() => {
+  //   if (programme.category === "Exhibition") return null;
+  //   if (!chosenSlot || !selectedDetailId) return null;
+  //   if (items.some((item) => item.programmeDetailId === selectedDetailId)) return null;
 
-    const chosenDate = `${chosenSlot.day} Dec`;
+  //   const chosenDate = `${chosenSlot.day} Dec`;
 
-    const conflictingItem = [...bookings, ...items].find((item) => {
-      if (item.programmeDetailId === selectedDetailId) return false;
-      return item.date === chosenDate && item.time === chosenSlot.fromTime;
-    });
+  //   const conflictingItem = [...bookings, ...items].find((item) => {
+  //     if (item.programmeDetailId === selectedDetailId) return false;
+  //     return item.date === chosenDate && item.time === chosenSlot.fromTime;
+  //   });
 
-    return conflictingItem ?? null;
-  }, [programme.category, items, chosenSlot, selectedDetailId, bookings]);
+  //   return conflictingItem ?? null;
+  // }, [programme.category, items, chosenSlot, selectedDetailId, bookings]);
 
   const doAddToCart = useCallback(
     async (checkClashing: boolean) => {
@@ -283,17 +283,6 @@ export function BookingSheet({
   }, [onClose, isClosing]);
 
   const handleAddToCart = useCallback(async () => {
-    const clash = findClash();
-
-    if (clash) {
-      setClashItem({
-        title: clash.title,
-        date: clash.date,
-        time: clash.time,
-      });
-      return;
-    }
-
     if (!isAuthenticated) {
       setShowRegisterGate(true);
       return;
@@ -301,6 +290,7 @@ export function BookingSheet({
 
     try {
       setCartError(null);
+
       const item = await doAddToCart(true);
 
       if (typeof window !== "undefined" && typeof window.fbq === "function") {
@@ -310,19 +300,43 @@ export function BookingSheet({
       handleClose();
       router.push(`/cart/added?id=${encodeURIComponent(item.id)}`);
     } catch (error) {
-      setCartError(getErrorMessage(error, "Unable to add this programme to your cart."));
+      const message = getErrorMessage(error, "Unable to add this programme to your cart.");
+
+      const apiError = error as {
+        response?: {
+          data?: {
+            errors?: {
+              program_detail_id?: string[];
+            };
+          };
+        };
+      };
+
+      const clashError = apiError.response?.data?.errors?.program_detail_id?.[0];
+
+      if (clashError) {
+        setCartError(clashError);
+
+        setClashItem({
+          title: programme.title,
+          date: chosenSlot?.day ? `${chosenSlot.day} Dec` : "",
+          time: chosenSlot?.fromTime ?? "",
+        });
+
+        return;
+      }
+
+      setCartError(message);
     }
-  }, [findClash, isAuthenticated, doAddToCart, handleClose, router]);
+  }, [isAuthenticated, doAddToCart, handleClose, router, programme.title, chosenSlot]);
 
   const handleProceedWithClash = useCallback(async () => {
-    setClashItem(null);
-    if (!isAuthenticated) {
-      setShowRegisterGate(true);
-      return;
-    }
     try {
       setCartError(null);
+
       const item = await doAddToCart(false);
+
+      setClashItem(null);
 
       if (typeof window !== "undefined" && typeof window.fbq === "function") {
         window.fbq("track", "AddToCart");
@@ -333,7 +347,7 @@ export function BookingSheet({
     } catch (error) {
       setCartError(getErrorMessage(error, "Unable to add this programme to your cart."));
     }
-  }, [isAuthenticated, doAddToCart, handleClose, router]);
+  }, [doAddToCart, handleClose, router]);
 
   const handleOpenRelated = useCallback(
     (relatedProgramme: UIProgramme) => {
@@ -814,12 +828,14 @@ export function BookingSheet({
             {clashItem.time}. You can&apos;t be in two places at once — but you can book both if
             you&apos;d like.
           </p>
+          {/* <p className="mt-4 text-muted-foreground headline">{cartError}</p> */}
           <div className="mt-8 flex flex-wrap gap-3">
             <button
               onClick={handleProceedWithClash}
+              disabled={cartLoading}
               className="headline text-xs uppercase tracking-[0.06em] bg-foreground text-background rounded-full px-5 py-3 hover:bg-accent transition-colors"
             >
-              Proceed anyway →
+              {cartLoading ? "Adding…" : "Proceed anyway →"}
             </button>
             <button
               onClick={() => setClashItem(null)}
