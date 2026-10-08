@@ -81,6 +81,7 @@ export function mapApiProgrammeToUi(
     sponsors: sponsors,
     createdAt: apiProgramme.created_at,
     droppingSoonDate: apiProgramme.dropping_soon_date ?? null,
+    soldOut: apiProgramme.is_sold ?? false,
     discipline: apiProgramme.discipline
       ? {
           name: apiProgramme.discipline.name,
