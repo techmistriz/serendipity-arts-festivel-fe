@@ -18,6 +18,7 @@ import { ProgrammeCard } from "./_components/ProgrammeCard";
 import { Modal } from "./Modal";
 import { ProgrammeDisclaimerModal } from "./ProgrammeDisclaimerModal";
 import { ScheduleMarquee } from "@/components/common/ScheduleMarquee";
+import { SoldOut } from "@/components/sold-out/SoldOut";
 
 // ===== Constants =====
 const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
@@ -118,6 +119,8 @@ export function BookingSheet({
   // console.log("Programme in BookingSheet:", programme);
   // console.log("Tags in BookingSheet:", programme.tags);
   // console.log("Tags length:", programme.tags?.length);
+
+  const isSoldout = programme.soldOut;
 
   // State
   const [quantity, setQuantity] = useState(1);
@@ -618,7 +621,7 @@ export function BookingSheet({
       <div className="container-editorial pt-6 md:pt-10 pb-16">
         {/* Header */}
         <div className="flex items-center justify-between rule-b pb-4">
-          <p className="label">Booking</p>
+          <p className="label">{isSoldout ? "Programme details" : "Booking"}</p>
           <button onClick={handleClose} className="label hover:text-accent">
             Close &nbsp;×
           </button>
@@ -626,16 +629,23 @@ export function BookingSheet({
 
         <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
           {/* Image */}
-          <div className="md:col-span-6 md:-mt-7">
-            <div className="relative w-full overflow-hidden md:aspect-square">
-              <Image
-                src={programme.img || PLACEHOLDER_IMAGE}
-                alt={programme.title || "Programme"}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain object-top p-4 max-md:static! max-md:h-auto! md:p-8"
-                onError={handleImageError}
-              />
+          <div className="md:col-span-6">
+            <div className="flex w-full justify-center">
+              <div className="relative inline-block max-h-[600px] max-w-full">
+                <Image
+                  src={programme.img || PLACEHOLDER_IMAGE}
+                  alt={programme.title || "Programme"}
+                  width={1200}
+                  height={1200}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="block max-h-[600px] w-auto max-w-full object-contain"
+                  onError={handleImageError}
+                />
+
+                {isSoldout && (
+                  <SoldOut className="absolute bottom-3 left-3 text-sm bg-background/95 border border-rule px-3 py-1 pointer-events-none" />
+                )}
+              </div>
             </div>
           </div>
           {/* Details */}
@@ -645,15 +655,20 @@ export function BookingSheet({
               {programme.title || "Untitled"}
             </h2>
 
-            <button
-              type="button"
-              onClick={() =>
-                addBoxRef.current?.scrollIntoView({ block: "center", behavior: "smooth" })
-              }
-              className="mt-5 headline font-semibold uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors"
-            >
-              Add to cart ↓
-            </button>
+            {!isSoldout && (
+              <button
+                type="button"
+                onClick={() =>
+                  addBoxRef.current?.scrollIntoView({
+                    block: "center",
+                    behavior: "smooth",
+                  })
+                }
+                className="mt-5 headline font-semibold uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors"
+              >
+                Add to cart ↓
+              </button>
+            )}
 
             {/* Details Grid */}
             <dl className="mt-6 md:mt-8 grid grid-cols-2 gap-y-3 text-sm rule-t rule-b py-4 headline">
@@ -778,15 +793,29 @@ export function BookingSheet({
             )}
 
             {/* Booking Section */}
-            <section
-              ref={addBoxRef}
-              className={`mt-8 border p-4 md:p-5 ${intent === "cart" ? "border-accent" : "border-foreground"}`}
-            >
-              {renderScheduleSelector()}
-              {renderIncludedProgrammes()}
-              {renderAddOns()}
-              {renderBookingActions()}
-            </section>
+            {isSoldout ? (
+              <section className="mt-8">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full border border-foreground px-6 py-1.5 headline text-sm  tracking-[0.06em] text-foreground transition-colors hover:bg-accent hover:text-background md:text-[14px]"
+                >
+                  Explore other programmes →
+                </button>
+              </section>
+            ) : (
+              <section
+                ref={addBoxRef}
+                className={`mt-8 border p-4 md:p-5 ${
+                  intent === "cart" ? "border-accent" : "border-foreground"
+                }`}
+              >
+                {renderScheduleSelector()}
+                {renderIncludedProgrammes()}
+                {renderAddOns()}
+                {renderBookingActions()}
+              </section>
+            )}
           </div>
         </div>
 

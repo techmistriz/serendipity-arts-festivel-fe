@@ -10,6 +10,7 @@ import { imagePaths } from "@/config/images";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { isProgrammeNew } from "@/utils/date";
 import { ScheduleMarquee } from "@/components/common/ScheduleMarquee";
+import { SoldOut } from "@/components/sold-out/SoldOut";
 
 type ProgrammeCardProps = {
   programme: UIProgramme;
@@ -145,7 +146,11 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
               blurDataURL={BLUR_DATA_URL}
             />
 
-            {isProgrammeNew(programme.createdAt) && (
+            {programme.soldOut && (
+              <SoldOut className="absolute bottom-2 inset-x-2 z-10 bg-background/95 border border-rule px-2 py-1 text-sm pointer-events-none" />
+            )}
+
+            {isProgrammeNew(programme.createdAt) && !programme.soldOut && (
               <span
                 className="label absolute top-2 left-2 px-2 py-1"
                 style={{ background: "#CEDC29", color: "#0A0A0A" }}
@@ -186,21 +191,31 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
       </button>
 
       {/* Action Buttons */}
-      <div className="mt-3 grid grid-cols-2 divide-x divide-foreground border border-foreground">
+      {programme.soldOut ? (
         <button
           onClick={handleAboutClick}
-          className="headline px-3 py-2 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background md:text-xs"
+          className="mt-3 w-full border border-foreground px-3 py-2 headline text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background md:text-xs"
         >
-          About
+          About the programme
         </button>
-        <button
-          onClick={handleAddClick}
-          disabled={!programme.isBookingAllowed}
-          className="headline px-3 py-2 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50 md:text-xs"
-        >
-          {programme.isBookingAllowed ? "Add to cart" : "Booking unavailable"}
-        </button>
-      </div>
+      ) : (
+        <div className="mt-3 grid grid-cols-2 divide-x divide-foreground border border-foreground">
+          <button
+            onClick={handleAboutClick}
+            className="headline px-3 py-2 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background md:text-xs"
+          >
+            About
+          </button>
+
+          <button
+            onClick={handleAddClick}
+            disabled={!programme.isBookingAllowed}
+            className="headline px-3 py-2 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50 md:text-xs"
+          >
+            {programme.isBookingAllowed ? "Add to cart" : "Booking unavailable"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

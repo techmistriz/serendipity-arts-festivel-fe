@@ -608,3 +608,83 @@ html.a11y-dyslexia button {
     transform: translateY(0);
   }
 }
+
+:root {
+  --sold-out-pop: #cedc29;
+  --sold-out-ticket: #cedc29;
+}
+
+.sold-out {
+  --sold-out-pop: #cedc29;
+  --sold-out-ticket: #cedc29;
+}
+
+/* Ticket + character gently bobs up/down */
+.sold-out-ticket {
+  animation: sold-out-bob 2.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Hand waving */
+.sold-out-wave {
+  transform-origin: 87px 36px;
+  animation: sold-out-wave 2.8s ease-in-out infinite;
+}
+
+/* Spark blinking */
+.sold-out-spark {
+  animation: sold-out-spark 2.8s ease-in-out infinite;
+}
+
+/* Ticket bob */
+@keyframes sold-out-bob {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+
+  30% {
+    transform: translateY(-5px) rotate(5deg);
+  }
+}
+
+/* Waving hand */
+@keyframes sold-out-wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25%,
+  65% {
+    transform: rotate(15deg);
+  }
+
+  45%,
+  85% {
+    transform: rotate(-8deg);
+  }
+}
+
+/* Spark */
+@keyframes sold-out-spark {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  45% {
+    opacity: 1;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .sold-out-ticket,
+  .sold-out-wave,
+  .sold-out-spark {
+    animation: none;
+  }
+}
