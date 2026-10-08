@@ -95,6 +95,7 @@ export interface ProgrammeSponsor {
 }
 
 export interface Programme {
+  is_sold: boolean;
   dropping_soon_date?: string | null;
   id: number;
   booking_type: string | null;
@@ -270,6 +271,8 @@ export interface UIProgramme {
 
   // Fallback venue for the programme
   venue: string;
+
+  soldOut: boolean;
 
   price: number;
   img: string;
