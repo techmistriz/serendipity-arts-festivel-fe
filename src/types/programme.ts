@@ -49,6 +49,7 @@ export interface ProgramDetail {
   updated_by: number | null;
   deleted_at: string | null;
   deleted_by: string | null;
+  is_detail_sold: boolean;
   venue: Venue | null;
   sub_venue: SubVenue | null;
 }
@@ -251,6 +252,7 @@ export interface UIProgramme {
   curators: ProgrammePerson[];
 
   slots: {
+    isDetailSold: boolean;
     detailId?: number;
     day: number;
     fromTime: string;
