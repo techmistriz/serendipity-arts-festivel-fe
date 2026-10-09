@@ -124,7 +124,7 @@ export function BookingSheet({
 
   // State
   const [quantity, setQuantity] = useState(1);
-  const [slotIndex, setSlotIndex] = useState(0);
+  const [selectedSlotIndex, setSelectedSlotIndex] = useState(0);
   const [addOnIds, setAddOnIds] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -165,6 +165,24 @@ export function BookingSheet({
     () => (effectivePrice + addOnsPrice) * quantity,
     [effectivePrice, addOnsPrice, quantity],
   );
+
+  const slotIndex = useMemo(() => {
+    const slots = programme.slots ?? [];
+    const selectedSlot = slots[selectedSlotIndex];
+
+    // Keep the selected slot if it is available.
+    if (selectedSlot && !selectedSlot.isDetailSold && Boolean(selectedSlot.detailId)) {
+      return selectedSlotIndex;
+    }
+
+    // Otherwise, select the first available slot.
+    const firstAvailableIndex = slots.findIndex(
+      (slot) => !slot.isDetailSold && Boolean(slot.detailId),
+    );
+
+    // If all slots are sold out, fall back to index 0.
+    return firstAvailableIndex === -1 ? 0 : firstAvailableIndex;
+  }, [programme.slots, selectedSlotIndex]);
 
   const chosenSlot = useMemo(
     () => (programme.slots?.length ? (programme.slots[slotIndex] ?? null) : null),
@@ -218,27 +236,16 @@ export function BookingSheet({
     e.currentTarget.src = PLACEHOLDER_IMAGE;
   }, []);
 
-  // const findClash = useCallback(() => {
-  //   if (programme.category === "Exhibition") return null;
-  //   if (!chosenSlot || !selectedDetailId) return null;
-  //   if (items.some((item) => item.programmeDetailId === selectedDetailId)) return null;
-
-  //   const chosenDate = `${chosenSlot.day} Dec`;
-
-  //   const conflictingItem = [...bookings, ...items].find((item) => {
-  //     if (item.programmeDetailId === selectedDetailId) return false;
-  //     return item.date === chosenDate && item.time === chosenSlot.fromTime;
-  //   });
-
-  //   return conflictingItem ?? null;
-  // }, [programme.category, items, chosenSlot, selectedDetailId, bookings]);
-
   const doAddToCart = useCallback(
     async (checkClashing: boolean) => {
       const programmeId = Number(programme.id);
 
       if (!Number.isInteger(programmeId) || !selectedDetailId) {
         throw new Error("This programme does not have a bookable schedule.");
+      }
+
+      if (chosenSlot?.isDetailSold) {
+        throw new Error("This date and time slot is sold out.");
       }
 
       const addedItem = await add({
@@ -250,9 +257,16 @@ export function BookingSheet({
 
       for (const addOn of chosenAddOns) {
         const addOnProgramme = allProgrammes.find((item) => String(item.id) === addOn.id);
-        const addOnDetailId = addOnProgramme?.slots.find(
+
+        const addOnSlot = addOnProgramme?.slots.find(
           (slot) => slot.day === addOn.day && slot.fromTime === addOn.time,
-        )?.detailId;
+        );
+
+        if (addOnSlot?.isDetailSold) {
+          throw new Error(`${addOn.title} is sold out for the selected time.`);
+        }
+
+        const addOnDetailId = addOnSlot?.detailId;
         const addOnProgrammeId = Number(addOnProgramme?.id);
 
         if (!Number.isInteger(addOnProgrammeId) || !addOnDetailId) {
@@ -269,7 +283,7 @@ export function BookingSheet({
 
       return addedItem;
     },
-    [add, allProgrammes, chosenAddOns, programme.id, quantity, selectedDetailId],
+    [add, allProgrammes, chosenAddOns, chosenSlot, programme.id, quantity, selectedDetailId],
   );
 
   const handleClose = useCallback(() => {
@@ -354,7 +368,7 @@ export function BookingSheet({
 
   const handleOpenRelated = useCallback(
     (relatedProgramme: UIProgramme) => {
-      setSlotIndex(0);
+      setSelectedSlotIndex(0);
       setIsExpanded(false);
       onOpen(relatedProgramme);
     },
@@ -386,14 +400,20 @@ export function BookingSheet({
           {programme.slots.map((slot, index) => (
             <button
               key={`slot-${slot.day}-${slot.fromTime}-${slot.toTime}-${index}`}
-              onClick={() => setSlotIndex(index)}
+              type="button"
+              disabled={slot.isDetailSold}
+              aria-pressed={slotIndex === index}
+              onClick={() => setSelectedSlotIndex(index)}
               className={`headline text-xs uppercase tracking-[0.06em] border px-3 py-2 transition-colors ${
-                slotIndex === index
-                  ? "bg-foreground text-background border-foreground"
-                  : "border-foreground hover:bg-foreground hover:text-background"
+                slot.isDetailSold
+                  ? "border-rule text-muted-foreground opacity-50 cursor-not-allowed line-through"
+                  : slotIndex === index
+                    ? "bg-foreground text-background border-foreground"
+                    : "border-foreground hover:bg-foreground hover:text-background"
               }`}
             >
               {formatSlot(slot)}
+              {slot.isDetailSold ? " — Sold out" : ""}
             </button>
           ))}
         </div>
@@ -581,7 +601,7 @@ export function BookingSheet({
           </p>
           <button
             onClick={handleAddToCart}
-            disabled={cartLoading}
+            disabled={cartLoading || !selectedDetailId || !!chosenSlot?.isDetailSold}
             className="headline uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
             {cartLoading ? "Adding…" : "Add to cart →"}
