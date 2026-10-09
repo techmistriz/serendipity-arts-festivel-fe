@@ -9,6 +9,7 @@ import SiteChrome from "@/components/layout/SiteChrome";
 import { Suspense } from "react";
 import { MetaPixel } from "@/components/meta-pixel/MetaPixel";
 import { MetaPixelPageTracking } from "@/components/meta-pixel/MetaPixelPageTracking";
+import GoogleAdsTag from "@/components/GoogleAdsTag";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function RootLayout({
         className="min-h-screen flex flex-col"
         suppressHydrationWarning //Fix: Suppress hydration warnings for body attributes
       >
+        <GoogleAdsTag />
         <MetaPixel />
         <MetaPixelPageTracking />
         <ReduxProvider>
