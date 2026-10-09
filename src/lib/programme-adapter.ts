@@ -32,6 +32,7 @@ export function mapApiProgrammeToUi(
       : [
           {
             detailId: detail.id,
+            isDetailSold: detail.is_detail_sold ?? false,
             day,
             eventDate: detail.event_date,
             fromTime: formatTime(detail.from_time),
