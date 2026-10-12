@@ -97,13 +97,14 @@ export default function GlobalPopup() {
 
         {/* Full image with redirect */}
         <a
-          href="https://indiainvenice.com/events/upcoming"
+          // href="https://indiainvenice.com/events/upcoming"
+          href="https://applinks.evnts.info/3b9aca55"
           target="_blank"
           rel="noopener noreferrer"
           className="block cursor-pointer"
         >
           <Image
-            src={images.globalPopup.popupImg}
+            src={images.globalPopup.popupImg2}
             alt="Serendipity Arts Festival"
             width={1600}
             height={1000}
