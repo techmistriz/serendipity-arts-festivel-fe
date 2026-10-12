@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
 
-import { BookingSuccess } from "@/components/common/BookingSuccess";
 import { PageLoadingSkeleton } from "@/components/common/LoadingSkeletons";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
@@ -31,7 +30,7 @@ export function CheckoutPageClient() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccess] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && typeof window.fbq === "function") {
@@ -99,7 +98,8 @@ export function CheckoutPageClient() {
         }
 
         await refresh(true);
-        setShowSuccess(true);
+
+        router.push(`/checkout/success?order_id=${checkoutResult.order.id}&amount=${total}`);
         return;
       }
 
@@ -125,7 +125,8 @@ export function CheckoutPageClient() {
       }
 
       await refresh(true);
-      setShowSuccess(true);
+
+      router.push(`/checkout/success?order_id=${checkoutResult.order.id}&amount=${total}`);
     } catch (checkoutFailure) {
       if (orderId && !paymentSubmitted) {
         await cancelCheckout(orderId).catch(() => undefined);
@@ -141,7 +142,7 @@ export function CheckoutPageClient() {
     }
   };
 
-  if (authLoading || (loading && items.length === 0 && !showSuccess)) {
+  if (authLoading || (loading && items.length === 0)) {
     return <PageLoadingSkeleton label="Loading checkout" />;
   }
 
@@ -331,15 +332,6 @@ export function CheckoutPageClient() {
           </p>
         </aside>
       </div>
-
-      {showSuccess && (
-        <BookingSuccess
-          onClose={() => {
-            setShowSuccess(false);
-            router.push("/dashboard");
-          }}
-        />
-      )}
     </div>
   );
 }

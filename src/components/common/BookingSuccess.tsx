@@ -9,12 +9,12 @@ import GlitchBar from "./GlitchBar";
 
 type Props = {
   title?: string;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
-export function BookingSuccess({ title = "Booking successful.", onClose }: Props) {
+export function BookingSuccess({ title = "Booking successful.", onClose = () => {} }: Props) {
   return (
-    <div className="fixed inset-0 z-[80] bg-background/95 backdrop-blur-md overflow-y-auto ed-fade">
+    <div className="relative min-h-screen bg-background overflow-y-auto ed-fade">
       <GlitchBar
         seed={9}
         direction="v"
@@ -35,9 +35,9 @@ export function BookingSuccess({ title = "Booking successful.", onClose }: Props
       <div className="container-editorial pt-6 md:pt-10 pb-16 max-w-4xl">
         <div className="flex items-center justify-between rule-b pb-4">
           <p className="label text-accent">Confirmation</p>
-          <button onClick={onClose} className="label hover:text-accent">
+          {/* <button onClick={onClose} className="label hover:text-accent">
             Close ×
-          </button>
+          </button> */}
         </div>
 
         <div className="mt-10 md:mt-16">
