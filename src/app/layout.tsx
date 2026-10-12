@@ -4,12 +4,12 @@ import { Inter_Tight, Stack_Sans_Headline } from "next/font/google";
 import { AccessibilityWidget } from "@/components/common/AccessibilityWidget";
 import { siteConfig } from "@/config/site";
 import { ReduxProvider } from "@/redux/provider";
-// import GlobalPopup from "@/components/common/GlobalPopup";
 import SiteChrome from "@/components/layout/SiteChrome";
 import { Suspense } from "react";
 import { MetaPixel } from "@/components/meta-pixel/MetaPixel";
 import { MetaPixelPageTracking } from "@/components/meta-pixel/MetaPixelPageTracking";
 import GoogleAdsTag from "@/components/GoogleAdsTag";
+import GlobalPopup from "@/components/common/GlobalPopup";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
@@ -74,7 +74,7 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <SiteChrome>{children}</SiteChrome>
           </Suspense>
-          {/* <GlobalPopup /> */}
+          <GlobalPopup />
           <AccessibilityWidget />
         </ReduxProvider>
       </body>
