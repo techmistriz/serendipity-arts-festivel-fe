@@ -70,6 +70,7 @@ import volunteerFifteen from "@public/images/volunteer/vol-15.jpg";
 import volunteerSixteen from "@public/images/volunteer/vol-16.jpg";
 import volunteerSeventeen from "@public/images/volunteer/vol-17.jpg";
 import popupImg from "@public/globalPopup/IIV_PROG_BNR(1200X400).png";
+import popupImg2 from "@public/globalPopup/App banner 1.png";
 
 import daysImage from "@public/drop/drop-days.jpg";
 import hoursImage from "@public/drop/drop-hours.jpg";
@@ -168,6 +169,7 @@ export const images = {
   volunteer: [volunteerFourteen, volunteerFifteen, volunteerSixteen, volunteerSeventeen],
   globalPopup: {
     popupImg,
+    popupImg2,
   },
 } as const;
 
