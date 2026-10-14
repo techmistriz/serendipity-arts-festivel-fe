@@ -22,26 +22,29 @@ function toSearchResults(data: SearchResponse["data"]): SearchResult[] {
     ...data.programs.map((programme) => ({
       kind: "Programme" as const,
       title: programme.name,
-      href: "/programmes",
+      href: `/programmes/${encodeURIComponent(programme.slug)}`,
     })),
+
     ...data.curators.map((curator) => ({
       kind: "Curator" as const,
       title: curator.name,
       subtitle: curator.discipline,
-      href: "/curators",
+      href: curator.slug ? `/curators/${encodeURIComponent(curator.slug)}` : "/curators",
     })),
+
     ...data.venues.map((venue) => ({
       kind: "Venue" as const,
-      title: venue.name,
-      subtitle: "Venue",
-      href: "/venues",
+      title: venue.name?.trim() || venue.title?.trim() || "Untitled Venue",
+      href: venue.slug ? `/venues/${encodeURIComponent(venue.slug)}` : "/venues",
     })),
-    ...data.vibes.map((vibe) => ({
-      kind: "Vibe" as const,
-      title: vibe.name,
-      subtitle: "Vibe",
-      href: "/programmes",
-    })),
+
+    ...Object.values(data.vibes ?? {})
+      .flat()
+      .map((vibe) => ({
+        kind: "Vibe" as const,
+        title: vibe.title,
+        href: "/vibes",
+      })),
   ];
 }
 
@@ -61,6 +64,7 @@ export function HeaderSearch({ onClose }: HeaderSearchProps) {
     const timer = window.setTimeout(() => {
       void searchSiteApi(keyword)
         .then((data) => {
+          console.log("Venue search data:", data.venues);
           if (isCurrent) setResults(toSearchResults(data));
         })
         .catch(() => {
@@ -167,9 +171,7 @@ export function HeaderSearch({ onClose }: HeaderSearchProps) {
                     onClick={closeSearch}
                     className="flex w-full flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-4 text-left hover:text-accent"
                   >
-                    <span className="headline text-base font-semibold md:text-xl">
-                      {result.title}
-                    </span>
+                    <p className="text-sm font-medium text-black opacity-100">{result.title}</p>
                     <span className="label shrink-0 text-muted-foreground">
                       {result.kind}
                       {result.subtitle ? ` · ${result.subtitle}` : ""}

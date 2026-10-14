@@ -20,13 +20,21 @@ export interface SearchProgram {
 
 export interface SearchVenue {
   id: number;
-  name: string;
+  name?: string;
+  title?: string;
   slug?: string;
 }
 
 export interface SearchVibe {
   id: number;
-  name: string;
+  parent_id: number;
+  title: string;
+  slug: string;
+  description?: string;
+  short_description?: string;
+  featured_image?: string;
+  external_link?: string | null;
+  instagram_link?: string | null;
 }
 
 export interface SearchResponse {
@@ -36,14 +44,16 @@ export interface SearchResponse {
     curators: SearchCurator[];
     programs: SearchProgram[];
     venues: SearchVenue[];
-    vibes: SearchVibe[];
+    vibes: Record<string, SearchVibe[]>;
   };
   meta: string;
   message: string;
 }
 
 export async function searchSiteApi(keyword: string): Promise<SearchResponse["data"]> {
-  const response = await API<SearchResponse>("/search", METHODS.GET, { keyword });
+  const response = await API<SearchResponse>("/search", METHODS.GET, {
+    keyword,
+  });
 
   if (!response.status) {
     throw new Error(response.message || "Search failed");
