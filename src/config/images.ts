@@ -71,6 +71,7 @@ import volunteerSixteen from "@public/images/volunteer/vol-16.jpg";
 import volunteerSeventeen from "@public/images/volunteer/vol-17.jpg";
 import popupImg from "@public/globalPopup/IIV_PROG_BNR(1200X400).png";
 import popupImg2 from "@public/globalPopup/App banner 1.png";
+import popupImg3 from "@public/globalPopup/App banner_page-0001.jpg";
 
 import daysImage from "@public/drop/drop-days.jpg";
 import hoursImage from "@public/drop/drop-hours.jpg";
@@ -170,6 +171,7 @@ export const images = {
   globalPopup: {
     popupImg,
     popupImg2,
+    popupImg3,
   },
 } as const;
 

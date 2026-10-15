@@ -104,7 +104,7 @@ export default function GlobalPopup() {
           className="block cursor-pointer"
         >
           <Image
-            src={images.globalPopup.popupImg2}
+            src={images.globalPopup.popupImg3}
             alt="Serendipity Arts Festival"
             width={1600}
             height={1000}
