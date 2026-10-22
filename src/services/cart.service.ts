@@ -155,14 +155,32 @@ export async function getBookings(): Promise<CartItem[]> {
 }
 
 export async function addCartItem(input: CartItemInput): Promise<CartItem> {
-  const response = await API<ApiResponse<ApiCartItem>>("/cart/add", METHODS.POST, {
+  const payload = {
     program_id: input.programmeId,
     program_detail_id: input.programmeDetailId,
     qty: input.quantity,
     check_clashing: input.checkClashing ?? true,
-  });
+    ...(input.customAmount !== undefined && {
+      custom_amount: input.customAmount,
+    }),
+  };
 
-  return toCartItem(getApiResponseData(response, "Unable to add this programme to your cart."));
+  console.log("[Cart] Add item request:", payload);
+
+  const response = await API<ApiResponse<ApiCartItem>>("/cart/add", METHODS.POST, payload);
+
+  console.log("[Cart] Add item raw response:", response);
+
+  const data = getApiResponseData(response, "Unable to add this programme to your cart.");
+
+  console.log("[Cart] Add item response data:", data);
+  console.log("[Cart] Returned amount:", data.amount);
+
+  const cartItem = toCartItem(data);
+
+  console.log("[Cart] Mapped cart item:", cartItem);
+
+  return cartItem;
 }
 
 export async function updateCartItem(id: string, quantity: number): Promise<CartItem | null> {

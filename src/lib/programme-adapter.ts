@@ -80,6 +80,7 @@ export function mapApiProgrammeToUi(
     category,
     curator,
     sponsors: sponsors,
+    programType: apiProgramme.program_type,
     createdAt: apiProgramme.created_at,
     droppingSoonDate: apiProgramme.dropping_soon_date ?? null,
     soldOut: apiProgramme.is_sold ?? false,

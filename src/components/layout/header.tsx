@@ -97,13 +97,21 @@ export default function Header() {
 
   return (
     <>
-      <header className="rule-b sticky top-0 z-40 bg-background/85 backdrop-blur-sm">
+      <header
+        className={`sticky top-0 z-40  ${
+          hasScrolledPastHero
+            ? "border-b border-white/10 bg-black text-white"
+            : "rule-b bg-background/85 text-foreground"
+        }`}
+      >
         <div className="container-editorial flex h-14 items-center justify-between md:h-16">
           {/* Home */}
           <Link
             href="/"
             aria-label="Home"
-            className="label notch transition-colors hover:text-accent"
+            className={`label notch transition-colors ${
+              hasScrolledPastHero ? "hover:text-white/70" : "hover:text-accent"
+            }`}
           >
             Home
           </Link>
@@ -115,7 +123,9 @@ export default function Header() {
               onClick={() => setIsSearchOpen(true)}
               aria-label="Search"
               aria-expanded={isSearchOpen}
-              className="transition-colors hover:text-accent"
+              className={`label notch transition-colors ${
+                hasScrolledPastHero ? "hover:text-white/70" : "hover:text-accent"
+              }`}
             >
               <Search className="h-5 w-5" strokeWidth={1.75} />
             </button>
@@ -125,21 +135,30 @@ export default function Header() {
             <Link
               href="/dashboard"
               aria-label="Dashboard"
-              className="relative transition-colors hover:text-accent"
+              className={`label notch transition-colors ${
+                hasScrolledPastHero ? "hover:text-white/70" : "hover:text-accent"
+              }`}
             >
               <LayoutGrid className="h-5 w-5" strokeWidth={1.75} />
             </Link>
 
             {/* Cart */}
+
+            {/* Cart */}
             <Link
               href="/cart"
-              aria-label="Cart"
-              className="relative transition-colors hover:text-accent"
+              aria-label={`Cart${count > 0 ? `, ${count} items` : ""}`}
+              className={`relative inline-flex items-center label notch transition-colors ${
+                hasScrolledPastHero ? "hover:text-white/70" : "hover:text-accent"
+              }`}
             >
               <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
 
               {count > 0 && (
-                <span className="absolute -right-2 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold tabular-nums text-accent-foreground">
+                <span
+                  aria-hidden="true"
+                  className="absolute -right-2 -top-1.5 z-10 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold leading-none tabular-nums text-accent-foreground"
+                >
                   {count}
                 </span>
               )}
@@ -152,13 +171,20 @@ export default function Header() {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="label notch transition-colors hover:text-accent"
+                    className={`label notch transition-colors ${
+                      hasScrolledPastHero ? "hover:text-white/70" : "hover:text-accent"
+                    }`}
                   >
                     Logout
                   </button>
                 ) : (
                   <>
-                    <Link href="/login" className="label notch transition-colors hover:text-accent">
+                    <Link
+                      href="/login"
+                      className={`label notch transition-colors ${
+                        hasScrolledPastHero ? "hover:text-white/70" : "hover:text-accent"
+                      }`}
+                    >
                       Login
                     </Link>
                   </>
@@ -169,7 +195,11 @@ export default function Header() {
             {!loading && !isAuthenticated && (!isHomePage || hasScrolledPastHero) && (
               <Link
                 href="/register"
-                className="label notch rounded-full bg-foreground px-4 py-2 text-background transition-colors hover:bg-accent"
+                className={`label notch rounded-full px-4 py-2 transition-colors ${
+                  hasScrolledPastHero
+                    ? "bg-white text-black hover:bg-white/80"
+                    : "bg-foreground text-background hover:bg-accent"
+                }`}
               >
                 Register
               </Link>

@@ -3,6 +3,7 @@ export interface CartItemInput {
   programmeDetailId: number;
   quantity: number;
   checkClashing?: boolean;
+  customAmount?: number;
 }
 
 export interface CartItem {
