@@ -19,6 +19,7 @@ import { Modal } from "./Modal";
 import { ProgrammeDisclaimerModal } from "./ProgrammeDisclaimerModal";
 import { ScheduleMarquee } from "@/components/common/ScheduleMarquee";
 import { SoldOut } from "@/components/sold-out/SoldOut";
+import { nagalliPricing } from "@/data/programmes-data";
 
 // ===== Constants =====
 const PLACEHOLDER_IMAGE = imagePaths.programmeFallback;
@@ -119,6 +120,7 @@ export function BookingSheet({
   // console.log("Programme in BookingSheet:", programme);
   // console.log("Tags in BookingSheet:", programme.tags);
   // console.log("Tags length:", programme.tags?.length);
+  const isNagalli = programme.programType === "nagalli";
 
   const isSoldout = programme.soldOut;
 
@@ -133,8 +135,39 @@ export function BookingSheet({
   const [isClosing, setIsClosing] = useState(false);
   const [cartError, setCartError] = useState<string | null>(null);
 
+  const [customAmount, setCustomAmount] = useState(99);
+  const [customAmountInput, setCustomAmountInput] = useState("");
+  const [amountError, setAmountError] = useState("");
+
+  const [showScaleRules, setShowScaleRules] = useState(false);
+  const scaleRulesRef = useRef<HTMLDivElement>(null);
+
   const addBoxRef = useRef<HTMLElement>(null);
   const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    if (!showScaleRules) return;
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!scaleRulesRef.current?.contains(event.target as Node)) {
+        setShowScaleRules(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowScaleRules(false);
+      }
+    };
+
+    window.addEventListener("mousedown", handleOutsideClick);
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      window.removeEventListener("mousedown", handleOutsideClick);
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [showScaleRules]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -146,9 +179,10 @@ export function BookingSheet({
 
   // Memoized values
   const effectivePrice = useMemo(
-    () => (isVip ? 0 : programme.price || 0),
-    [isVip, programme.price],
+    () => (isVip ? 0 : isNagalli ? customAmount : programme.price || 0),
+    [isVip, isNagalli, customAmount, programme.price],
   );
+
   const maxTickets = useMemo(() => (isVip ? VIP_MAX_TICKETS : MAX_TICKETS), [isVip]);
 
   const chosenAddOns = useMemo(
@@ -162,7 +196,7 @@ export function BookingSheet({
   );
 
   const total = useMemo(
-    () => (effectivePrice + addOnsPrice) * quantity,
+    () => Math.round((effectivePrice + addOnsPrice) * quantity),
     [effectivePrice, addOnsPrice, quantity],
   );
 
@@ -216,6 +250,20 @@ export function BookingSheet({
   }, [intent, isClosing]);
 
   // ===== Handlers =====
+
+  const handleOpenProgramme = useCallback(
+    (nextProgramme: UIProgramme) => {
+      setCustomAmount(99);
+      setCustomAmountInput("");
+      setAmountError("");
+      setSelectedSlotIndex(0);
+      setIsExpanded(false);
+
+      onOpen(nextProgramme);
+    },
+    [onOpen],
+  );
+
   const handleQuantityDecrease = useCallback(() => {
     setQuantity((prev) => Math.max(1, prev - 1));
   }, []);
@@ -253,6 +301,9 @@ export function BookingSheet({
         programmeDetailId: selectedDetailId,
         quantity,
         checkClashing,
+        ...(isNagalli && {
+          customAmount,
+        }),
       });
 
       for (const addOn of chosenAddOns) {
@@ -283,7 +334,17 @@ export function BookingSheet({
 
       return addedItem;
     },
-    [add, allProgrammes, chosenAddOns, chosenSlot, programme.id, quantity, selectedDetailId],
+    [
+      add,
+      allProgrammes,
+      chosenAddOns,
+      chosenSlot,
+      programme.id,
+      quantity,
+      selectedDetailId,
+      isNagalli,
+      customAmount,
+    ],
   );
 
   const handleClose = useCallback(() => {
@@ -368,11 +429,9 @@ export function BookingSheet({
 
   const handleOpenRelated = useCallback(
     (relatedProgramme: UIProgramme) => {
-      setSelectedSlotIndex(0);
-      setIsExpanded(false);
-      onOpen(relatedProgramme);
+      handleOpenProgramme(relatedProgramme);
     },
-    [onOpen],
+    [handleOpenProgramme],
   );
 
   // ===== Render helpers =====
@@ -437,7 +496,7 @@ export function BookingSheet({
                 <button
                   type="button"
                   disabled={!ref}
-                  onClick={() => ref && onOpen(ref)}
+                  onClick={() => ref && handleOpenProgramme(ref)}
                   className="w-full flex items-center gap-3 text-left group disabled:cursor-default"
                 >
                   {ref && (
@@ -521,7 +580,7 @@ export function BookingSheet({
                     </button>
                     {ref && (
                       <button
-                        onClick={() => onOpen(ref)}
+                        onClick={() => handleOpenProgramme(ref)}
                         className="headline text-xs uppercase tracking-[0.08em] underline underline-offset-4"
                       >
                         View programme
@@ -542,13 +601,16 @@ export function BookingSheet({
       return (
         <div className="border border-foreground p-4">
           <p className="label text-muted-foreground">Part of a day booking</p>
+
           <p className="mt-2 headline text-sm">
             This programme can&apos;t be booked on its own — it&apos;s included in{" "}
             <span className="text-foreground font-semibold">{parent.title}</span>. Book the day and
             this is yours.
           </p>
+
           <button
-            onClick={() => onOpen(parent)}
+            type="button"
+            onClick={() => handleOpenProgramme(parent)}
             className="mt-4 headline uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors"
           >
             Book {parent.title} →
@@ -567,17 +629,208 @@ export function BookingSheet({
 
     return (
       <>
+        {/* Nagalli sliding scale */}
+        {isNagalli && !isVip && (
+          <div className="mb-6">
+            <div className="flex items-center gap-3 flex-wrap">
+              <label htmlFor="nagalli-price" className="label text-muted-foreground">
+                Sliding scale · pay what you feel (min ₹99)
+              </label>
+
+              <div className="relative" ref={scaleRulesRef}>
+                <button
+                  type="button"
+                  onClick={() => setShowScaleRules((current) => !current)}
+                  aria-expanded={showScaleRules}
+                  aria-label="About the sliding scale"
+                  className="headline text-xs leading-none border border-foreground rounded-full h-6 w-6 grid place-items-center cursor-pointer hover:bg-foreground hover:text-background transition-colors"
+                >
+                  ?
+                </button>
+
+                {showScaleRules && (
+                  <div
+                    role="dialog"
+                    aria-label="About the sliding scale"
+                    className="absolute right-0 top-full z-50 mt-2 w-[min(22rem,calc(100vw-4.5rem))] max-h-[70vh] overflow-y-auto bg-background border border-foreground p-4 shadow-lg"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="headline uppercase text-sm leading-none">The sliding scale</p>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowScaleRules(false)}
+                        aria-label="Close"
+                        className="headline text-sm leading-none"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                      Tickets start at ₹99. If you feel this programme is valuable, you can give
+                      more — every extra rupee helps keep the festival open to everyone.
+                    </p>
+
+                    <ul className="mt-4 space-y-2.5">
+                      {[
+                        "Choose the figure that reflects the value you received.",
+                        "Seating follows booking order.",
+                        "Your amount goes toward the artists and the people who build the programme.",
+                        "Giving what you can keeps programmes like this possible.",
+                      ].map((rule) => (
+                        <li key={rule} className="flex gap-2 text-xs leading-relaxed">
+                          <span
+                            aria-hidden="true"
+                            className="mt-[6px] h-1.5 w-1.5 shrink-0 bg-accent"
+                          />
+                          <span>{rule}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowScaleRules(false)}
+                      className="mt-4 label uppercase tracking-[0.1em] hover:text-accent"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Range slider with six fixed price points */}
+            <input
+              id="nagalli-price"
+              type="range"
+              min={0}
+              max={nagalliPricing.prices.length - 1}
+              step={1}
+              value={Math.max(0, nagalliPricing.prices.indexOf(customAmount))}
+              onChange={(e) => {
+                const price = nagalliPricing.prices[Number(e.target.value)];
+
+                setCustomAmount(price);
+                setCustomAmountInput("");
+                setAmountError("");
+              }}
+              className="mt-3 w-full accent-[var(--accent)]"
+              aria-label="Choose ticket price"
+            />
+
+            {/* Price labels */}
+            {/* Price labels */}
+            <div className="mt-1 flex justify-between gap-1 text-xs tabular-nums">
+              {nagalliPricing.prices.map((price) => (
+                <button
+                  key={price}
+                  type="button"
+                  onClick={() => {
+                    setCustomAmount(price);
+                    setCustomAmountInput("");
+                    setAmountError("");
+                  }}
+                  aria-pressed={customAmount === price}
+                  className={`whitespace-nowrap transition-colors ${
+                    customAmount === price
+                      ? "font-bold text-accent"
+                      : "text-muted-foreground hover:text-accent"
+                  }`}
+                >
+                  ₹{price.toLocaleString("en-IN")}
+                </button>
+              ))}
+            </div>
+
+            {/* Custom amount */}
+            <div className="mt-3 max-w-xs">
+              <input
+                type="number"
+                min={nagalliPricing.minPrice}
+                max={nagalliPricing.maxPrice}
+                value={customAmountInput}
+                placeholder="Or enter your amount (min ₹99)"
+                className={`input w-full ${amountError ? "border-destructive" : ""}`}
+                onChange={(e) => {
+                  const rawValue = e.target.value;
+                  setCustomAmountInput(rawValue);
+
+                  if (rawValue === "") {
+                    setAmountError("");
+                    return;
+                  }
+
+                  const value = Number(rawValue);
+
+                  if (value < nagalliPricing.minPrice) {
+                    setAmountError("Minimum is ₹99.");
+                    return;
+                  }
+
+                  if (value > nagalliPricing.maxPrice) {
+                    setAmountError("Maximum is ₹2,999.");
+                    return;
+                  }
+
+                  setAmountError("");
+                  setCustomAmount(value);
+                }}
+                onBlur={() => {
+                  // Empty is valid when the user selected an amount using the slider.
+                  if (customAmountInput.trim() === "") {
+                    setAmountError("");
+                    return;
+                  }
+
+                  const value = Number(customAmountInput);
+
+                  if (value < nagalliPricing.minPrice) {
+                    setAmountError("Minimum is ₹99.");
+                    return;
+                  }
+
+                  if (value > nagalliPricing.maxPrice) {
+                    setCustomAmountInput(String(nagalliPricing.maxPrice));
+                    setCustomAmount(nagalliPricing.maxPrice);
+                    setAmountError("");
+                    return;
+                  }
+
+                  setAmountError("");
+                }}
+                aria-label="Enter a custom ticket amount"
+                aria-invalid={!!amountError}
+                aria-describedby={amountError ? "amount-error" : undefined}
+              />
+
+              {amountError && (
+                <p id="amount-error" role="alert" className="mt-1 text-xs text-destructive">
+                  {amountError}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Quantity */}
         <label className="label text-muted-foreground">Tickets</label>
+
         <div className="mt-2 flex items-center gap-6">
           <button
+            type="button"
             onClick={handleQuantityDecrease}
             className="display text-3xl w-10"
             aria-label="Decrease quantity"
           >
             −
           </button>
+
           <span className="display text-4xl tabular-nums w-10 text-center">{quantity}</span>
+
           <button
+            type="button"
             onClick={handleQuantityIncrease}
             className="display text-3xl w-10"
             aria-label="Increase quantity"
@@ -586,8 +839,10 @@ export function BookingSheet({
           </button>
         </div>
 
+        {/* Disclaimer */}
         {programme.disclaimer && (
           <button
+            type="button"
             onClick={() => setShowDisclaimer(true)}
             className="mt-6 label text-accent hover:underline underline-offset-4"
           >
@@ -595,19 +850,29 @@ export function BookingSheet({
           </button>
         )}
 
+        {/* Total and add to cart */}
         <div className="mt-6 flex items-center justify-between rule-t pt-4 gap-4 flex-wrap">
-          <p className="display text-3xl md:text-4xl">
-            {effectivePrice === 0 ? "Free" : `₹${total}`}
-          </p>
+          <div>
+            <p className="display text-3xl md:text-4xl">
+              {effectivePrice === 0 ? "Free" : `₹${total.toLocaleString("en-IN")}`}
+            </p>
+          </div>
+
           <button
+            type="button"
             onClick={handleAddToCart}
             disabled={cartLoading || !selectedDetailId || !!chosenSlot?.isDetailSold}
-            className="headline uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="headline font-semibold uppercase tracking-[0.06em] text-sm md:text-base bg-foreground text-background rounded-full px-6 py-3 hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {cartLoading ? "Adding…" : "Add to cart →"}
           </button>
         </div>
-        {cartError && <p className="mt-3 text-sm text-red-600">{cartError}</p>}
+
+        {cartError && (
+          <p role="alert" className="mt-3 text-sm text-destructive">
+            {cartError}
+          </p>
+        )}
       </>
     );
   };
@@ -731,10 +996,10 @@ export function BookingSheet({
               <dt className="label text-muted-foreground">Price</dt>
               <dd>
                 {effectivePrice === 0
-                  ? isVip && programme.price && programme.price > 0
+                  ? isVip && programme.price > 0
                     ? "Complimentary — Special guest"
                     : "Free"
-                  : `₹${effectivePrice} per ticket`}
+                  : `₹${effectivePrice.toLocaleString("en-IN")} per ticket`}
               </dd>
             </dl>
 

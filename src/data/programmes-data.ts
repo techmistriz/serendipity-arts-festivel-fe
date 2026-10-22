@@ -22,6 +22,21 @@ export type AddOn = {
   price: number;
   blurb?: string;
 };
+
+export const nagalliPricing = {
+  prices: [99, 299, 499, 999, 1999, 2999],
+  minPrice: 99,
+  maxPrice: 2999,
+  defaultPrice: 99,
+};
+
+// Static demo discount codes.
+// These are for UI testing only, not real discount validation.
+export const nagalliDiscounts: Record<string, number> = {
+  NAGALLI10: 10,
+  WELCOME20: 20,
+};
+
 export type Programme = {
   id: string;
   /** Stable id override so bundles/add-ons can reference this programme. */
