@@ -238,6 +238,7 @@ export interface UIProgramme {
   title: string;
   slug: string;
   category: string;
+  programType?: string;
 
   sponsors: ProgrammeSponsor[];
   createdAt?: string;
