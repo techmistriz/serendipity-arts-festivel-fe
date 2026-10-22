@@ -668,16 +668,16 @@ export function BookingSheet({
                     </div>
 
                     <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                      Tickets start at ₹99. If you feel this programme is valuable, you can give
-                      more — every extra rupee helps keep the festival open to everyone.
+                      Tickets start at ₹99. If you feel the programme is valuable, you are welcome
+                      to pay as you wish.
                     </p>
 
                     <ul className="mt-4 space-y-2.5">
                       {[
-                        "Choose the figure that reflects the value you received.",
-                        "Seating follows booking order.",
-                        "Your amount goes toward the artists and the people who build the programme.",
-                        "Giving what you can keeps programmes like this possible.",
+                        "Choose the amount you feel is right for you.",
+                        "Seating will be on a first-come, first-served basis for everyone.",
+                        "All attendees will receive the same experience, regardless of the amount paid.",
+                        "Your contribution helps make the festival accessible to a wider audience.",
                       ].map((rule) => (
                         <li key={rule} className="flex gap-2 text-xs leading-relaxed">
                           <span
