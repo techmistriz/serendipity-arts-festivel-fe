@@ -4,6 +4,7 @@ import { LayoutGrid, Search, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 import { HeaderMenu } from "./_components/HeaderMenu";
 import { HeaderSearch } from "./_components/HeaderSearch";
@@ -97,23 +98,18 @@ export default function Header() {
 
   return (
     <>
-      <header
-        className={`sticky top-0 z-40  ${
-          hasScrolledPastHero
-            ? "border-b border-white/10 bg-black text-white"
-            : "rule-b bg-background/85 text-foreground"
-        }`}
-      >
+      <header className={`sticky top-0 z-40  rule-b bg-background/85 text-foreground`}>
         <div className="container-editorial flex h-14 items-center justify-between md:h-16">
           {/* Home */}
-          <Link
-            href="/"
-            aria-label="Home"
-            className={`label notch transition-colors ${
-              hasScrolledPastHero ? "hover:text-white/70" : "hover:text-accent"
-            }`}
-          >
-            Home
+          <Link href="/" aria-label="Home" className="label notch">
+            <Image
+              src={"/images/logo/saf-logo-white-2026.png"}
+              alt="Summit for Action logo"
+              width={180}
+              height={56}
+              priority
+              className="h-16 w-auto object-contain transition-opacity duration-300"
+            />
           </Link>
 
           <div className="flex items-center gap-3 md:gap-5">
@@ -141,8 +137,6 @@ export default function Header() {
             >
               <LayoutGrid className="h-5 w-5" strokeWidth={1.75} />
             </Link>
-
-            {/* Cart */}
 
             {/* Cart */}
             <Link
@@ -195,11 +189,8 @@ export default function Header() {
             {!loading && !isAuthenticated && (!isHomePage || hasScrolledPastHero) && (
               <Link
                 href="/register"
-                className={`label notch rounded-full px-4 py-2 transition-colors ${
-                  hasScrolledPastHero
-                    ? "bg-white text-black hover:bg-white/80"
-                    : "bg-foreground text-background hover:bg-accent"
-                }`}
+                className={`label notch rounded-full px-4 py-2 transition-colors bg-foreground text-background hover:bg-accent"
+                `}
               >
                 Register
               </Link>
