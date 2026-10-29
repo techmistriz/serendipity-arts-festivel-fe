@@ -1,11 +1,9 @@
-import axios, { type Method } from "axios";
-
+import axios, { type AxiosRequestConfig, type Method } from "axios";
 import { getApiHeaders } from "@/network/api-headers";
 import { store } from "@/redux/store";
 import { siteConfig } from "@/config/site";
 
-const baseURL = siteConfig.api_base_url?.replace(/\/$/, "");
-
+const baseURL = siteConfig.api_base_url?.replace(/\/+$/, "");
 export const METHODS = {
   POST: "POST",
   GET: "GET",
@@ -13,12 +11,11 @@ export const METHODS = {
   PATCH: "PATCH",
   DELETE: "DELETE",
 } as const;
-
 export type ApiMethod = (typeof METHODS)[keyof typeof METHODS];
+export type ApiOptions = Pick<AxiosRequestConfig, "responseType" | "signal" | "timeout">;
 
 function clearUserToken() {
   if (typeof window === "undefined" || !store.getState().auth.accessToken) return;
-
   window.dispatchEvent(new Event("saf:session-expired"));
 }
 
@@ -27,25 +24,20 @@ export default async function API<T>(
   method: ApiMethod,
   payload?: unknown,
   authToken = store.getState().auth.accessToken,
+  options: ApiOptions = {},
 ): Promise<T> {
-  if (!baseURL) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL is not configured.");
-  }
-
+  if (!baseURL) throw new Error("NEXT_PUBLIC_API_BASE_URL is not configured.");
   try {
     const response = await axios.request<T>({
+      ...options,
       method: method as Method,
       url: `${baseURL}${endpoint}`,
       headers: getApiHeaders(payload, authToken),
       ...(method === METHODS.GET ? { params: payload } : { data: payload }),
     });
-
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      clearUserToken();
-    }
-
+    if (axios.isAxiosError(error) && error.response?.status === 401) clearUserToken();
     throw error;
   }
 }
