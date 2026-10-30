@@ -78,6 +78,11 @@ import hoursImage from "@public/drop/drop-hours.jpg";
 import minutesImage from "@public/drop/drop-minutes.jpg";
 import secondsImage from "@public/drop/drop-seconds.jpg";
 
+import customTitle from "@public/images/support/custom-title.jpg";
+import program_ip from "@public/images/support/programme-ip.png";
+import letterhead from "@public/images/support/serendipity-arts-letterhead.jpg";
+import title_presenting from "@public/images/support/title-presenting-sponsor.jpg";
+
 /** Application-owned static images. API media belongs with its API response, not this catalog. */
 export const images = {
   about: {
@@ -146,6 +151,12 @@ export const images = {
     hoursImage: hoursImage,
     minutesImage: minutesImage,
     secondsImage: secondsImage,
+  },
+  support: {
+    customTitle: customTitle,
+    program_ip: program_ip,
+    letterhead: letterhead,
+    title_presenting: title_presenting,
   },
   testimonials: {
     fallback: fallbackAvatar,
