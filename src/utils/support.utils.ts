@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { DonationValues, DonationReceipt } from "@/types/support.types";
+import type { DonationValues } from "@/types/support.types";
 
 export const AMOUNTS = [1000, 2000, 5000, 10000];
 
@@ -10,6 +10,7 @@ export const donationSchema = z
     email: z.string().trim().email("Enter a valid email").max(255),
     pin: z.string().trim().min(3, "Pin/Zip is required").max(12),
     pan: z.string().trim().max(20),
+    address: z.string().min(1, "Address is required"),
     amount: z.number(),
     other: z.string(),
     residency: z.string(),
@@ -44,36 +45,14 @@ export const enquirySchema = z.object({
   msg: z.string(),
 });
 
-export function printCertificate(receipt: DonationReceipt) {
-  const popup = window.open("", "_blank", "width=800,height=900");
-  if (!popup) return false;
+import axios from "axios";
 
-  // Use textContent for submitted values so they cannot become HTML.
-  popup.document.title = "Sample donation receipt";
-  const style = popup.document.createElement("style");
-  style.textContent =
-    "body{font-family:Arial,sans-serif;color:#111;padding:48px;line-height:1.6}h1{font-size:28px}p{white-space:pre-wrap}@page{size:A4;margin:20mm}";
-  popup.document.head.appendChild(style);
-  const heading = popup.document.createElement("h1");
-  heading.textContent = "Sample donation receipt — UI preview";
-  popup.document.body.appendChild(heading);
-
-  const details = [
-    "No payment has been processed. This is not a valid donation or tax receipt.",
-    `Preview reference: ${receipt.id}`,
-    `Donor: ${receipt.name}`,
-    `Email: ${receipt.email}`,
-    `Amount: ${receipt.currency} ${receipt.amount.toLocaleString("en-IN")}`,
-    `Tax residency: ${receipt.residency}`,
-    `Date: ${receipt.date}`,
-  ];
-  for (const detail of details) {
-    const paragraph = popup.document.createElement("p");
-    paragraph.textContent = detail;
-    popup.document.body.appendChild(paragraph);
+export function getDonationError(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data as
+      { message?: string; errors?: Record<string, string[]> } | undefined;
+    const firstFieldError = data?.errors && Object.values(data.errors)[0]?.[0];
+    return firstFieldError ?? data?.message ?? "Unable to create donation. Please try again.";
   }
-  popup.document.close();
-  popup.focus();
-  popup.print();
-  return true;
+  return error instanceof Error ? error.message : "Something went wrong. Please try again.";
 }

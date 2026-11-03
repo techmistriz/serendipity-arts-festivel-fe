@@ -1,8 +1,11 @@
+import { RazorpayCheckoutOptions } from "@/services/cart.service";
+
 export type DonationValues = {
   name: string;
   phone: string;
   email: string;
   pin: string;
+  address: string;
   pan: string;
   amount: number;
   other: string;
@@ -20,8 +23,7 @@ export type DonationReceipt = {
   amount: number;
   currency: "INR" | "USD";
   residency: string;
-  date: string;
-  receiptRequested: boolean;
+  receiptUrl: string | null;
 };
 
 export type EnquiryValues = {
@@ -47,4 +49,22 @@ export type SupportEnquiryPayload = {
   phone: string;
   organisation: string;
   message: string;
+};
+
+export type CreateDonationResponse = {
+  status: boolean;
+  message: string;
+  data: {
+    payment_gateway: {
+      name: string;
+      checkout: RazorpayCheckoutOptions;
+    };
+    donation: {
+      id: number;
+      order_number: string;
+      amount: string;
+      tax_residency: string;
+      is_need_donation_receipt: boolean;
+    };
+  };
 };

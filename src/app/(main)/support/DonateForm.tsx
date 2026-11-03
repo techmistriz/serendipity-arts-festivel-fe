@@ -5,7 +5,11 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field } from "./SupportForms";
 import type { DonationValues, DonationReceipt } from "@/types/support.types";
-import { AMOUNTS, donationSchema, printCertificate } from "@/utils/support.utils";
+import { AMOUNTS, donationSchema, getDonationError } from "@/utils/support.utils";
+import { createDonation, verifyDonationPayment } from "@/services/donation.service";
+import { openRazorpayCheckout } from "@/services/razorpay.service";
+import axios from "axios";
+import type { RazorpayPaymentResponse } from "@/services/razorpay.service";
 
 export default function DonateForm() {
   const {
@@ -13,13 +17,15 @@ export default function DonateForm() {
     handleSubmit,
     control,
     setValue,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitting },
   } = useForm<DonationValues>({
     resolver: zodResolver(donationSchema),
     defaultValues: {
       name: "",
       phone: "",
       email: "",
+      address: "",
       pin: "",
       pan: "",
       amount: 2000,
@@ -43,66 +49,139 @@ export default function DonateForm() {
   const askReceiptChoice = residency === "India" && finalAmount <= 2500;
   const validationError = Object.values(errors).find((error) => error?.message)?.message;
 
-  function submit(data: DonationValues) {
+  async function submit(data: DonationValues) {
     setErr("");
     const submittedAmount = data.other ? Number(data.other) : data.amount;
-    // UI preview only. Set success after backend payment verification when integrated.
-    setDone({
-      id: crypto.randomUUID(),
-      name: data.name,
-      email: data.email,
-      amount: submittedAmount,
-      currency: data.residency === "India" ? "INR" : "USD",
-      residency: data.residency,
-      date: new Date().toLocaleDateString("en-IN"),
-      receiptRequested:
-        data.residency !== "India" || submittedAmount > 2500 || data.receiptChoice === "yes",
-    });
+    const isIndia = data.residency === "India";
+    const receiptRequested = !isIndia || submittedAmount > 2500 || data.receiptChoice === "yes";
+
+    const fd = new FormData();
+    fd.append("name", data.name);
+    fd.append("email", data.email);
+    fd.append("phone", data.phone);
+    fd.append("amount", String(submittedAmount));
+    fd.append("payment_gateway", "RAZORPAY");
+    fd.append("pincode", data.pin);
+    fd.append("address", data.address);
+    fd.append("tax_residency", data.residency);
+    fd.append("nature_of_donation", "Voluntary");
+    fd.append("is_need_donation_receipt", receiptRequested ? "1" : "0");
+
+    if (isIndia) {
+      fd.append("pan_number", data.pan);
+      fd.append("aadhaar_number", data.aadhaar.replace(/\s/g, ""));
+      if (file) fd.append("pan_card_image", file);
+      if (aadhaarFile) fd.append("aadhaar_card_image", aadhaarFile);
+    } else {
+      fd.append("tax_id", data.pan);
+      if (file) fd.append("tax_card_image", file);
+    }
+
+    try {
+      const created = await createDonation(fd);
+      console.log("[donation] created:", created);
+
+      const { donation, payment_gateway } = created.data;
+
+      let payment: RazorpayPaymentResponse;
+      try {
+        payment = await openRazorpayCheckout(payment_gateway.checkout);
+        console.log("[donation] razorpay response:", payment);
+      } catch (e) {
+        console.error("[donation] razorpay failed/cancelled:", e);
+        setErr(getDonationError(e));
+        return;
+      }
+
+      let receiptUrl: string | null = null;
+
+      try {
+        const verified = await verifyDonationPayment(donation.id, payment);
+
+        console.log("[donation] complete verify response:", JSON.stringify(verified, null, 2));
+
+        if (!verified.status) {
+          throw new Error(verified.message);
+        }
+
+        receiptUrl = verified.data?.receipt_url ?? null;
+
+        console.log("[donation] receipt URL:", receiptUrl);
+      } catch (e) {
+        console.error("[donation] verify failed:", e);
+
+        if (axios.isAxiosError(e)) {
+          console.error("[donation] verify status/body:", e.response?.status, e.response?.data);
+        }
+
+        setErr(
+          `We couldn't confirm your payment. If money was deducted, do not pay again. Please contact us with reference ${donation.order_number}.`,
+        );
+
+        return;
+      }
+
+      setDone({
+        id: donation.order_number,
+        name: data.name,
+        email: data.email,
+        amount: Number(donation.amount),
+        currency: payment_gateway.checkout.currency === "INR" ? "INR" : "USD",
+        residency: donation.tax_residency,
+        receiptUrl,
+      });
+
+      reset();
+    } catch (e) {
+      console.error("[donation] create failed:", e);
+      if (axios.isAxiosError(e)) {
+        console.error("[donation] create status/body:", e.response?.status, e.response?.data);
+      }
+      setErr(getDonationError(e));
+    }
   }
 
-  if (done) {
+  if (done)
     return (
       <div className="border border-foreground p-6 md:p-8">
         <p className="display uppercase text-3xl">Thank you, {done.name.split(" ")[0]}.</p>
 
         <p className="mt-3 text-sm">
           Your donation of {done.currency === "INR" ? "₹" : "$"}
-          {done.amount.toLocaleString("en-IN")} — success screen preview. No payment has been
-          processed.
+          {done.amount.toLocaleString("en-IN")} was received. Reference: {done.id}. A confirmation
+          will be sent to {done.email}.
         </p>
 
-        {done.receiptRequested && (
-          <button
-            type="button"
-            onClick={() => {
-              if (!printCertificate(done)) {
-                setErr("Please allow pop-ups to print the sample receipt.");
-              }
-            }}
-            className="mt-6 label notch bg-foreground text-background rounded-full px-5 py-3 hover:bg-accent"
+        {done.receiptUrl && (
+          <a
+            href={done.receiptUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+            className="mt-6 inline-block label notch bg-foreground text-background rounded-full px-5 py-3 hover:bg-accent"
           >
-            Download sample receipt ↓
-          </button>
+            Download donation receipt ↓
+          </a>
         )}
-        {err && (
-          <p role="alert" className="mt-3 text-sm text-destructive">
-            {err}
+
+        {!done.receiptUrl && (
+          <p className="mt-3 text-sm">
+            Your donation was successful. The receipt is currently unavailable.
           </p>
         )}
+
         <button
           type="button"
           onClick={() => {
             setDone(null);
             setErr("");
           }}
-          className="mt-4 block text-sm underline"
+          className="mt-6 block text-sm underline"
         >
           Back to donation form
         </button>
       </div>
     );
-  }
-
   return (
     <form
       noValidate
@@ -132,6 +211,22 @@ export default function DonateForm() {
         <Field label="Phone*" type="tel" {...register("phone")} />
         <Field label="Email*" type="email" {...register("email")} />
         <Field label="Pin/Zip Code*" {...register("pin")} />
+      </div>
+
+      {/* Address */}
+      <div>
+        <label className="block text-sm font-semibold mb-2">Address*</label>
+
+        <textarea
+          {...register("address")}
+          rows={3}
+          placeholder="Enter your full address"
+          className="w-full border border-foreground bg-background px-4 py-3 text-sm resize-none"
+        />
+
+        {errors.address?.message && (
+          <p className="mt-1 text-sm text-destructive">{errors.address.message}</p>
+        )}
       </div>
       <select
         aria-label="Tax residency"
@@ -205,22 +300,25 @@ export default function DonateForm() {
           </div>
         </fieldset>
       )}
-      {validationError && (
+      {(validationError || err) && (
         <p role="alert" className="text-sm text-destructive">
-          {validationError}
+          {validationError ?? err}
         </p>
       )}
       <button
         type="submit"
+        disabled={isSubmitting}
         className="w-full label notch bg-foreground text-background py-4 hover:bg-accent disabled:opacity-50"
       >
-        {`Donate ${sym}${(Number.isFinite(finalAmount) ? finalAmount : 0).toLocaleString("en-IN")} →`}
+        {isSubmitting
+          ? "Processing…"
+          : `Donate ${sym}${(Number.isFinite(finalAmount) ? finalAmount : 0).toLocaleString("en-IN")} →`}
       </button>
       <div className="border-t border-foreground pt-4 text-xs text-muted-foreground space-y-2">
         <p className="font-semibold text-foreground">Receipt and tax terms</p>
         <p>
-          The downloadable receipt remains provisional until payment is confirmed and the final
-          signed 80G receipt is issued with the Foundation&apos;s registration details.
+          The final signed 80G receipt is issued with the Foundation&apos;s registration details
+          once your payment is confirmed.
         </p>
         <p>
           For an Indian ITR, retain the final receipt and payment proof, then use the Foundation
