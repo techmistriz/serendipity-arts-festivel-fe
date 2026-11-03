@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Serendipity Arts Festival",
+  name: "Serendipity Arts Festival 2026",
   description: "Official website of Serendipity Arts Festival",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   api_base_url: process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000/api/v1/web",
