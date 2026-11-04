@@ -1,9 +1,13 @@
 import { Suspense } from "react";
 
+import JsonLd from "@/components/common/JsonLd";
 import { RouteLoadingOverlay } from "@/components/common/LoadingSkeletons";
+import { createPageMetadata } from "@/lib/metadata";
+import { generateProgrammeListSchema } from "@/lib/seo/programme-schema";
+import { getServerApiData } from "@/network/server-api";
+import type { ProgrammesListResponse } from "@/types/programme";
 
 import { ProgrammesListContent } from "./ProgrammesListContent";
-import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata = createPageMetadata({
   title: "Programmes",
@@ -13,10 +17,35 @@ export const metadata = createPageMetadata({
   keywords: ["programmes", "performances", "exhibitions", "workshops", "talks", "film screenings"],
 });
 
-export default function ProgrammesPage() {
+async function getAllProgrammesForSchema() {
+  type PaginatedData = ProgrammesListResponse["data"];
+
+  const firstPage = await getServerApiData<PaginatedData>("/programmes");
+
+  if (!firstPage) return [];
+
+  const lastPage = Math.max(1, firstPage.last_page || 1);
+
+  const remainingPages = await Promise.all(
+    Array.from({ length: lastPage - 1 }, (_, index) => index + 2).map((page) =>
+      getServerApiData<PaginatedData>(`/programmes?page=${page}`),
+    ),
+  );
+
+  return [...firstPage.data, ...remainingPages.flatMap((page) => page?.data ?? [])];
+}
+
+export default async function ProgrammesPage() {
+  const programmes = await getAllProgrammesForSchema();
+  const schema = generateProgrammeListSchema(programmes);
+
   return (
-    <Suspense fallback={<RouteLoadingOverlay label="Loading programmes" />}>
-      <ProgrammesListContent />
-    </Suspense>
+    <>
+      <JsonLd schema={schema} />
+
+      <Suspense fallback={<RouteLoadingOverlay label="Loading programmes" />}>
+        <ProgrammesListContent />
+      </Suspense>
+    </>
   );
 }

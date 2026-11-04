@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import JsonLd from "@/components/common/JsonLd";
 import { createPageMetadata, textFromHtml } from "@/lib/metadata";
+import { generateCuratorDetailSchema } from "@/lib/seo/curator-schema";
 import { getServerApiData } from "@/network/server-api";
 
 import { CuratorDetailPageContent } from "../CuratorDetailPageContent";
@@ -9,6 +11,15 @@ import type { CuratorDetail, CuratorDetailData } from "../types";
 
 async function getCuratorDetail(slug: string): Promise<CuratorDetailData | null> {
   return getServerApiData<CuratorDetailData>(`/curator/${encodeURIComponent(slug)}`);
+}
+
+function getCuratorDescription(curator: CuratorDetail): string {
+  return (
+    curator.meta_description ||
+    curator.short_description ||
+    textFromHtml(curator.bio) ||
+    `Meet ${curator.name}, curator at Serendipity Arts Festival 2026.`
+  );
 }
 
 export async function generateMetadata({
@@ -29,11 +40,8 @@ export async function generateMetadata({
     });
   }
 
-  const description =
-    curator.meta_description ||
-    curator.short_description ||
-    textFromHtml(curator.bio) ||
-    `Meet ${curator.name}, curator at Serendipity Arts Festival 2026.`;
+  const description = getCuratorDescription(curator);
+
   const keywords = (curator.meta_keywords ?? "")
     .split(",")
     .map((keyword) => keyword.trim())
@@ -56,5 +64,18 @@ export default async function CuratorDetailPage({ params }: { params: Promise<{ 
     notFound();
   }
 
-  return <CuratorDetailPageContent detail={detail} />;
+  const description = getCuratorDescription(detail.curator);
+
+  const schema = generateCuratorDetailSchema({
+    data: detail,
+    slug,
+    description,
+  });
+
+  return (
+    <>
+      <JsonLd schema={schema} />
+      <CuratorDetailPageContent detail={detail} />
+    </>
+  );
 }
