@@ -18,12 +18,14 @@ export type DonationValues = {
 
 export type DonationReceipt = {
   id: string;
+  donationId: number;
   name: string;
   email: string;
   amount: number;
   currency: "INR" | "USD";
   residency: string;
   receiptUrl: string | null;
+  receiptRequested: boolean;
 };
 
 export type EnquiryValues = {

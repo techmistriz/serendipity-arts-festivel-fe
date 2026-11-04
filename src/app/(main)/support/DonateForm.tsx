@@ -6,7 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Field } from "./SupportForms";
 import type { DonationValues, DonationReceipt } from "@/types/support.types";
 import { AMOUNTS, donationSchema, getDonationError } from "@/utils/support.utils";
-import { createDonation, verifyDonationPayment } from "@/services/donation.service";
+import {
+  createDonation,
+  verifyDonationPayment,
+  downloadDonationReceipt,
+} from "@/services/donation.service";
 import { openRazorpayCheckout } from "@/services/razorpay.service";
 import axios from "axios";
 import type { RazorpayPaymentResponse } from "@/services/razorpay.service";
@@ -41,6 +45,8 @@ export default function DonateForm() {
     control,
     name: ["amount", "other", "residency", "file", "aadhaarFile"] as const,
   });
+  const [downloading, setDownloading] = useState(false);
+
   const file = files?.[0];
   const aadhaarFile = aadhaarFiles?.[0];
   const finalAmount = other ? Number(other) : amount;
@@ -53,8 +59,16 @@ export default function DonateForm() {
     setErr("");
     const submittedAmount = data.other ? Number(data.other) : data.amount;
     const isIndia = data.residency === "India";
-    const receiptRequested = !isIndia || submittedAmount > 2500 || data.receiptChoice === "yes";
+    const receiptRequested = isIndia
+      ? submittedAmount > 2500 || data.receiptChoice === "yes"
+      : true;
 
+    console.log("Receipt Debug:", {
+      residency: data.residency,
+      amount: submittedAmount,
+      receiptChoice: data.receiptChoice,
+      receiptRequested,
+    });
     const fd = new FormData();
     fd.append("name", data.name);
     fd.append("email", data.email);
@@ -123,12 +137,14 @@ export default function DonateForm() {
 
       setDone({
         id: donation.order_number,
+        donationId: donation.id,
         name: data.name,
         email: data.email,
         amount: Number(donation.amount),
         currency: payment_gateway.checkout.currency === "INR" ? "INR" : "USD",
         residency: donation.tax_residency,
-        receiptUrl,
+        receiptUrl: receiptUrl,
+        receiptRequested,
       });
 
       reset();
@@ -141,7 +157,41 @@ export default function DonateForm() {
     }
   }
 
-  if (done)
+  async function handleDownloadReceipt() {
+    if (!done?.donationId) return;
+
+    try {
+      setDownloading(true);
+      setErr("");
+
+      const blob = await downloadDonationReceipt(done.donationId);
+
+      // Check API response
+      if (!(blob instanceof Blob) || blob.size === 0) {
+        throw new Error("Receipt file is empty.");
+      }
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `donation-receipt-${done.id}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("[donation] receipt download failed:", error);
+
+      setErr("Unable to download your receipt. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
+  if (done) {
     return (
       <div className="border border-foreground p-6 md:p-8">
         <p className="display uppercase text-3xl">Thank you, {done.name.split(" ")[0]}.</p>
@@ -152,21 +202,20 @@ export default function DonateForm() {
           will be sent to {done.email}.
         </p>
 
-        {done.receiptUrl && (
-          <a
-            href={done.receiptUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-            className="mt-6 inline-block label notch bg-foreground text-background rounded-full px-5 py-3 hover:bg-accent"
+        {done.receiptRequested && (
+          <button
+            type="button"
+            onClick={handleDownloadReceipt}
+            disabled={downloading}
+            className="mt-6 inline-block label notch bg-foreground text-background rounded-full px-5 py-3 hover:bg-accent disabled:opacity-50"
           >
-            Download donation receipt ↓
-          </a>
+            {downloading ? "Downloading..." : "Download donation receipt ↓"}
+          </button>
         )}
 
-        {!done.receiptUrl && (
-          <p className="mt-3 text-sm">
-            Your donation was successful. The receipt is currently unavailable.
+        {err && (
+          <p role="alert" className="mt-3 text-sm text-destructive">
+            {err}
           </p>
         )}
 
@@ -182,6 +231,8 @@ export default function DonateForm() {
         </button>
       </div>
     );
+  }
+
   return (
     <form
       noValidate
@@ -240,7 +291,7 @@ export default function DonateForm() {
         ))}
       </select>
       <Field
-        label={residency === "India" ? "PAN Number*" : "Tax ID (Optional)"}
+        label={residency === "India" ? "PAN Number*" : "Tax ID"}
         required={residency === "India"}
         {...register("pan", {
           setValueAs: (value: string) => value.toUpperCase(),
@@ -254,7 +305,7 @@ export default function DonateForm() {
           ? file.name
           : residency === "India"
             ? "Upload PAN card* (PDF or image)"
-            : "Upload tax ID (PDF or image, optional)"}
+            : "Upload tax ID (PDF or image)"}
         <input
           type="file"
           accept="image/*,application/pdf"

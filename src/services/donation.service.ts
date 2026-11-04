@@ -30,3 +30,10 @@ export function verifyDonationPayment(donationId: number, payment: RazorpayPayme
     razorpay_signature: payment.razorpay_signature,
   });
 }
+
+// Download donation receipt
+export function downloadDonationReceipt(donationId: number) {
+  return API<Blob>(`/donations/receipt/${donationId}`, METHODS.GET, undefined, undefined, {
+    responseType: "blob",
+  });
+}
