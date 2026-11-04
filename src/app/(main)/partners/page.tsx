@@ -3,7 +3,8 @@ import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata = createPageMetadata({
   title: "Partners",
-  description: "Meet the partners and supporters who help make Serendipity Arts Festival possible.",
+  description:
+    "Meet the partners supporting Serendipity Arts Festival 2026, including the Government of Goa, cultural organisations and civic institutions.",
   pathname: "/partners",
   keywords: ["festival partners", "arts supporters", "Serendipity Arts Festival partners"],
 });

@@ -11,63 +11,53 @@ export function filterProgrammes(
 
   const query = filters.query.trim().toLowerCase();
 
-  return programmes
-    .filter((programme) => {
-      // Category filter
-      if (filters.category !== "All" && programme.category !== filters.category) {
-        return false;
-      }
+  return programmes.filter((programme) => {
+    // Category filter
+    if (filters.category !== "All" && programme.category !== filters.category) {
+      return false;
+    }
 
-      // Day filter
-      if (filters.day !== null) {
-        const hasSlotOnDay = programme.slots?.some((slot) => slot.day === filters.day);
+    // Day filter
+    if (filters.day !== null) {
+      const hasSlotOnDay = programme.slots?.some((slot) => slot.day === filters.day);
 
-        if (!hasSlotOnDay) {
-          return false;
-        }
-      }
+      if (!hasSlotOnDay) return false;
+    }
 
-      // Venue filter - filter by venue ID
-      if (filters.venue !== "All") {
-        const hasVenue = programme.slots?.some((slot) => slot.venue?.slug === filters.venue);
+    // Venue filter
+    if (filters.venue !== "All") {
+      const hasVenue = programme.slots?.some((slot) => slot.venue?.slug === filters.venue);
 
-        if (!hasVenue) {
-          return false;
-        }
-      }
+      if (!hasVenue) return false;
+    }
 
-      // Tags filter
-      if (filters.tags.length > 0) {
-        const hasAllTags = filters.tags.every((tag) =>
-          programme.tags?.some((programmeTag) => programmeTag.name === tag),
-        );
+    // Tags filter
+    if (filters.tags.length > 0) {
+      const hasAllTags = filters.tags.every((tag) =>
+        programme.tags?.some((programmeTag) => programmeTag.name === tag),
+      );
 
-        if (!hasAllTags) {
-          return false;
-        }
-      }
+      if (!hasAllTags) return false;
+    }
 
-      // Search query
-      if (query !== "") {
-        const searchableText = [
-          programme.title,
-          programme.blurb,
-          programme.curator,
-          programme.venue,
-          programme.category,
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
+    // Search query
+    if (query !== "") {
+      const searchableText = [
+        programme.title,
+        programme.blurb,
+        programme.curator,
+        programme.venue,
+        programme.category,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
-        if (!searchableText.includes(query)) {
-          return false;
-        }
-      }
+      if (!searchableText.includes(query)) return false;
+    }
 
-      return true;
-    })
-    .sort((first, second) => first.title.localeCompare(second.title));
+    return true;
+  });
 }
 
 // Get paginated items

@@ -16,7 +16,7 @@ export default function Programmes() {
 
   const { programmes, loading, error } = useProgrammes({ page: 1, limit: 8 });
 
-  const sortedProgrammes = [...programmes].sort((a, b) => a.name.localeCompare(b.name));
+  const displayedProgrammes = programmes;
 
   return (
     <>
@@ -89,7 +89,7 @@ export default function Programmes() {
         {!loading && !error && (
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-14">
-              {sortedProgrammes.slice(0, 8).map((programme, index) => (
+              {displayedProgrammes.slice(0, 8).map((programme, index) => (
                 <Link
                   key={programme.id}
                   href={

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { AsyncErrorAlert, EmptyState } from "@/components/common/AsyncState";
 import { VenueGridLoadingSkeleton } from "@/components/common/LoadingSkeletons";
@@ -14,28 +14,32 @@ import type { VenueListItem } from "./types";
 // import { useCart } from "@/hooks/use-cart";
 // import { goaVenueSlug } from "@/lib/venue-slug";
 
-export default function VenuesPageClient() {
-  const [venues, setVenues] = useState<VenueListItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [listError, setListError] = useState<string | null>(null);
+type VenuesPageClientProps = {
+  initialVenues: VenueListItem[] | null;
+};
 
-  function initializeVenues() {
-    void getVenues()
-      .then(setVenues)
-      .catch((error: unknown) => {
-        setListError(getErrorMessage(error, "Unable to load venues. Please try again."));
-      })
-      .finally(() => setLoading(false));
+export default function VenuesPageClient({ initialVenues }: VenuesPageClientProps) {
+  const [venues, setVenues] = useState<VenueListItem[]>(initialVenues ?? []);
+  const [loading, setLoading] = useState(false);
+  const [listError, setListError] = useState<string | null>(
+    initialVenues === null ? "Unable to load venues. Please try again." : null,
+  );
+
+  async function initializeVenues() {
+    try {
+      const data = await getVenues();
+      setVenues(data);
+    } catch (error: unknown) {
+      setListError(getErrorMessage(error, "Unable to load venues. Please try again."));
+    } finally {
+      setLoading(false);
+    }
   }
-
-  useEffect(() => {
-    initializeVenues();
-  }, []);
 
   const retryVenues = () => {
     setLoading(true);
     setListError(null);
-    initializeVenues();
+    void initializeVenues();
   };
 
   // const { bookings } = useCart();
@@ -65,6 +69,7 @@ export default function VenuesPageClient() {
           className="mt-10"
         />
       )}
+
       {loading ? (
         <VenueGridLoadingSkeleton />
       ) : venues.length > 0 ? (
@@ -76,6 +81,7 @@ export default function VenuesPageClient() {
       ) : (
         <EmptyState message="No venues are available yet" />
       )}
+
       {/* <section className="mt-20 md:mt-28">
         <h2 className="display uppercase text-[9vw] md:text-[5vw] leading-[0.9]">Wayfinding</h2>
         <p className="mt-4 max-w-2xl text-muted-foreground headline text-sm">

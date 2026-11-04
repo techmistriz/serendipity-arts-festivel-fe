@@ -1,5 +1,9 @@
 import CuratorsPageClient from "./CuratorsPageClient";
 import { createPageMetadata } from "@/lib/metadata";
+import JsonLd from "@/components/common/JsonLd";
+import { getServerApiData } from "@/network/server-api";
+import { generateCuratorListSchema } from "@/lib/seo/curator-schema";
+import type { CuratorListItem } from "@/types/curator";
 
 export const metadata = createPageMetadata({
   title: "Curators",
@@ -9,6 +13,15 @@ export const metadata = createPageMetadata({
   keywords: ["festival curators", "artists", "arts practitioners", "Goa"],
 });
 
-export default function Page() {
-  return <CuratorsPageClient />;
+export default async function Page() {
+  const curators = (await getServerApiData<CuratorListItem[]>("/curators")) ?? [];
+
+  const schema = generateCuratorListSchema(curators);
+
+  return (
+    <>
+      <JsonLd schema={schema} />
+      <CuratorsPageClient />
+    </>
+  );
 }
