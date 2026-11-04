@@ -431,9 +431,9 @@ export function ProgrammesListContent() {
   );
 
   return (
-    <div className="container-editorial pt-10 md:pt-24 pb-32">
+    <div className="container-editorial min-w-0 w-full overflow-x-clip pt-10 md:pt-24 pb-32">
       {/* HEADER */}
-      <h1 className="display uppercase text-[15vw] md:text-[12vw] leading-[0.9]">Programmes</h1>
+      <h1 className="display uppercase text-[13vw] md:text-[12vw] leading-[0.9]">Programmes</h1>
 
       <p className="mt-6 max-w-2xl hand text-xl md:text-3xl leading-[1.15] headline">
         We keep on adding new programmes — book them before they get sold out.
