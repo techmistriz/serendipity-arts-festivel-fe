@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Serendipity Arts Festival",
+  name: "Serendipity Arts Festival 2026",
   description: "Official website of Serendipity Arts Festival",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   api_base_url: process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000/api/v1/web",
@@ -14,6 +14,7 @@ export const siteConfig = {
     { label: "Venues", href: "/venues", comingSoon: false },
     { label: "Vibes", href: "/vibes", comingSoon: false },
     { label: "About us", href: "/about", comingSoon: false },
+    // { label: "Support us", href: "/support", comingSoon: false },
     { label: "Register", href: "/register", comingSoon: false },
     { label: "FAQ", href: "/faq", comingSoon: false },
     { label: "Contact", href: "/contact", comingSoon: false },

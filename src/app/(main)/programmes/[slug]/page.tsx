@@ -1,21 +1,17 @@
 import type { Metadata } from "next";
 
+import JsonLd from "@/components/common/JsonLd";
 import { createPageMetadata, textFromHtml } from "@/lib/metadata";
+import { generateProgrammeDetailSchema } from "@/lib/seo/programme-schema";
 import { getServerApiData } from "@/network/server-api";
-import type { Programme } from "@/types/programme";
+import type { ProgramDetailResponse } from "@/types/programme";
 
 import { ProgrammeDetailPageClient } from "./ProgrammeDetailPageClient";
 
-type ProgrammeMetadataData = {
-  program?: Programme;
-};
+type ProgrammeDetailData = ProgramDetailResponse["data"];
 
-async function getProgrammeMetadata(slug: string): Promise<Programme | null> {
-  const data = await getServerApiData<ProgrammeMetadataData>(
-    `/programme/${encodeURIComponent(slug)}`,
-  );
-
-  return data?.program ?? null;
+async function getProgrammeDetail(slug: string): Promise<ProgrammeDetailData | null> {
+  return getServerApiData<ProgrammeDetailData>(`/programme/${encodeURIComponent(slug)}`);
 }
 
 export async function generateMetadata({
@@ -24,7 +20,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const programme = await getProgrammeMetadata(slug);
+  const detail = await getProgrammeDetail(slug);
+  const programme = detail?.program;
 
   if (!programme) {
     return createPageMetadata({
@@ -40,6 +37,7 @@ export async function generateMetadata({
     textFromHtml(programme.short_description) ||
     textFromHtml(programme.description) ||
     `Discover ${programme.name} at Serendipity Arts Festival 2026.`;
+
   const keywords = (programme.meta_keywords ?? "")
     .split(",")
     .map((keyword) => keyword.trim())
@@ -62,9 +60,19 @@ export default async function ProgrammeDetailPage({
   searchParams: Promise<{ intent?: string | string[] }>;
 }) {
   const { slug } = await params;
-
   const { intent } = await searchParams;
+
   const initialIntent = intent === "cart" ? "cart" : "about";
 
-  return <ProgrammeDetailPageClient slug={slug} initialIntent={initialIntent} />;
+  const detail = await getProgrammeDetail(slug);
+
+  const schema = detail?.program ? generateProgrammeDetailSchema(detail, slug) : null;
+
+  return (
+    <>
+      {schema && <JsonLd schema={schema} />}
+
+      <ProgrammeDetailPageClient slug={slug} initialIntent={initialIntent} />
+    </>
+  );
 }
