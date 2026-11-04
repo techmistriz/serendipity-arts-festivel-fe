@@ -16,8 +16,6 @@ export default function Programmes() {
 
   const { programmes, loading, error } = useProgrammes({ page: 1, limit: 8 });
 
-  console.log(programmes);
-
   const displayedProgrammes = programmes;
 
   return (

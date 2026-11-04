@@ -63,12 +63,6 @@ export default function DonateForm() {
       ? submittedAmount > 2500 || data.receiptChoice === "yes"
       : true;
 
-    console.log("Receipt Debug:", {
-      residency: data.residency,
-      amount: submittedAmount,
-      receiptChoice: data.receiptChoice,
-      receiptRequested,
-    });
     const fd = new FormData();
     fd.append("name", data.name);
     fd.append("email", data.email);
@@ -93,14 +87,12 @@ export default function DonateForm() {
 
     try {
       const created = await createDonation(fd);
-      console.log("[donation] created:", created);
 
       const { donation, payment_gateway } = created.data;
 
       let payment: RazorpayPaymentResponse;
       try {
         payment = await openRazorpayCheckout(payment_gateway.checkout);
-        console.log("[donation] razorpay response:", payment);
       } catch (e) {
         console.error("[donation] razorpay failed/cancelled:", e);
         setErr(getDonationError(e));
@@ -112,15 +104,11 @@ export default function DonateForm() {
       try {
         const verified = await verifyDonationPayment(donation.id, payment);
 
-        console.log("[donation] complete verify response:", JSON.stringify(verified, null, 2));
-
         if (!verified.status) {
           throw new Error(verified.message);
         }
 
         receiptUrl = verified.data?.receipt_url ?? null;
-
-        console.log("[donation] receipt URL:", receiptUrl);
       } catch (e) {
         console.error("[donation] verify failed:", e);
 
