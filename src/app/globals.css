@@ -77,18 +77,29 @@
 
 @layer base {
   * {
+    box-sizing: border-box;
     border-color: var(--color-rule);
   }
+
   html {
+    width: 100%;
+    max-width: 100%;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+
   body {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100%;
+    margin: 0;
+    overflow-x: clip;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "ss02", "cv11";
   }
+
   ::selection {
     background-color: var(--color-accent);
     color: var(--color-accent-foreground);

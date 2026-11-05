@@ -212,68 +212,57 @@ export default function Support() {
                         ← Prev
                       </button>
 
-                      {/* First page */}
-                      {firstVisiblePage > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => setCurrentPage(1)}
-                          aria-current={validCurrentPage === 1 ? "page" : undefined}
-                          className={`headline min-w-[40px] border px-3 py-2 text-xs tracking-[0.06em] uppercase transition-colors ${
-                            validCurrentPage === 1
-                              ? "border-foreground bg-foreground text-background"
-                              : "border-foreground hover:bg-foreground hover:text-background"
-                          }`}
-                        >
-                          1
-                        </button>
-                      )}
+                      {/* Mobile page indicator */}
+                      <span className="sm:hidden headline text-xs tracking-[0.06em] uppercase px-2 py-2">
+                        {validCurrentPage} / {totalPages}
+                      </span>
 
-                      {/* First ellipsis */}
-                      {firstVisiblePage > 2 && (
-                        <span className="px-1 text-sm text-muted-foreground" aria-hidden="true">
-                          …
-                        </span>
-                      )}
+                      {/* Desktop page numbers */}
+                      <div className="hidden sm:flex items-center gap-2">
+                        {firstVisiblePage > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => setCurrentPage(1)}
+                            className="headline min-w-[40px] border border-foreground px-3 py-2 text-xs tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background"
+                          >
+                            1
+                          </button>
+                        )}
 
-                      {/* Visible pages */}
-                      {visiblePages.map((page) => (
-                        <button
-                          key={page}
-                          type="button"
-                          onClick={() => setCurrentPage(page)}
-                          aria-current={page === validCurrentPage ? "page" : undefined}
-                          className={`headline min-w-[40px] border px-3 py-2 text-xs tracking-[0.06em] uppercase transition-colors ${
-                            page === validCurrentPage
-                              ? "border-foreground bg-foreground text-background"
-                              : "border-foreground hover:bg-foreground hover:text-background"
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      ))}
+                        {firstVisiblePage > 2 && (
+                          <span className="px-1 text-sm text-muted-foreground">…</span>
+                        )}
 
-                      {/* Last ellipsis */}
-                      {lastVisiblePage !== undefined && lastVisiblePage < totalPages - 1 && (
-                        <span className="px-1 text-sm text-muted-foreground" aria-hidden="true">
-                          …
-                        </span>
-                      )}
+                        {visiblePages.map((page) => (
+                          <button
+                            key={page}
+                            type="button"
+                            onClick={() => setCurrentPage(page)}
+                            aria-current={page === validCurrentPage ? "page" : undefined}
+                            className={`headline min-w-[40px] border px-3 py-2 text-xs tracking-[0.06em] uppercase transition-colors ${
+                              page === validCurrentPage
+                                ? "border-foreground bg-foreground text-background"
+                                : "border-foreground hover:bg-foreground hover:text-background"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
 
-                      {/* Last page */}
-                      {lastVisiblePage !== undefined && lastVisiblePage < totalPages && (
-                        <button
-                          type="button"
-                          onClick={() => setCurrentPage(totalPages)}
-                          aria-current={validCurrentPage === totalPages ? "page" : undefined}
-                          className={`headline min-w-[40px] border px-3 py-2 text-xs tracking-[0.06em] uppercase transition-colors ${
-                            validCurrentPage === totalPages
-                              ? "border-foreground bg-foreground text-background"
-                              : "border-foreground hover:bg-foreground hover:text-background"
-                          }`}
-                        >
-                          {totalPages}
-                        </button>
-                      )}
+                        {lastVisiblePage !== undefined && lastVisiblePage < totalPages - 1 && (
+                          <span className="px-1 text-sm text-muted-foreground">…</span>
+                        )}
+
+                        {lastVisiblePage !== undefined && lastVisiblePage < totalPages && (
+                          <button
+                            type="button"
+                            onClick={() => setCurrentPage(totalPages)}
+                            className="headline min-w-[40px] border border-foreground px-3 py-2 text-xs tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background"
+                          >
+                            {totalPages}
+                          </button>
+                        )}
+                      </div>
 
                       {/* Next */}
                       <button
