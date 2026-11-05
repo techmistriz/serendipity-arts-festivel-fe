@@ -202,7 +202,7 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
         <div className="mt-3 grid grid-cols-2 divide-x divide-foreground border border-foreground">
           <button
             onClick={handleAboutClick}
-            className="headline px-3 py-2 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background md:text-xs"
+            className="headline px-1 py-2 text-[10px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background md:text-xs"
           >
             About
           </button>
@@ -210,7 +210,7 @@ export function ProgrammeCard({ programme, onAbout, onAdd }: ProgrammeCardProps)
           <button
             onClick={handleAddClick}
             disabled={!programme.isBookingAllowed}
-            className="headline px-3 py-2 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50 md:text-xs"
+            className="headline px-1 py-2 text-[10px] tracking-[0.06em] uppercase transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50 md:text-xs"
           >
             {programme.isBookingAllowed ? "Add to cart" : "Booking unavailable"}
           </button>

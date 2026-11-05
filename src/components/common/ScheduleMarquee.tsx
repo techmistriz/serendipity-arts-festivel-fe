@@ -89,7 +89,7 @@ export function ScheduleMarquee({
   return (
     <div
       ref={scheduleRef}
-      className={`headline overflow-hidden whitespace-nowrap text-[11px] text-muted-foreground md:text-xs ${className}`}
+      className={`headline overflow-hidden whitespace-nowrap text-[14px] text-[#000] md:text-xs ${className}`}
     >
       <div
         className={`schedule-marquee-track ${hasOverflow ? "is-animating" : ""}`}
